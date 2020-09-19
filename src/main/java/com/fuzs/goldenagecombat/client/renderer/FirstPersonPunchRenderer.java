@@ -57,10 +57,13 @@ public class FirstPersonPunchRenderer {
                     firstPersonRenderer.transformFirstPerson(matrixStack, handside, swingProgress);
                     break;
                 case EAT:
-                case DRINK:
                     firstPersonRenderer.transformEatFirstPerson(matrixStack, partialTicks, handside, stack);
                     firstPersonRenderer.transformSideFirstPerson(matrixStack, handside, equippedProgress);
-//                    firstPersonRenderer.transformFirstPerson(matrixStack, handside, swingProgress);
+                    firstPersonRenderer.transformFirstPerson(matrixStack, handside, swingProgress);
+                    break;
+                case DRINK: // vanilla bug will cause a hit when using, screwing with the whole animation
+                    firstPersonRenderer.transformEatFirstPerson(matrixStack, partialTicks, handside, stack);
+                    firstPersonRenderer.transformSideFirstPerson(matrixStack, handside, equippedProgress);
                     break;
                 case BOW:
                     firstPersonRenderer.transformSideFirstPerson(matrixStack, handside, equippedProgress);

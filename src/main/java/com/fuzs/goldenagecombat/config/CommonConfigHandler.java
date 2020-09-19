@@ -10,7 +10,7 @@ public class CommonConfigHandler {
     private static final ForgeConfigSpec.Builder BUILDER = new ForgeConfigSpec.Builder();
 
     // features
-    public static final ForgeConfigSpec.BooleanValue COMBAT;
+    public static final ForgeConfigSpec.BooleanValue COOLDOWN;
     public static final ForgeConfigSpec.BooleanValue BLOCKING;
 //    public static final ForgeConfigSpec.BooleanValue FISHING_ROD;
     public static final ForgeConfigSpec.BooleanValue FOOD;
@@ -19,16 +19,20 @@ public class CommonConfigHandler {
 
     // combat
     public static final ForgeConfigSpec.BooleanValue COMBAT_DAMAGE_VALUES;
+
     // blocking
     public static final ForgeConfigSpec.ConfigValue<List<String>> BLOCKING_EXCLUDE;
     public static final ForgeConfigSpec.ConfigValue<List<String>> BLOCKING_INCLUDE;
+
     // food
     public static final ForgeConfigSpec.IntValue FOOD_REGEN_DELAY;
     public static final ForgeConfigSpec.IntValue FOOD_REGEN_THRESHOLD;
     public static final ForgeConfigSpec.BooleanValue FOOD_DRAIN_FOOD;
+
     // golden apple
     public static final ForgeConfigSpec.BooleanValue GOLDEN_APPLE_EFFECTS;
     public static final ForgeConfigSpec.BooleanValue GOLDEN_APPLE_RECIPE;
+
     // sounds
     public static final ForgeConfigSpec.BooleanValue SOUNDS_CRIT;
     public static final ForgeConfigSpec.BooleanValue SOUNDS_KNOCKBACK;
@@ -39,7 +43,6 @@ public class CommonConfigHandler {
 
     // classic combat
     public static final ForgeConfigSpec.BooleanValue REMOVE_ATTACK_COOLDOWN;
-    public static final ForgeConfigSpec.BooleanValue NO_COOLDOWN_TOOLTIP;
     public static final ForgeConfigSpec.BooleanValue HIDE_ATTACK_INDICATOR;
     public static final ForgeConfigSpec.BooleanValue BOOST_SHARPNESS;
     public static final ForgeConfigSpec.BooleanValue MORE_SPRINTING;
@@ -49,14 +52,14 @@ public class CommonConfigHandler {
     static {
 
         BUILDER.push("_features");
-        COMBAT = CommonConfigHandler.BUILDER.comment("Restores pre-Combat Update combat mechanics.").define("Combat", true);
+        COOLDOWN = CommonConfigHandler.BUILDER.comment("Remove cooldown mechanic and make fast clicking effective again.").define("Cooldown", true);
         BLOCKING = CommonConfigHandler.BUILDER.comment("Re-adds sword blocking in a very configurable way.").define("Blocking", true);
-        FOOD = CommonConfigHandler.BUILDER.comment("Changes the way the player heals from food, mainly disabling almost instant regen.").define("Food", true);
+        FOOD = CommonConfigHandler.BUILDER.comment("Changes the way the player heals from food, mainly disabling almost instant regeneration.").define("Food", true);
         GOLDEN_APPLE = CommonConfigHandler.BUILDER.comment("Revert various aspects of enchanted golden apples.").define("Golden Apple", true);
         SOUNDS = CommonConfigHandler.BUILDER.comment("Don't play various attack sounds added in more recent versions. Set individual sounds to \"true\" to disable.").define("Sounds", true);
         BUILDER.pop();
 
-        BUILDER.push("combat");
+        BUILDER.push("cooldown");
         COMBAT_DAMAGE_VALUES = CommonConfigHandler.BUILDER.comment("Revert weapon and tool attack damage to old values.").define("Old Damage Values", true);
         BUILDER.pop();
 
@@ -91,7 +94,6 @@ public class CommonConfigHandler {
         BUILDER.comment("Restores pre-Combat Update combat mechanics.");
         BUILDER.push("classic_combat");
         REMOVE_ATTACK_COOLDOWN = CommonConfigHandler.BUILDER.comment("Completely remove the attack cooldown as if it never even existed in the first place.").define("Remove Attack Cooldown", true);
-        NO_COOLDOWN_TOOLTIP = CommonConfigHandler.BUILDER.comment("Remove \"Attack Speed\" attribute from tooltips.").define("No Attack Speed Tooltip", true);
         HIDE_ATTACK_INDICATOR = CommonConfigHandler.BUILDER.comment("Prevent attack indicator from showing regardless of what's been set in \"Video Settings\".").define("Disable Attack Indicator", true);
         BOOST_SHARPNESS = CommonConfigHandler.BUILDER.comment("Boost sharpness enchantment to add +1.0 attack damage per level instead of +0.5 damage.").define("Boost Sharpness", true);
         MORE_SPRINTING = CommonConfigHandler.BUILDER.comment("Sprinting and attacking no longer interfere, so you won't stop and critical hits are always possible.").define("Sprint While Attacking", true);

@@ -21,16 +21,15 @@ public class ThirdPersonBlockingRenderer {
 
             if (BLOCKING_HELPER.isActiveItemStackBlocking((PlayerEntity) entity)) {
 
+                boolean flag = ClientConfigHandler.BLOCKING_POSE.get() == ClientConfigHandler.BlockingPose.MODERN;
                 if (entity.getActiveHand() == Hand.OFF_HAND) {
 
                     model.bipedLeftArm.rotateAngleX = model.bipedLeftArm.rotateAngleX - ((float) Math.PI * 2.0F) / 10F;
-                    if (ClientConfigHandler.BLOCKING_POSE.get() == ClientConfigHandler.BlockingPose.MODERN)
-                        model.bipedLeftArm.rotateAngleY = ((float)Math.PI / 6F);
+                    if (flag) model.bipedLeftArm.rotateAngleY = ((float)Math.PI / 6F);
                 } else {
 
                     model.bipedRightArm.rotateAngleX = model.bipedRightArm.rotateAngleX - ((float) Math.PI * 2.0F) / 10F;
-                    if (ClientConfigHandler.BLOCKING_POSE.get() == ClientConfigHandler.BlockingPose.MODERN)
-                        model.bipedRightArm.rotateAngleY = (-(float)Math.PI / 6F);
+                    if (flag) model.bipedRightArm.rotateAngleY = (-(float)Math.PI / 6F);
                 }
             }
         }
