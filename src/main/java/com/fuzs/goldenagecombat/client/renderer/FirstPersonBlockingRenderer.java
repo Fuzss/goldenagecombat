@@ -6,10 +6,10 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.FirstPersonRenderer;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -21,7 +21,6 @@ public class FirstPersonBlockingRenderer {
     private final BlockingItemHelper blockingHelper = new BlockingItemHelper();
     private final Minecraft mc = Minecraft.getInstance();
 
-    @SuppressWarnings({"unused", "deprecation"})
     @SubscribeEvent
     public void onRenderHand(final RenderHandEvent evt) {
 

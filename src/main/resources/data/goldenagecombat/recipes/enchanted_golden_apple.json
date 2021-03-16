@@ -15,5 +15,12 @@
   },
   "result": {
     "item": "minecraft:enchanted_golden_apple"
-  }
+  },
+  "conditions": [
+    {
+      "type": "puzzleslibgc:element_config",
+      "element": "goldenagecombat:classic_combat",
+      "path": "Notch Apple Recipe"
+    }
+  ]
 }

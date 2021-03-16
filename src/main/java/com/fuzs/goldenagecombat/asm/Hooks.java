@@ -6,16 +6,13 @@ import com.fuzs.goldenagecombat.config.CommonConfigHandler;
 import com.fuzs.goldenagecombat.handler.ClassicCombatHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.entity.layers.ArmorLayer;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.Vec3d;
+import net.minecraft.util.math.vector.Vector3d;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -24,22 +21,6 @@ import net.minecraftforge.api.distmarker.OnlyIn;
  */
 @SuppressWarnings("unused")
 public class Hooks {
-
-    /**
-     * modify damage dealt to an entity in {@link net.minecraft.entity.player.PlayerEntity#attackTargetEntityWithCurrentItem}
-     */
-    public static float addEnchantmentDamage(float enchantmentAmount, PlayerEntity player, Entity targetEntity) {
-
-        if (enchantmentAmount > 0.0F) {
-
-            if (CommonConfigHandler.BOOST_SHARPNESS.get()) {
-
-                enchantmentAmount += ClassicCombatHandler.addEnchantmentDamage(player);
-            }
-        }
-
-        return enchantmentAmount;
-    }
 
     /**
      * allow critical strikes when the player is sprinting in {@link net.minecraft.entity.player.PlayerEntity#attackTargetEntityWithCurrentItem}
@@ -72,7 +53,7 @@ public class Hooks {
     /**
      * add slight upwards motion when pulling an entity in net.minecraft.entity.projectile.FishingBobberEntity#bringInHookedEntity
      */
-    public static Vec3d getCaughtEntityMotion(Vec3d vec3d) {
+    public static Vector3d getCaughtEntityMotion(Vector3d vec3d) {
 
         return CommonConfigHandler.OLD_FISHING_ROD.get() ? ClassicCombatHandler.getCaughtEntityMotion(vec3d) : vec3d;
 

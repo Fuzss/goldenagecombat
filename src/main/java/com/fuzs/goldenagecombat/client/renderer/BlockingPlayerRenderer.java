@@ -1,11 +1,12 @@
 package com.fuzs.goldenagecombat.client.renderer;
 
 import com.fuzs.goldenagecombat.client.renderer.entity.layers.SwordBlockingLayer;
+import com.fuzs.goldenagecombat.mixin.client.accessor.ILivingRendererAccessor;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.Quaternion;
 import net.minecraft.client.renderer.entity.PlayerRenderer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
+import net.minecraft.util.math.vector.Quaternion;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -24,7 +25,7 @@ public class BlockingPlayerRenderer {
         Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getRenderManager().getSkinMap();
         for (PlayerRenderer renderer : skinMap.values()) {
 
-            renderer.layerRenderers.removeIf(it -> it instanceof HeldItemLayer);
+            ((ILivingRendererAccessor) renderer).getLayerRenderers().removeIf(it -> it instanceof HeldItemLayer);
             renderer.addLayer(new SwordBlockingLayer(renderer));
         }
     }
