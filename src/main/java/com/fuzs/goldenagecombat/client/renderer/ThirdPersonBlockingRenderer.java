@@ -1,7 +1,7 @@
 package com.fuzs.goldenagecombat.client.renderer;
 
 import com.fuzs.goldenagecombat.client.config.ClientConfigHandler;
-import com.fuzs.goldenagecombat.util.BlockingItemHelper;
+import com.fuzs.goldenagecombat.util.BlockingHelper;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.entity.model.BipedModel;
 import net.minecraft.entity.LivingEntity;
@@ -13,7 +13,7 @@ import net.minecraftforge.api.distmarker.OnlyIn;
 @OnlyIn(Dist.CLIENT)
 public class ThirdPersonBlockingRenderer {
 
-    private static final BlockingItemHelper BLOCKING_HELPER = new BlockingItemHelper();
+    private static final BlockingHelper BLOCKING_HELPER = new BlockingHelper();
 
     public static void applyRotations(BipedModel<LivingEntity> entityModel, LivingEntity entity) {
 

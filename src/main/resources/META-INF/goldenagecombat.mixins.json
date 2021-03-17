@@ -12,6 +12,7 @@
     "accessor.ILivingEntityAccessor"
   ],
   "client": [
+    "client.FirstPersonRendererMixin",
     "client.accessor.ILivingRendererAccessor",
     "client.accessor.IVideoSettingsScreenAccessor",
     "client.accessor.IFirstPersonRendererAccessor"

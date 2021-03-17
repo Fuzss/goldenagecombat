@@ -1,7 +1,6 @@
 package com.fuzs.goldenagecombat.client.element;
 
 import com.fuzs.goldenagecombat.element.ClassicCombatElement;
-import com.fuzs.goldenagecombat.mixin.client.accessor.IFirstPersonRendererAccessor;
 import com.fuzs.goldenagecombat.mixin.client.accessor.IVideoSettingsScreenAccessor;
 import com.fuzs.puzzleslib_gc.element.extension.ElementExtension;
 import com.fuzs.puzzleslib_gc.element.side.IClientElement;
@@ -10,7 +9,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.screen.VideoSettingsScreen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.OptionButton;
-import net.minecraft.client.renderer.FirstPersonRenderer;
 import net.minecraft.client.settings.AttackIndicatorStatus;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -23,7 +21,6 @@ import net.minecraftforge.eventbus.api.EventPriority;
 public class ClassicCombatExtension extends ElementExtension<ClassicCombatElement> implements IClientElement {
 
     private final Minecraft mc = Minecraft.getInstance();
-    private final FirstPersonRenderer itemRenderer = new FirstPersonRenderer(this.mc);
 
     /**
      * temporary storage for disabling while rendering is happening
@@ -43,7 +40,6 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
 
         this.addListener(this::onRenderGameOverlay);
         this.addListener(this::onClientTick);
-        this.addListener(this::onRenderTick);
         this.addListener(this::onItemTooltip, EventPriority.LOW);
         this.addListener(this::onGuiInit);
     }
@@ -95,24 +91,7 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
 
                 // FirstPersonRenderer::tick uses cooldown period, so we reset it before calling that
                 ClassicCombatElement.disableCooldownPeriod(this.mc.player);
-                // tick our own item renderer which doesn't respond to equipped progress being reset
-                // values will be synced to original right before rendering
-                this.itemRenderer.tick();
             }
-        }
-    }
-
-    private void onRenderTick(final TickEvent.RenderTickEvent evt) {
-
-        if (this.parent.removeCooldown && evt.phase == TickEvent.Phase.START) {
-
-            // we use a separate item renderer, so now sync its values to the vanilla one
-            IFirstPersonRendererAccessor modItemRenderer = (IFirstPersonRendererAccessor) this.itemRenderer;
-            IFirstPersonRendererAccessor mainItemRenderer = (IFirstPersonRendererAccessor) this.mc.getFirstPersonRenderer();
-            mainItemRenderer.setEquippedProgressMainHand(modItemRenderer.getEquippedProgressMainHand());
-            mainItemRenderer.setEquippedProgressOffHand(modItemRenderer.getEquippedProgressOffHand());
-            mainItemRenderer.setPrevEquippedProgressMainHand(modItemRenderer.getPrevEquippedProgressMainHand());
-            mainItemRenderer.setPrevEquippedProgressOffHand(modItemRenderer.getPrevEquippedProgressOffHand());
         }
     }
 

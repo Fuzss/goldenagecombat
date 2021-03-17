@@ -2,12 +2,11 @@ package com.fuzs.goldenagecombat.client.renderer.entity.layers;
 
 import com.fuzs.goldenagecombat.client.config.ClientConfigHandler;
 import com.fuzs.goldenagecombat.client.renderer.BlockingPlayerRenderer;
-import com.fuzs.goldenagecombat.util.BlockingItemHelper;
+import com.fuzs.goldenagecombat.util.BlockingHelper;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
 import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.client.renderer.entity.model.IHasArm;
@@ -16,6 +15,7 @@ import net.minecraft.client.renderer.model.IBakedModel;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
@@ -25,7 +25,7 @@ import javax.annotation.Nonnull;
 @SuppressWarnings("deprecation")
 public class SwordBlockingLayer extends HeldItemLayer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> {
 
-    private final BlockingItemHelper blockingHelper = new BlockingItemHelper();
+    private final BlockingHelper blockingHelper = new BlockingHelper();
 
     public SwordBlockingLayer(IEntityRenderer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> p_i50934_1_) {
         super(p_i50934_1_);
