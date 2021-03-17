@@ -32,7 +32,7 @@ public class InitiateBlockHandler {
 
         if (evt.getEntityLiving() instanceof PlayerEntity && this.blockingHelper.canItemStackBlock(evt.getItem())) {
 
-            evt.setDuration(BlockingItemHelper.SWORD_USE_DURATION);
+            evt.setDuration(72000);
         }
     }
 

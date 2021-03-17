@@ -17,7 +17,6 @@ public class BlockingItemHelper {
     @SyncProvider(path = {"blocking", "Blocking Inclusion List"})
     public static final Set<Item> INCLUDE = Sets.newHashSet();
 
-    public static final int SWORD_USE_DURATION = 72000;
     private Item activeItem = Items.AIR;
     private boolean activeBlock;
 

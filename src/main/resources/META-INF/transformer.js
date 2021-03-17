@@ -187,43 +187,6 @@ var patchBipedModelSetRotationAngles = {
     }
 };
 
-var patchFishingBobberEntityBringInHookedEntity = {
-    filter: function(node, obfuscated) {
-        if (matchesMethod(node, "net/minecraft/entity/Entity", obfuscated ? "func_213322_ci" : "getMotion", "()Lnet/minecraft/util/math/Vec3d;")) {
-            var nextNode = node.getNext();
-            if (nextNode instanceof VarInsnNode && nextNode.getOpcode().equals(Opcodes.ALOAD) && nextNode.var.equals(1)) {
-                return nextNode;
-            }
-        }
-    },
-    action: function(node, instructions, obfuscated) {
-        var insnList = new InsnList();
-        insnList.add(generateHook("getCaughtEntityMotion", "(Lnet/minecraft/util/math/Vec3d;)Lnet/minecraft/util/math/Vec3d;"));
-        instructions.insert(node, insnList);
-    }
-};
-
-var patchFishingBobberEntityCheckCollision = {
-    filter: function(node, obfuscated) {
-        if (node instanceof VarInsnNode && node.getOpcode().equals(Opcodes.ALOAD) && node.var.equals(0)) {
-            var nextNode = node.getNext();
-            if (matchesMethod(nextNode, "net/minecraft/entity/projectile/FishingBobberEntity", obfuscated ? "func_190622_s" : "setHookedEntity", "()V")) {
-                return nextNode;
-            }
-        }
-    },
-    action: function(node, instructions, obfuscated) {
-        var insnList = new InsnList();
-        insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/projectile/FishingBobberEntity", obfuscated ? "field_146042_b" : "angler", "Lnet/minecraft/entity/player/PlayerEntity;"));
-        insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        insnList.add(new FieldInsnNode(Opcodes.GETFIELD, "net/minecraft/entity/projectile/FishingBobberEntity", obfuscated ? "field_146043_c" : "caughtEntity", "Lnet/minecraft/entity/Entity;"));
-        insnList.add(generateHook("onFishingBobberCollision", "(Lnet/minecraft/entity/projectile/FishingBobberEntity;Lnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/Entity;)V"));
-        instructions.insert(node, insnList);
-    }
-};
-
 var patchArmorLayerRenderArmorPart = {
     filter: function(node, obfuscated) {
         if (matchesMethod(node, "net/minecraft/client/renderer/entity/layers/ArmorLayer", obfuscated ? "renderArmor" : "renderArmor", "(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;IZLnet/minecraft/client/renderer/entity/model/BipedModel;FFFLnet/minecraft/util/ResourceLocation;)V")) {
@@ -238,29 +201,6 @@ var patchArmorLayerRenderArmorPart = {
         insnList.add(new InsnNode(Opcodes.POP));
         instructions.insert(node, insnList);
         instructions.remove(node);
-    }
-};
-
-var patchPlayerEntityAttackEntityFrom = {
-    filter: function(node, obfuscated) {
-        if (node instanceof VarInsnNode && node.getOpcode().equals(Opcodes.FLOAD) && node.var.equals(2)) {
-            var nextNode = node.getNext();
-            if (nextNode instanceof InsnNode && nextNode.getOpcode().equals(Opcodes.FCONST_0)) {
-                nextNode = nextNode.getNext();
-                if (nextNode instanceof InsnNode && nextNode.getOpcode().equals(Opcodes.FCMPL)) {
-                    return node;
-                }
-            }
-        }
-    },
-    action: function(node, instructions, obfuscated) {
-        var insnList = new InsnList();
-        insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-        insnList.add(new VarInsnNode(Opcodes.FLOAD, 2));
-        insnList.add(new MethodInsnNode(Opcodes.INVOKESPECIAL, "net/minecraft/entity/LivingEntity", obfuscated ? "func_70097_a" : "attackEntityFrom", "(Lnet/minecraft/util/DamageSource;F)Z", false));
-        insnList.add(new InsnNode(Opcodes.IRETURN));
-        instructions.insertBefore(node, insnList);
     }
 };
 
@@ -279,27 +219,6 @@ var patchPlayerEntityAttackTargetEntityWithCurrentItem2 = {
     action: function(node, instructions, obfuscated) {
         var insnList = new InsnList();
         insnList.add(generateHook("allowCriticalSprinting", "(Z)Z"));
-        instructions.insert(node, insnList);
-    }
-};
-
-var patchPlayerEntityAttackTargetEntityWithCurrentItem1 = {
-    filter: function(node, obfuscated) {
-        if (node instanceof VarInsnNode && node.getOpcode().equals(Opcodes.FLOAD) && node.var.equals(3)) {
-            var nextNode = node.getNext();
-            if (nextNode instanceof VarInsnNode && nextNode.getOpcode().equals(Opcodes.FLOAD) && nextNode.var.equals(4)) {
-                nextNode = nextNode.getNext();
-                if (nextNode instanceof InsnNode && nextNode.getOpcode().equals(Opcodes.FMUL)) {
-                    return node;
-                }
-            }
-        }
-    },
-    action: function(node, instructions, obfuscated) {
-        var insnList = new InsnList();
-        insnList.add(new VarInsnNode(Opcodes.ALOAD, 0));
-        insnList.add(new VarInsnNode(Opcodes.ALOAD, 1));
-        insnList.add(generateHook("addEnchantmentDamage", "(FLnet/minecraft/entity/player/PlayerEntity;Lnet/minecraft/entity/Entity;)F"));
         instructions.insert(node, insnList);
     }
 };

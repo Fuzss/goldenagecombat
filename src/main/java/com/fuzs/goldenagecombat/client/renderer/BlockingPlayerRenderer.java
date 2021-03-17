@@ -25,7 +25,7 @@ public class BlockingPlayerRenderer {
         Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getRenderManager().getSkinMap();
         for (PlayerRenderer renderer : skinMap.values()) {
 
-            ((ILivingRendererAccessor) renderer).getLayerRenderers().removeIf(it -> it instanceof HeldItemLayer);
+            ((ILivingRendererAccessor) renderer).getLayerRenderers().removeIf(layerRenderer -> layerRenderer instanceof HeldItemLayer);
             renderer.addLayer(new SwordBlockingLayer(renderer));
         }
     }

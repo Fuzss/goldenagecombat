@@ -5,13 +5,13 @@ import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.FirstPersonRenderer;
-import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
+import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import net.minecraftforge.client.event.RenderHandEvent;
@@ -24,65 +24,71 @@ public class FirstPersonPunchRenderer {
 
     private final Minecraft mc = Minecraft.getInstance();
 
-    @SuppressWarnings({"unused", "deprecation"})
     @SubscribeEvent(priority = EventPriority.LOW)
     public void onRenderHand(final RenderHandEvent evt) {
 
         ClientPlayerEntity player = this.mc.player;
         ItemStack stack = evt.getItemStack();
 
-        if (!ClientConfigHandler.ANIMATIONS_PUNCHING.get() || stack.isEmpty() || stack.getItem() instanceof FilledMapItem || player == null) {
+        if (!ClientConfigHandler.ANIMATIONS_PUNCHING.get() || stack.isEmpty() || stack.getItem() instanceof FilledMapItem) {
 
             return;
         }
 
         if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == evt.getHand()) {
 
-            FirstPersonRenderer firstPersonRenderer = this.mc.getFirstPersonRenderer();
-
+            FirstPersonRenderer itemRenderer = this.mc.getFirstPersonRenderer();
             float equippedProgress = evt.getEquipProgress();
             float partialTicks = evt.getPartialTicks();
             float swingProgress = evt.getSwingProgress();
             MatrixStack matrixStack = evt.getMatrixStack();
 
-            boolean flag = evt.getHand() == Hand.MAIN_HAND;
-            HandSide handside = flag ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
-            boolean flag3 = (flag ? player.getPrimaryHand() : player.getPrimaryHand().opposite()) == HandSide.RIGHT;
+            boolean isMainHand = evt.getHand() == Hand.MAIN_HAND;
+            HandSide handSide = isMainHand ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
+            boolean isHandSideRight = (isMainHand ? player.getPrimaryHand() : player.getPrimaryHand().opposite()) == HandSide.RIGHT;
 
             matrixStack.push();
             switch(stack.getUseAction()) {
+
                 case NONE:
                 case BLOCK:
-                    firstPersonRenderer.transformSideFirstPerson(matrixStack, handside, equippedProgress);
-                    firstPersonRenderer.transformFirstPerson(matrixStack, handside, swingProgress);
+
+                    itemRenderer.transformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    itemRenderer.transformFirstPerson(matrixStack, handSide, swingProgress);
                     break;
                 case EAT:
-                    firstPersonRenderer.transformEatFirstPerson(matrixStack, partialTicks, handside, stack);
-                    firstPersonRenderer.transformSideFirstPerson(matrixStack, handside, equippedProgress);
-                    firstPersonRenderer.transformFirstPerson(matrixStack, handside, swingProgress);
+
+                    itemRenderer.transformEatFirstPerson(matrixStack, partialTicks, handSide, stack);
+                    itemRenderer.transformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    itemRenderer.transformFirstPerson(matrixStack, handSide, swingProgress);
                     break;
                 case DRINK: // vanilla bug will cause a hit when using, screwing with the whole animation
-                    firstPersonRenderer.transformEatFirstPerson(matrixStack, partialTicks, handside, stack);
-                    firstPersonRenderer.transformSideFirstPerson(matrixStack, handside, equippedProgress);
+
+                    itemRenderer.transformEatFirstPerson(matrixStack, partialTicks, handSide, stack);
+                    itemRenderer.transformSideFirstPerson(matrixStack, handSide, equippedProgress);
                     break;
                 case BOW:
-                    firstPersonRenderer.transformSideFirstPerson(matrixStack, handside, equippedProgress);
-                    firstPersonRenderer.transformFirstPerson(matrixStack, handside, swingProgress);
-                    this.transformBowFirstPerson(matrixStack, partialTicks, handside, stack);
+
+                    itemRenderer.transformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    itemRenderer.transformFirstPerson(matrixStack, handSide, swingProgress);
+                    this.transformBowFirstPerson(matrixStack, partialTicks, handSide, stack);
                     break;
                 case SPEAR:
-                    firstPersonRenderer.transformSideFirstPerson(matrixStack, handside, equippedProgress);
-                    firstPersonRenderer.transformFirstPerson(matrixStack, handside, swingProgress);
-                    this.transformSpearFirstPerson(matrixStack, partialTicks, handside, stack);
+
+                    itemRenderer.transformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    itemRenderer.transformFirstPerson(matrixStack, handSide, swingProgress);
+                    this.transformSpearFirstPerson(matrixStack, partialTicks, handSide, stack);
                     break;
                 case CROSSBOW:
-                    firstPersonRenderer.transformSideFirstPerson(matrixStack, handside, equippedProgress);
-                    firstPersonRenderer.transformFirstPerson(matrixStack, handside, swingProgress);
-                    this.transformCrossbowFirstPerson(matrixStack, partialTicks, handside, stack);
+
+                    itemRenderer.transformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    itemRenderer.transformFirstPerson(matrixStack, handSide, swingProgress);
+                    this.transformCrossbowFirstPerson(matrixStack, partialTicks, handSide, stack);
+                    break;
             }
 
-            this.mc.getFirstPersonRenderer().renderItemSide(player, stack, flag3 ? net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND :
-                    net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !flag3, matrixStack, evt.getBuffers(), evt.getLight());
+            this.mc.getFirstPersonRenderer().renderItemSide(player, stack, isHandSideRight ? net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND :
+                    net.minecraft.client.renderer.model.ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isHandSideRight, matrixStack, evt.getBuffers(), evt.getLight());
             matrixStack.pop();
 
             evt.setCanceled(true);
@@ -143,17 +149,19 @@ public class FirstPersonPunchRenderer {
     private void transformCrossbowFirstPerson(MatrixStack matrixStackIn, float partialTicks, HandSide handside, ItemStack stack) {
 
         int i = handside == HandSide.RIGHT ? 1 : -1;
-        matrixStackIn.translate((float)i * -0.4785682F, -0.094387F, 0.05731531F);
+        matrixStackIn.translate(i * -0.4785682F, -0.094387F, 0.05731531F);
         matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-11.935F));
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees((float)i * 65.3F));
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees((float)i * -9.785F));
-        float f9 = (float)stack.getUseDuration() - ((this.mc.player != null ? (float)this.mc.player.getItemInUseCount() : 0.0F) - partialTicks + 1.0F);
-        float f13 = f9 / (float) CrossbowItem.getChargeTime(stack);
+        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(i * 65.3F));
+        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(i * -9.785F));
+        float f9 = stack.getUseDuration() - (this.mc.player.getItemInUseCount() - partialTicks + 1.0F);
+        float f13 = f9 / CrossbowItem.getChargeTime(stack);
         if (f13 > 1.0F) {
+
             f13 = 1.0F;
         }
 
         if (f13 > 0.1F) {
+
             float f16 = MathHelper.sin((f9 - 0.1F) * 1.3F);
             float f3 = f13 - 0.1F;
             float f4 = f16 * f3;
@@ -162,7 +170,7 @@ public class FirstPersonPunchRenderer {
 
         matrixStackIn.translate(f13 * 0.0F, f13 * 0.0F, f13 * 0.04F);
         matrixStackIn.scale(1.0F, 1.0F, 1.0F + f13 * 0.2F);
-        matrixStackIn.rotate(Vector3f.YN.rotationDegrees((float)i * 45.0F));
+        matrixStackIn.rotate(Vector3f.YN.rotationDegrees(i * 45.0F));
     }
 
 }

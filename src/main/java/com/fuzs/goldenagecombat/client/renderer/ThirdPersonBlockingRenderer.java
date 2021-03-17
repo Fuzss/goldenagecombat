@@ -15,21 +15,27 @@ public class ThirdPersonBlockingRenderer {
 
     private static final BlockingItemHelper BLOCKING_HELPER = new BlockingItemHelper();
 
-    public static void applyRotations(BipedModel<LivingEntity> model, LivingEntity entity) {
+    public static void applyRotations(BipedModel<LivingEntity> entityModel, LivingEntity entity) {
 
         if (entity instanceof AbstractClientPlayerEntity) {
 
             if (BLOCKING_HELPER.isActiveItemStackBlocking((PlayerEntity) entity)) {
 
-                boolean flag = ClientConfigHandler.BLOCKING_POSE.get() == ClientConfigHandler.BlockingPose.MODERN;
+                boolean isModernPose = ClientConfigHandler.BLOCKING_POSE.get() == ClientConfigHandler.BlockingPose.MODERN;
                 if (entity.getActiveHand() == Hand.OFF_HAND) {
 
-                    model.bipedLeftArm.rotateAngleX = model.bipedLeftArm.rotateAngleX - ((float) Math.PI * 2.0F) / 10F;
-                    if (flag) model.bipedLeftArm.rotateAngleY = ((float)Math.PI / 6F);
+                    entityModel.bipedLeftArm.rotateAngleX = entityModel.bipedLeftArm.rotateAngleX - ((float) Math.PI * 2.0F) / 10.0F;
+                    if (isModernPose) {
+
+                        entityModel.bipedLeftArm.rotateAngleY = ((float) Math.PI / 6.0F);
+                    }
                 } else {
 
-                    model.bipedRightArm.rotateAngleX = model.bipedRightArm.rotateAngleX - ((float) Math.PI * 2.0F) / 10F;
-                    if (flag) model.bipedRightArm.rotateAngleY = (-(float)Math.PI / 6F);
+                    entityModel.bipedRightArm.rotateAngleX = entityModel.bipedRightArm.rotateAngleX - ((float) Math.PI * 2.0F) / 10.0F;
+                    if (isModernPose) {
+
+                        entityModel.bipedRightArm.rotateAngleY = ((float) -Math.PI / 6.0F);
+                    }
                 }
             }
         }

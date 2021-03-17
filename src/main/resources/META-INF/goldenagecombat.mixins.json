@@ -5,6 +5,9 @@
   "package": "com.fuzs.goldenagecombat.mixin",
   "refmap": "goldenagecombat.refmap.json",
   "mixins": [
+    "FoodStatsMixin",
+    "PlayerEntityMixin",
+    "FishingBobberEntityMixin",
     "accessor.IItemAccessor",
     "accessor.ILivingEntityAccessor"
   ],
