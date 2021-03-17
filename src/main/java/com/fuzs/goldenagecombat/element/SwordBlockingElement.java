@@ -3,12 +3,17 @@ package com.fuzs.goldenagecombat.element;
 import com.fuzs.goldenagecombat.GoldenAgeCombat;
 import com.fuzs.goldenagecombat.client.element.SwordBlockingExtension;
 import com.fuzs.puzzleslib_gc.element.extension.ClientExtensibleElement;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.PlayerEntity;
+import net.minecraft.entity.projectile.AbstractArrowEntity;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
+import net.minecraft.item.UseAction;
 import net.minecraft.tags.ItemTags;
 import net.minecraft.util.ActionResultType;
+import net.minecraft.util.DamageSource;
+import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
@@ -28,7 +33,7 @@ public class SwordBlockingElement extends ClientExtensibleElement<SwordBlockingE
     @Override
     public String getDescription() {
 
-        return "Re-adds sword blocking in a very configurable way.";
+        return "Reintroduces sword blocking exactly like it used to be.";
     }
 
     @Override
@@ -44,10 +49,15 @@ public class SwordBlockingElement extends ClientExtensibleElement<SwordBlockingE
         PlayerEntity player = evt.getPlayer();
         if (canItemStackBlock(evt.getItemStack())) {
 
-            player.setActiveHand(evt.getHand());
-            // cause reequip animation, but don't swing hand
-            evt.setCancellationResult(ActionResultType.CONSUME);
-            evt.setCanceled(true);
+            CombatAdjustmentsElement element = (CombatAdjustmentsElement) GoldenAgeCombat.COMBAT_ADJUSTMENTS;
+            if (!element.isEnabled() || !element.prioritizeShield || evt.getHand() != Hand.MAIN_HAND || evt.getHand() == Hand.MAIN_HAND && player.getHeldItemOffhand().getUseAction() != UseAction.BLOCK) {
+
+                evt.setCanceled(true);
+                player.setActiveHand(evt.getHand());
+                // cause reequip animation, but don't swing hand, not to be confused with ActionResultType#SUCCESS
+                evt.setCancellationResult(ActionResultType.CONSUME);
+            }
+
         }
     }
 
@@ -55,6 +65,7 @@ public class SwordBlockingElement extends ClientExtensibleElement<SwordBlockingE
 
         if (evt.getEntityLiving() instanceof PlayerEntity && canItemStackBlock(evt.getItem())) {
 
+            // default use duration for items
             evt.setDuration(72000);
         }
     }
@@ -64,11 +75,25 @@ public class SwordBlockingElement extends ClientExtensibleElement<SwordBlockingE
         if (evt.getEntityLiving() instanceof PlayerEntity) {
 
             PlayerEntity player = (PlayerEntity) evt.getEntityLiving();
-            if (!evt.getSource().isUnblockable() && isActiveItemStackBlocking(player) && evt.getAmount() > 0.0F) {
+            if (isDamageSourceBlockable(evt.getSource()) && isActiveItemStackBlocking(player) && evt.getAmount() > 0.0F) {
 
                 evt.setAmount((1.0F + evt.getAmount()) * 0.5F);
             }
         }
+    }
+
+    private static boolean isDamageSourceBlockable(DamageSource damageSourceIn) {
+
+        Entity entity = damageSourceIn.getImmediateSource();
+        if (entity instanceof AbstractArrowEntity) {
+
+            if (((AbstractArrowEntity)entity).getPierceLevel() > 0) {
+
+                return false;
+            }
+        }
+
+        return !damageSourceIn.isUnblockable();
     }
 
     public static boolean isActiveItemStackBlocking(PlayerEntity player) {
@@ -76,18 +101,18 @@ public class SwordBlockingElement extends ClientExtensibleElement<SwordBlockingE
         return player.isHandActive() && canItemStackBlock(player.getActiveItemStack());
     }
 
-    public static boolean canItemStackBlock(ItemStack stack) {
+    public static boolean canItemStackBlock(ItemStack blockingStack) {
 
-        Item item = stack.getItem();
-        if (item.isIn(SWORD_BLOCKING_EXCLUSIONS_TAG)) {
+        Item blockingItem = blockingStack.getItem();
+        if (blockingItem.isIn(SWORD_BLOCKING_EXCLUSIONS_TAG)) {
 
             return false;
-        } else if (item instanceof SwordItem) {
+        } else if (blockingItem instanceof SwordItem) {
 
             return true;
         } else {
 
-            return item.isIn(SWORD_BLOCKING_INCLUSIONS_TAG);
+            return blockingItem.isIn(SWORD_BLOCKING_INCLUSIONS_TAG);
         }
     }
 

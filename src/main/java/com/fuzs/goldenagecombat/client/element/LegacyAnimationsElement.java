@@ -4,40 +4,52 @@ import com.fuzs.goldenagecombat.mixin.client.accessor.IFirstPersonRendererAccess
 import com.fuzs.puzzleslib_gc.element.AbstractElement;
 import com.fuzs.puzzleslib_gc.element.side.IClientElement;
 import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.systems.RenderSystem;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
+import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.FirstPersonRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
+import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.FilledMapItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
+import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.EventPriority;
+
+import java.util.Random;
 
 @SuppressWarnings({"ConstantConditions", "DuplicatedCode"})
 public class LegacyAnimationsElement extends AbstractElement implements IClientElement {
 
     private final Minecraft mc = Minecraft.getInstance();
+    private final Random rand = new Random();
 
     public boolean damageOnArmor;
     private boolean bowPunching;
+    public boolean blockHitting;
     public boolean noFlashingHearts;
 
     @Override
     public String getDescription() {
 
-        return "Old visuals and animations for miscellaneous things.";
+        return "Legacy visuals and animations for miscellaneous things. Heavily inspired by the old \"Orange's 1.7 Animations Mod\".";
     }
 
     @Override
     public void setupClient() {
 
         this.addListener(this::onRenderHand, EventPriority.LOW);
+        this.addListener(this::onRenderGameOverlay);
     }
 
     @Override
@@ -45,7 +57,8 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
 
         addToConfig(builder.comment("Armor on entities turns red when they receive damage just like their body.").define("Render Damage On Armor", true), v -> this.damageOnArmor = v);
         addToConfig(builder.comment("Use a bow or eat food while punching at the same time.").define("Allow Bow Punching", true), v -> this.bowPunching = v);
-        addToConfig(builder.comment("Hearts you just lost no longer flash when disappearing.").define("Disable Flashing Hearts", false), v -> this.noFlashingHearts = v);
+        addToConfig(builder.comment("Hit and block with your sword at the same time.").define("Allow Block Hitting", true), v -> this.blockHitting = v);
+        addToConfig(builder.comment("Lost hearts no longer flash when disappearing.").define("Disable Flashing Hearts", false), v -> this.noFlashingHearts = v);
     }
 
     private void onRenderHand(final RenderHandEvent evt) {
@@ -195,6 +208,105 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
         matrixStackIn.translate(f13 * 0.0F, f13 * 0.0F, f13 * 0.04F);
         matrixStackIn.scale(1.0F, 1.0F, 1.0F + f13 * 0.2F);
         matrixStackIn.rotate(Vector3f.YN.rotationDegrees(sideSignum * 45.0F));
+    }
+
+    private void onRenderGameOverlay(final RenderGameOverlayEvent.Pre evt) {
+
+        if (!this.noFlashingHearts || evt.getType() != RenderGameOverlayEvent.ElementType.HEALTH || !(this.mc.getRenderViewEntity() instanceof PlayerEntity)) {
+
+            return;
+        }
+
+        evt.setCanceled(true);
+        this.mc.getProfiler().startSection("health");
+        RenderSystem.enableBlend();
+
+        PlayerEntity playerentity = (PlayerEntity) this.mc.getRenderViewEntity();
+        MatrixStack matrixStack = evt.getMatrixStack();
+        boolean raiseHeart = playerentity.hurtResistantTime / 3 % 2 == 1;
+        if (playerentity.hurtResistantTime <= 10) {
+
+            // prevent single flash
+            raiseHeart = false;
+        }
+
+        int playerHealth = MathHelper.ceil(playerentity.getHealth());
+        float maxHealth = (float) playerentity.getAttributeValue(Attributes.MAX_HEALTH);
+        int playerAbsorption = MathHelper.ceil(playerentity.getAbsorptionAmount());
+        int healthRows = MathHelper.ceil((maxHealth + playerAbsorption) / 2.0F / 10.0F);
+        int rowHeight = Math.max(10 - (healthRows - 2), 3);
+
+        int ticks = this.mc.ingameGUI.getTicks();
+        this.rand.setSeed(ticks * 312871L);
+        int renderStartX = evt.getWindow().getScaledWidth() / 2 - 91;
+        int renderStartY = evt.getWindow().getScaledHeight() - ForgeIngameGui.left_height;
+        ForgeIngameGui.left_height += (healthRows * rowHeight);
+        if (rowHeight != 10) {
+
+            ForgeIngameGui.left_height += 10 - rowHeight;
+        }
+
+        int i3 = playerAbsorption;
+        int isRegenerating = -1;
+        if (playerentity.isPotionActive(Effects.REGENERATION)) {
+
+            isRegenerating = ticks % MathHelper.ceil(maxHealth + 5.0F);
+        }
+
+        for (int l5 = MathHelper.ceil((maxHealth + playerAbsorption) / 2.0F) - 1; l5 >= 0; --l5) {
+
+            int potionTextureMargin = 16;
+            if (playerentity.isPotionActive(Effects.POISON)) {
+
+                potionTextureMargin += 36;
+            } else if (playerentity.isPotionActive(Effects.WITHER)) {
+
+                potionTextureMargin += 72;
+            }
+
+            int heartYOffset = raiseHeart ? 1 : 0;
+            int k4 = MathHelper.ceil((l5 + 1) / 10.0F) - 1;
+            int posX = renderStartX + l5 % 10 * 8;
+            int posY = renderStartY - k4 * rowHeight;
+            if (playerHealth <= 4) {
+
+                posY += this.rand.nextInt(2);
+            }
+
+            if (i3 <= 0 && l5 == isRegenerating) {
+
+                posY -= 2;
+            }
+
+            int hardcoreTextureMargin = playerentity.world.getWorldInfo().isHardcore() ? 5 : 0;
+            AbstractGui.blit(matrixStack, posX, posY, 16 + heartYOffset * 9, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+            if (i3 > 0) {
+
+                if (i3 == playerAbsorption && playerAbsorption % 2 == 1) {
+
+                    AbstractGui.blit(matrixStack, posX, posY, potionTextureMargin + 153, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+                    --i3;
+                } else {
+
+                    AbstractGui.blit(matrixStack, posX, posY, potionTextureMargin + 144, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+                    i3 -= 2;
+                }
+            } else {
+
+                if (l5 * 2 + 1 < playerHealth) {
+
+                    AbstractGui.blit(matrixStack, posX, posY, potionTextureMargin + 36, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+                }
+
+                if (l5 * 2 + 1 == playerHealth) {
+
+                    AbstractGui.blit(matrixStack, posX, posY, potionTextureMargin + 45, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+                }
+            }
+        }
+
+        RenderSystem.disableBlend();
+        this.mc.getProfiler().endSection();
     }
 
 }

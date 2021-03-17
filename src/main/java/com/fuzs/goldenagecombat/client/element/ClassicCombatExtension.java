@@ -20,8 +20,6 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.event.TickEvent;
-import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.eventbus.api.EventPriority;
 
 import java.util.List;
 import java.util.Optional;
@@ -36,7 +34,6 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
     private AttackIndicatorStatus attackIndicator = AttackIndicatorStatus.OFF;
 
     private boolean hideAttackIndicator;
-    private boolean removeAttackSpeedTooltip;
 
     public ClassicCombatExtension(ClassicCombatElement parent) {
 
@@ -48,7 +45,6 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
 
         this.addListener(this::onRenderGameOverlay);
         this.addListener(this::onClientTick);
-        this.addListener(this::onItemTooltip, EventPriority.LOW);
         this.addListener(this::onGuiInit);
         this.addListener(this::onDrawScreen);
     }
@@ -56,14 +52,14 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
     @Override
     public void initClient() {
 
+        // leads to NullPointerException if ran much earlier
         this.disabledIndicatorProcessor = Minecraft.getInstance().fontRenderer.trimStringToWidth(this.disabledIndicatorComponent, 200);
     }
 
     @Override
     public void setupClientConfig(ForgeConfigSpec.Builder builder) {
 
-        addToConfig(builder.comment("Prevent attack indicator from rendering regardless of what's been set in \"Video Settings\".").define("Remove Attack Indicator", true), v -> this.hideAttackIndicator = v);
-        addToConfig(builder.comment("Remove \"Attack Speed\" attribute from inventory tooltips.").define("Remove Attack Speed Tooltip", true), v -> this.removeAttackSpeedTooltip = v);
+        addToConfig(builder.comment("Prevent attack indicator from rendering regardless of what's been set for \"Attack Indicator\" option in video settings.").define("Remove Attack Indicator", true), v -> this.hideAttackIndicator = v);
     }
 
     private void onRenderGameOverlay(final RenderGameOverlayEvent evt) {
@@ -112,9 +108,9 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
 
     private void onGuiInit(final GuiScreenEvent.InitGuiEvent.Post evt) {
 
-        // some mods change the video settings screem and the button will not be found, so we just catch that exception and do nothing
         if (this.hideAttackIndicator && evt.getGui() instanceof VideoSettingsScreen) {
 
+            // some mods change the video settings screen and the button will not be found, so we just catch that exception and do nothing
             try {
 
                 // disable attack indicator button in video settings screen
@@ -135,6 +131,7 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
 
             try {
 
+                // render toooltip explaining why the button is disabled
                 getWidgetAtPosition(((IVideoSettingsScreenAccessor) evt.getGui()).getOptionsRowList(), evt.getMouseX(), evt.getMouseY())
                         .filter(widget -> widget instanceof OptionButton)
                         .filter(widget -> ((OptionButton) widget).func_238517_a_() == AbstractOption.ATTACK_INDICATOR)
@@ -142,14 +139,6 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
             } catch (NoSuchFieldError ignored) {
 
             }
-        }
-    }
-
-    private void onItemTooltip(final ItemTooltipEvent evt) {
-
-        if (this.removeAttackSpeedTooltip) {
-
-            evt.getToolTip().removeIf(component -> component.toString().contains("attribute.name.generic.attack_speed"));
         }
     }
 

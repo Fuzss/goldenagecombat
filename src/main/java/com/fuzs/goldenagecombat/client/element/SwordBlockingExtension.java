@@ -1,5 +1,6 @@
 package com.fuzs.goldenagecombat.client.element;
 
+import com.fuzs.goldenagecombat.GoldenAgeCombat;
 import com.fuzs.goldenagecombat.client.renderer.entity.layers.BlockingHeldItemLayer;
 import com.fuzs.goldenagecombat.element.SwordBlockingElement;
 import com.fuzs.goldenagecombat.mixin.client.accessor.IFirstPersonRendererAccessor;
@@ -27,7 +28,6 @@ public class SwordBlockingExtension extends ElementExtension<SwordBlockingElemen
     private final Minecraft mc = Minecraft.getInstance();
 
     public BlockingPose blockingPose;
-    private boolean blockHitting;
 
     public SwordBlockingExtension(SwordBlockingElement parent) {
 
@@ -55,9 +55,9 @@ public class SwordBlockingExtension extends ElementExtension<SwordBlockingElemen
     public void setupClientConfig(ForgeConfigSpec.Builder builder) {
 
         addToConfig(builder.comment("Third-person pose when blocking, \"MODERN\" is from Minecraft 1.8, \"LEGACY\" from game versions before that.").defineEnum("Third-Person Blocking Pose", BlockingPose.LEGACY), v -> this.blockingPose = v);
-        addToConfig(builder.comment("Hit and block with your sword at the same time.").define("Allow Block Hitting", true), v -> this.blockHitting = v);
     }
 
+    @SuppressWarnings("ConstantConditions")
     private void onRenderHand(final RenderHandEvent evt) {
 
         ClientPlayerEntity player = this.mc.player;
@@ -74,7 +74,8 @@ public class SwordBlockingExtension extends ElementExtension<SwordBlockingElemen
             boolean isHandSideRight = handSide == HandSide.RIGHT;
 
             ((IFirstPersonRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, evt.getEquipProgress());
-            if (this.blockHitting) {
+            LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
+            if (element.isEnabled() && element.blockHitting) {
 
                 ((IFirstPersonRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, evt.getSwingProgress());
             }

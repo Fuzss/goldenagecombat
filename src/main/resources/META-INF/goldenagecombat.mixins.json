@@ -5,6 +5,7 @@
   "package": "com.fuzs.goldenagecombat.mixin",
   "refmap": "goldenagecombat.refmap.json",
   "mixins": [
+    "DamageEnchantmentMixin",
     "FishingBobberEntityMixin",
     "FoodStatsMixin",
     "PlayerEntityMixin",

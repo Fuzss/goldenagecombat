@@ -2,6 +2,7 @@ package com.fuzs.goldenagecombat;
 
 import com.fuzs.goldenagecombat.client.element.LegacyAnimationsElement;
 import com.fuzs.goldenagecombat.element.ClassicCombatElement;
+import com.fuzs.goldenagecombat.element.CombatAdjustmentsElement;
 import com.fuzs.goldenagecombat.element.SwordBlockingElement;
 import com.fuzs.puzzleslib_gc.PuzzlesLib;
 import com.fuzs.puzzleslib_gc.config.ConfigManager;
@@ -22,6 +23,7 @@ public class GoldenAgeCombat extends PuzzlesLib {
 
     public static final AbstractElement CLASSIC_COMBAT = register("classic_combat", ClassicCombatElement::new);
     public static final AbstractElement SWORD_BLOCKING = register("sword_blocking", SwordBlockingElement::new);
+    public static final AbstractElement COMBAT_ADJUSTMENTS = register("combat_adjustments", CombatAdjustmentsElement::new);
     public static final AbstractElement LEGACY_ANIMATIONS = register("legacy_animations", LegacyAnimationsElement::new, Dist.CLIENT);
 
     public GoldenAgeCombat() {
