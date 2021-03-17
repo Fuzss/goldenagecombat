@@ -1,14 +1,17 @@
 package com.fuzs.goldenagecombat.client.element;
 
+import com.fuzs.goldenagecombat.client.renderer.entity.layers.BlockingHeldItemLayer;
 import com.fuzs.goldenagecombat.element.SwordBlockingElement;
 import com.fuzs.goldenagecombat.mixin.client.accessor.IFirstPersonRendererAccessor;
-import com.fuzs.goldenagecombat.util.BlockingHelper;
+import com.fuzs.goldenagecombat.mixin.client.accessor.ILivingRendererAccessor;
 import com.fuzs.puzzleslib_gc.element.extension.ElementExtension;
 import com.fuzs.puzzleslib_gc.element.side.IClientElement;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.renderer.FirstPersonRenderer;
+import net.minecraft.client.renderer.entity.PlayerRenderer;
+import net.minecraft.client.renderer.entity.layers.HeldItemLayer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.Hand;
@@ -17,10 +20,11 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
 
+import java.util.Map;
+
 public class SwordBlockingExtension extends ElementExtension<SwordBlockingElement> implements IClientElement {
 
     private final Minecraft mc = Minecraft.getInstance();
-    private final BlockingHelper blockingHelper = new BlockingHelper();
 
     public BlockingPose blockingPose;
     private boolean blockHitting;
@@ -37,6 +41,17 @@ public class SwordBlockingExtension extends ElementExtension<SwordBlockingElemen
     }
 
     @Override
+    public void initClient() {
+
+        Map<String, PlayerRenderer> skinMap = Minecraft.getInstance().getRenderManager().getSkinMap();
+        for (PlayerRenderer renderer : skinMap.values()) {
+
+            ((ILivingRendererAccessor) renderer).getLayerRenderers().removeIf(layerRenderer -> layerRenderer instanceof HeldItemLayer);
+            renderer.addLayer(new BlockingHeldItemLayer(renderer));
+        }
+    }
+
+    @Override
     public void setupClientConfig(ForgeConfigSpec.Builder builder) {
 
         addToConfig(builder.comment("Third-person pose when blocking, \"MODERN\" is from Minecraft 1.8, \"LEGACY\" from game versions before that.").defineEnum("Third-Person Blocking Pose", BlockingPose.LEGACY), v -> this.blockingPose = v);
@@ -47,7 +62,7 @@ public class SwordBlockingExtension extends ElementExtension<SwordBlockingElemen
 
         ClientPlayerEntity player = this.mc.player;
         ItemStack stack = evt.getItemStack();
-        if (player.getActiveHand() == evt.getHand() && this.blockingHelper.isActiveItemStackBlocking(player)) {
+        if (player.getActiveHand() == evt.getHand() && SwordBlockingElement.isActiveItemStackBlocking(player)) {
 
             evt.setCanceled(true);
             FirstPersonRenderer itemRenderer = this.mc.getFirstPersonRenderer();
@@ -83,7 +98,18 @@ public class SwordBlockingExtension extends ElementExtension<SwordBlockingElemen
 
     public enum BlockingPose {
 
-        LEGACY, MODERN
+        LEGACY, MODERN;
+
+        public boolean isLegacyPose() {
+
+            return this == LEGACY;
+        }
+
+        public boolean isModernPose() {
+
+            return this == MODERN;
+        }
+
     }
 
 }

@@ -5,17 +5,20 @@
   "package": "com.fuzs.goldenagecombat.mixin",
   "refmap": "goldenagecombat.refmap.json",
   "mixins": [
+    "FishingBobberEntityMixin",
     "FoodStatsMixin",
     "PlayerEntityMixin",
-    "FishingBobberEntityMixin",
     "accessor.IItemAccessor",
     "accessor.ILivingEntityAccessor"
   ],
   "client": [
+    "client.BipedArmorLayerMixin",
+    "client.BipedModelMixin",
+    "client.ElytraLayerMixin",
     "client.FirstPersonRendererMixin",
+    "client.accessor.IFirstPersonRendererAccessor",
     "client.accessor.ILivingRendererAccessor",
-    "client.accessor.IVideoSettingsScreenAccessor",
-    "client.accessor.IFirstPersonRendererAccessor"
+    "client.accessor.IVideoSettingsScreenAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

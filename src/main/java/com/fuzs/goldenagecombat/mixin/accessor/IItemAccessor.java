@@ -9,7 +9,7 @@ import java.util.UUID;
 @Mixin(Item.class)
 public interface IItemAccessor {
 
-    @Accessor
+    @Accessor("ATTACK_DAMAGE_MODIFIER")
     static UUID getAttackDamageModifier() {
 
         throw new IllegalStateException();
