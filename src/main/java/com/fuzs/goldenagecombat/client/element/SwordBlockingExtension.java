@@ -19,15 +19,12 @@ import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.RenderHandEvent;
-import net.minecraftforge.common.ForgeConfigSpec;
 
 import java.util.Map;
 
 public class SwordBlockingExtension extends ElementExtension<SwordBlockingElement> implements IClientElement {
 
     private final Minecraft mc = Minecraft.getInstance();
-
-    public BlockingPose blockingPose;
 
     public SwordBlockingExtension(SwordBlockingElement parent) {
 
@@ -49,12 +46,6 @@ public class SwordBlockingExtension extends ElementExtension<SwordBlockingElemen
             ((ILivingRendererAccessor) renderer).getLayerRenderers().removeIf(layerRenderer -> layerRenderer instanceof HeldItemLayer);
             renderer.addLayer(new BlockingHeldItemLayer(renderer));
         }
-    }
-
-    @Override
-    public void setupClientConfig(ForgeConfigSpec.Builder builder) {
-
-        addToConfig(builder.comment("Third-person pose when blocking, \"MODERN\" is from Minecraft 1.8, \"LEGACY\" from game versions before that.").defineEnum("Third-Person Blocking Pose", BlockingPose.LEGACY), v -> this.blockingPose = v);
     }
 
     @SuppressWarnings("ConstantConditions")
@@ -95,22 +86,6 @@ public class SwordBlockingExtension extends ElementExtension<SwordBlockingElemen
         matrixStack.rotate(Vector3f.XP.rotationDegrees(-102.25F));
         matrixStack.rotate(Vector3f.YP.rotationDegrees(sideSignum * 13.365F));
         matrixStack.rotate(Vector3f.ZP.rotationDegrees(sideSignum * 78.05F));
-    }
-
-    public enum BlockingPose {
-
-        LEGACY, MODERN;
-
-        public boolean isLegacyPose() {
-
-            return this == LEGACY;
-        }
-
-        public boolean isModernPose() {
-
-            return this == MODERN;
-        }
-
     }
 
 }

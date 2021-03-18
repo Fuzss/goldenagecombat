@@ -18,8 +18,7 @@
     "client.ElytraLayerMixin",
     "client.FirstPersonRendererMixin",
     "client.accessor.IFirstPersonRendererAccessor",
-    "client.accessor.ILivingRendererAccessor",
-    "client.accessor.IVideoSettingsScreenAccessor"
+    "client.accessor.ILivingRendererAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

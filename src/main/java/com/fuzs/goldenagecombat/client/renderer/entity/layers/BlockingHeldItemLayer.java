@@ -1,6 +1,7 @@
 package com.fuzs.goldenagecombat.client.renderer.entity.layers;
 
 import com.fuzs.goldenagecombat.GoldenAgeCombat;
+import com.fuzs.goldenagecombat.client.element.LegacyAnimationsElement;
 import com.fuzs.goldenagecombat.element.SwordBlockingElement;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.Minecraft;
@@ -20,6 +21,7 @@ import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 
+@SuppressWarnings("deprecation")
 @OnlyIn(Dist.CLIENT)
 public class BlockingHeldItemLayer extends HeldItemLayer<AbstractClientPlayerEntity, PlayerModel<AbstractClientPlayerEntity>> {
     
@@ -50,7 +52,6 @@ public class BlockingHeldItemLayer extends HeldItemLayer<AbstractClientPlayerEnt
         }
     }
 
-    @SuppressWarnings("deprecation")
     private void renderHeldItem(AbstractClientPlayerEntity player, ItemStack stack, ItemCameraTransforms.TransformType transform, HandSide handSide, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn) {
 
         if (stack.isEmpty()) {
@@ -62,9 +63,9 @@ public class BlockingHeldItemLayer extends HeldItemLayer<AbstractClientPlayerEnt
         ((IHasArm) this.getEntityModel()).translateHand(handSide, matrixStackIn);
         boolean isHandSideLeft = handSide == HandSide.LEFT;
         Hand hand = isHandSideLeft ? Hand.OFF_HAND : Hand.MAIN_HAND;
-        SwordBlockingElement element = (SwordBlockingElement) GoldenAgeCombat.SWORD_BLOCKING;
-        boolean renderSwordBlocking = element.isEnabled() && element.extension.blockingPose.isLegacyPose();
-        if (renderSwordBlocking && SwordBlockingElement.isActiveItemStackBlocking(player) && player.getActiveHand() == hand) {
+        LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
+        boolean renderLegacyPose = element.isEnabled() && element.oldBlockingPose;
+        if (GoldenAgeCombat.SWORD_BLOCKING.isEnabled() && renderLegacyPose && SwordBlockingElement.isActiveItemStackBlocking(player) && player.getActiveHand() == hand) {
 
             matrixStackIn.translate((isHandSideLeft ? 1.0F : -1.0F) / 16.0F, 0.4375F, 0.0625F);
 
@@ -92,7 +93,7 @@ public class BlockingHeldItemLayer extends HeldItemLayer<AbstractClientPlayerEnt
 
             // revert 1.8+ model changes
             IBakedModel ibakedmodel = Minecraft.getInstance().getItemRenderer().getItemModelWithOverrides(stack, player.world, player);
-            applyTransformReverse(ibakedmodel.getItemCameraTransforms().getTransform(transform), isHandSideLeft, matrixStackIn);
+            applyTransformReverse(matrixStackIn, ibakedmodel.getItemCameraTransforms().getTransform(transform), isHandSideLeft);
         } else {
 
             matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-90.0F));
@@ -104,8 +105,7 @@ public class BlockingHeldItemLayer extends HeldItemLayer<AbstractClientPlayerEnt
         matrixStackIn.pop();
     }
 
-    @SuppressWarnings("deprecation")
-    public static void applyTransformReverse(net.minecraft.client.renderer.model.ItemTransformVec3f vec, boolean leftHand, MatrixStack matrixStackIn) {
+    public static void applyTransformReverse(MatrixStack matrixStackIn, net.minecraft.client.renderer.model.ItemTransformVec3f vec, boolean leftHand) {
 
         if (vec != net.minecraft.client.renderer.model.ItemTransformVec3f.DEFAULT) {
 

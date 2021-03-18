@@ -28,8 +28,20 @@ public abstract class BipedArmorLayerMixin<T extends LivingEntity, M extends Bip
         super(entityRendererIn);
     }
 
-    // renderArmorPart and renderArmor
-    @Redirect(method = "func_241739_a_", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/BipedArmorLayer;func_241738_a_(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;IZLnet/minecraft/client/renderer/entity/model/BipedModel;FFFLnet/minecraft/util/ResourceLocation;)V", remap = false))
+    // for default forge environment
+    @Redirect(method = "func_241739_a_", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/BipedArmorLayer;func_241738_a_(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;IZLnet/minecraft/client/renderer/entity/model/BipedModel;FFFLnet/minecraft/util/ResourceLocation;)V", remap = false), require = 0)
+    private void renderModel1(BipedArmorLayer<T, M, A> armorLayer, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, boolean glintIn, A modelIn, float red, float green, float blue, ResourceLocation armorResource, MatrixStack matrixStackIn2, IRenderTypeBuffer bufferIn2, T entityIn) {
+
+        this.renderArmor(armorLayer, matrixStackIn, bufferIn, packedLightIn, glintIn, modelIn, red, green, blue, armorResource, matrixStackIn2, bufferIn2, entityIn);
+    }
+
+    // optifine patches this class as well, this patch will be used then
+    @Redirect(method = "func_241739_a_", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/layers/BipedArmorLayer;renderModel(Lcom/mojang/blaze3d/matrix/MatrixStack;Lnet/minecraft/client/renderer/IRenderTypeBuffer;IZLnet/minecraft/client/renderer/entity/model/BipedModel;FFFLnet/minecraft/util/ResourceLocation;)V", remap = false), require = 0)
+    private void renderModel2(BipedArmorLayer<T, M, A> armorLayer, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, boolean glintIn, A modelIn, float red, float green, float blue, ResourceLocation armorResource, MatrixStack matrixStackIn2, IRenderTypeBuffer bufferIn2, T entityIn) {
+
+        this.renderArmor(armorLayer, matrixStackIn, bufferIn, packedLightIn, glintIn, modelIn, red, green, blue, armorResource, matrixStackIn2, bufferIn2, entityIn);
+    }
+
     private void renderArmor(BipedArmorLayer<T, M, A> armorLayer, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, boolean glintIn, A modelIn, float red, float green, float blue, ResourceLocation armorResource, MatrixStack matrixStackIn2, IRenderTypeBuffer bufferIn2, T entityIn) {
 
         IVertexBuilder ivertexbuilder = ItemRenderer.getBuffer(bufferIn, RenderType.getEntityCutoutNoCull(armorResource), false, glintIn);

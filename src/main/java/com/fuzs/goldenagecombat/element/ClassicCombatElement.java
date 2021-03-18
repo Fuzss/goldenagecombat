@@ -43,9 +43,9 @@ public class ClassicCombatElement extends ClientExtensibleElement<ClassicCombatE
     }
 
     @Override
-    public String getDescription() {
+    public String[] getDescription() {
 
-        return "Restores basic pre-Combat Update combat mechanics, achieved mainly by removing the cooldown mechanic.";
+        return new String[]{"Restores basic pre-Combat Update combat mechanics, achieved mainly by removing the cooldown mechanic."};
     }
 
     @Override
@@ -67,7 +67,7 @@ public class ClassicCombatElement extends ClientExtensibleElement<ClassicCombatE
         addToConfig(builder.comment("Sprinting and attacking no longer interfere with each other, making critical hits possible at all times.").define("Critical Sprint Hits", true), v -> this.criticalSprinting = v);
         addToConfig(builder.comment("Fishing rod deals knockback upon hitting an entity.").define("Rod Causes Knockback", true), v -> this.rodKnockback = v);
         addToConfig(builder.comment("Entities reeled in using a fishing rod are slightly launched upwards.").define("Rod Launches Entities", true), v -> this.rodLaunch = v);
-        addToConfig(builder.comment("Boost sharpness enchantment to add a whole damage point per level instead of just 0.5.").define("Boost Sharpness", false), v -> this.boostSharpness = v);
+        addToConfig(builder.comment("Boost sharpness enchantment to 1.25 damage points per level instead of just 0.5.").define("Boost Sharpness", false), v -> this.boostSharpness = v);
         addToConfig(builder.comment("Give Regeneration V and Absorption I instead of Regeneration II and Absorption IV after consuming a notch apple.").define("Notch Apple Effects", true), v -> this.goldenAppleEffects = v);
         addToConfig(builder.comment("A notch apple can be crafted from a single apple and eight gold blocks.").define("Notch Apple Recipe", true), v -> {});
     }

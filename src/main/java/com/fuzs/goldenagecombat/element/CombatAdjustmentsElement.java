@@ -27,9 +27,9 @@ public class CombatAdjustmentsElement extends ClientExtensibleElement<CombatAdju
     }
 
     @Override
-    public String getDescription() {
+    public String[] getDescription() {
 
-        return "Small tweaks to make classic combat integrate more smoothly into modern Minecraft gameplay.";
+        return new String[]{"Small tweaks to make classic combat integrate more smoothly into modern Minecraft gameplay."};
     }
 
     @Override

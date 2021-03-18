@@ -13,7 +13,8 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-@SuppressWarnings({"WeakerAccess", "unused"})
+// client classes are otherwise loaded on server
+@SuppressWarnings({"WeakerAccess", "unused", "Convert2MethodRef"})
 @Mod(GoldenAgeCombat.MODID)
 public class GoldenAgeCombat extends PuzzlesLib {
 
@@ -24,7 +25,7 @@ public class GoldenAgeCombat extends PuzzlesLib {
     public static final AbstractElement CLASSIC_COMBAT = register("classic_combat", ClassicCombatElement::new);
     public static final AbstractElement SWORD_BLOCKING = register("sword_blocking", SwordBlockingElement::new);
     public static final AbstractElement COMBAT_ADJUSTMENTS = register("combat_adjustments", CombatAdjustmentsElement::new);
-    public static final AbstractElement LEGACY_ANIMATIONS = register("legacy_animations", LegacyAnimationsElement::new, Dist.CLIENT);
+    public static final AbstractElement LEGACY_ANIMATIONS = register("legacy_animations", () -> new LegacyAnimationsElement(), Dist.CLIENT);
 
     public GoldenAgeCombat() {
 

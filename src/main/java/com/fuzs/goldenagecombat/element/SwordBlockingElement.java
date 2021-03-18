@@ -19,6 +19,7 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.eventbus.api.EventPriority;
 
 public class SwordBlockingElement extends ClientExtensibleElement<SwordBlockingExtension> {
 
@@ -31,15 +32,22 @@ public class SwordBlockingElement extends ClientExtensibleElement<SwordBlockingE
     }
 
     @Override
-    public String getDescription() {
+    public String[] getDescription() {
 
-        return "Reintroduces sword blocking exactly like it used to be.";
+        return new String[]{"Reintroduces sword blocking exactly like it used to be.", "Additional swords can be included using the \"" + GoldenAgeCombat.MODID + ":sword_blocking_inclusions\" item tag.", "Swords which already have a right-clicking ability can be excluded using the \"" + GoldenAgeCombat.MODID + ":sword_blocking_exclusions\" item tag."};
+    }
+
+    @Override
+    public String[] isIncompatibleWith() {
+
+        return new String[]{"swordblockingmechanics"};
     }
 
     @Override
     public void setupCommon() {
 
-        this.addListener(this::onRightClickItem);
+        // give other mods a chance to cancel the event for their own swords before we do
+        this.addListener(this::onRightClickItem, EventPriority.LOW);
         this.addListener(this::onItemUseStart);
         this.addListener(this::onLivingHurt);
     }

@@ -1,6 +1,7 @@
 package com.fuzs.goldenagecombat.mixin.client;
 
 import com.fuzs.goldenagecombat.GoldenAgeCombat;
+import com.fuzs.goldenagecombat.client.element.LegacyAnimationsElement;
 import com.fuzs.goldenagecombat.element.SwordBlockingElement;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.entity.model.AgeableModel;
@@ -30,20 +31,21 @@ public abstract class BipedModelMixin<T extends LivingEntity> extends AgeableMod
 
         if (entityIn instanceof AbstractClientPlayerEntity) {
 
-            SwordBlockingElement element = (SwordBlockingElement) GoldenAgeCombat.SWORD_BLOCKING;
-            if (element.isEnabled() && SwordBlockingElement.isActiveItemStackBlocking((PlayerEntity) entityIn)) {
+            if (GoldenAgeCombat.SWORD_BLOCKING.isEnabled() && SwordBlockingElement.isActiveItemStackBlocking((PlayerEntity) entityIn)) {
 
+                LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
+                boolean renderModernPose = !element.isEnabled() || !element.oldBlockingPose;
                 if (entityIn.getActiveHand() == Hand.OFF_HAND) {
 
                     this.bipedLeftArm.rotateAngleX = this.bipedLeftArm.rotateAngleX - ((float) Math.PI * 2.0F) / 10.0F;
-                    if (element.extension.blockingPose.isModernPose()) {
+                    if (renderModernPose) {
 
                         this.bipedLeftArm.rotateAngleY = ((float) Math.PI / 6.0F);
                     }
                 } else {
 
                     this.bipedRightArm.rotateAngleX = this.bipedRightArm.rotateAngleX - ((float) Math.PI * 2.0F) / 10.0F;
-                    if (element.extension.blockingPose.isModernPose()) {
+                    if (renderModernPose) {
 
                         this.bipedRightArm.rotateAngleY = ((float) -Math.PI / 6.0F);
                     }

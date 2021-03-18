@@ -2,12 +2,12 @@ package com.fuzs.goldenagecombat.client.element;
 
 import com.fuzs.goldenagecombat.GoldenAgeCombat;
 import com.fuzs.goldenagecombat.element.ClassicCombatElement;
-import com.fuzs.goldenagecombat.mixin.client.accessor.IVideoSettingsScreenAccessor;
 import com.fuzs.puzzleslib_gc.element.extension.ElementExtension;
 import com.fuzs.puzzleslib_gc.element.side.IClientElement;
 import net.minecraft.client.AbstractOption;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
+import net.minecraft.client.gui.screen.Screen;
 import net.minecraft.client.gui.screen.VideoSettingsScreen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.OptionButton;
@@ -59,7 +59,7 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
     @Override
     public void setupClientConfig(ForgeConfigSpec.Builder builder) {
 
-        addToConfig(builder.comment("Prevent attack indicator from rendering regardless of what's been set for \"Attack Indicator\" option in video settings.").define("Remove Attack Indicator", true), v -> this.hideAttackIndicator = v);
+        addToConfig(builder.comment("Prevent attack indicator from rendering regardless of what's been set for the \"Attack Indicator\" option in video settings.").define("Remove Attack Indicator", true), v -> this.hideAttackIndicator = v);
     }
 
     private void onRenderGameOverlay(final RenderGameOverlayEvent evt) {
@@ -110,18 +110,14 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
 
         if (this.hideAttackIndicator && evt.getGui() instanceof VideoSettingsScreen) {
 
-            // some mods change the video settings screen and the button will not be found, so we just catch that exception and do nothing
-            try {
-
-                // disable attack indicator button in video settings screen
-                ((IVideoSettingsScreenAccessor) evt.getGui()).getOptionsRowList().getEventListeners().stream()
-                        .flatMap(optionsRow -> optionsRow.getEventListeners().stream())
-                        .filter(eventListener -> eventListener instanceof OptionButton)
-                        .filter(eventListener -> ((OptionButton) eventListener).func_238517_a_() == AbstractOption.ATTACK_INDICATOR)
-                        .findAny().ifPresent(eventListener -> ((Widget) eventListener).active = false);
-            } catch (NoSuchFieldError ignored) {
-
-            }
+            // disable attack indicator button in video settings screen
+            getOptionsRowList(evt.getGui())
+                    .flatMap(optionsRowList -> optionsRowList.getEventListeners().stream()
+                            .flatMap(optionsRow -> optionsRow.getEventListeners().stream())
+                            .filter(optionButton -> optionButton instanceof OptionButton)
+                            .filter(optionButton -> ((OptionButton) optionButton).func_238517_a_() == AbstractOption.ATTACK_INDICATOR)
+                            .findFirst())
+                    .ifPresent(eventListener -> ((Widget) eventListener).active = false);
         }
     }
 
@@ -129,17 +125,22 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
 
         if (this.hideAttackIndicator && evt.getGui() instanceof VideoSettingsScreen) {
 
-            try {
-
-                // render toooltip explaining why the button is disabled
-                getWidgetAtPosition(((IVideoSettingsScreenAccessor) evt.getGui()).getOptionsRowList(), evt.getMouseX(), evt.getMouseY())
-                        .filter(widget -> widget instanceof OptionButton)
-                        .filter(widget -> ((OptionButton) widget).func_238517_a_() == AbstractOption.ATTACK_INDICATOR)
-                        .ifPresent(widget -> evt.getGui().renderTooltip(evt.getMatrixStack(), this.disabledIndicatorProcessor, evt.getMouseX(), evt.getMouseY()));
-            } catch (NoSuchFieldError ignored) {
-
-            }
+            // render tooltip explaining why the button is disabled
+            getOptionsRowList(evt.getGui())
+                    .flatMap(rowList -> getWidgetAtPosition(rowList, evt.getMouseX(), evt.getMouseY())
+                            .filter(widget -> widget instanceof OptionButton)
+                            .filter(widget -> ((OptionButton) widget).func_238517_a_() == AbstractOption.ATTACK_INDICATOR))
+                    .ifPresent(widget -> evt.getGui().renderTooltip(evt.getMatrixStack(), this.disabledIndicatorProcessor, evt.getMouseX(), evt.getMouseY()));
         }
+    }
+
+    private static Optional<OptionsRowList> getOptionsRowList(Screen screen) {
+
+        // don't access optionsRowList field directly using reflection or an accessor since OptiFine removes it
+        return screen.getEventListeners().stream()
+                .filter(listener -> listener instanceof OptionsRowList)
+                .findFirst()
+                .map(listener -> (OptionsRowList) listener);
     }
 
     private static Optional<Widget> getWidgetAtPosition(OptionsRowList optionsRowList, double mouseX, double mouseY) {

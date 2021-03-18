@@ -9,6 +9,7 @@ import com.fuzs.puzzleslib_gc.element.side.ISidedElement;
 import com.google.common.collect.Lists;
 import net.minecraftforge.common.ForgeConfigSpec;
 import net.minecraftforge.eventbus.api.Event;
+import net.minecraftforge.fml.ModList;
 import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
@@ -56,6 +57,20 @@ public abstract class AbstractElement extends EventListener implements IConfigur
     public boolean getDefaultState() {
 
         return true;
+    }
+
+    @Override
+    public String[] isIncompatibleWith() {
+
+        return new String[0];
+    }
+
+    /**
+     * @return has an incompatible mod been found
+     */
+    protected final boolean isIncompatibilityPresent() {
+
+        return Stream.of(this.isIncompatibleWith()).anyMatch(modId -> ModList.get().isLoaded(modId));
     }
 
     @Override
@@ -122,6 +137,13 @@ public abstract class AbstractElement extends EventListener implements IConfigur
      * @param evt setup event this is called from
      */
     public final void load(ParallelDispatchEvent evt) {
+
+        // don't load anything if an incompatible mod is detected
+        if (this.isIncompatibilityPresent()) {
+
+            this.enabled = -1;
+            return;
+        }
 
         this.initSide(evt);
         if (this instanceof ICommonElement) {
@@ -257,7 +279,7 @@ public abstract class AbstractElement extends EventListener implements IConfigur
     /**
      * something went wrong using this element, disable until game is restarted
      */
-    protected void forceDisable() {
+    protected void setDisabled() {
 
         this.setEnabled(-1);
         PuzzlesLib.LOGGER.warn("Detected issue in {} element: {}", this.getDisplayName(), "Disabling until game restart");

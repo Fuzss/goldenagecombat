@@ -25,7 +25,12 @@ public interface IConfigurableElement {
     /**
      * @return description for this element
      */
-    String getDescription();
+    String[] getDescription();
+
+    /**
+     * @return mods whose presence prevent this element from loading
+     */
+    String[] isIncompatibleWith();
 
     /**
      * add an entry for controlling this element in the general config section

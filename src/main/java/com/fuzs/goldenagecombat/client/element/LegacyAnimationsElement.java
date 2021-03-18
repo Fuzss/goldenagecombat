@@ -32,17 +32,18 @@ import java.util.Random;
 public class LegacyAnimationsElement extends AbstractElement implements IClientElement {
 
     private final Minecraft mc = Minecraft.getInstance();
-    private final Random rand = new Random();
+    private final Random random = new Random();
 
     public boolean damageOnArmor;
     private boolean bowPunching;
     public boolean blockHitting;
+    public boolean oldBlockingPose;
     public boolean noFlashingHearts;
 
     @Override
-    public String getDescription() {
+    public String[] getDescription() {
 
-        return "Legacy visuals and animations for miscellaneous things. Heavily inspired by the old \"Orange's 1.7 Animations Mod\".";
+        return new String[]{"Legacy visuals and animations for miscellaneous things. Heavily inspired by the old \"Orange's 1.7 Animations Mod\" mod."};
     }
 
     @Override
@@ -56,8 +57,9 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
     public void setupClientConfig(ForgeConfigSpec.Builder builder) {
 
         addToConfig(builder.comment("Armor on entities turns red when they receive damage just like their body.").define("Render Damage On Armor", true), v -> this.damageOnArmor = v);
-        addToConfig(builder.comment("Use a bow or eat food while punching at the same time.").define("Allow Bow Punching", true), v -> this.bowPunching = v);
+        addToConfig(builder.comment("Draw a bow or eat food while punching at the same time.").define("Allow Bow Punching", true), v -> this.bowPunching = v);
         addToConfig(builder.comment("Hit and block with your sword at the same time.").define("Allow Block Hitting", true), v -> this.blockHitting = v);
+        addToConfig(builder.comment("Use old third-person pose when blocking with a sword.").define("Old Blocking Pose", false), v -> this.oldBlockingPose = v);
         addToConfig(builder.comment("Lost hearts no longer flash when disappearing.").define("Disable Flashing Hearts", false), v -> this.noFlashingHearts = v);
     }
 
@@ -237,7 +239,7 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
         int rowHeight = Math.max(10 - (healthRows - 2), 3);
 
         int ticks = this.mc.ingameGUI.getTicks();
-        this.rand.setSeed(ticks * 312871L);
+        this.random.setSeed(ticks * 312871L);
         int renderStartX = evt.getWindow().getScaledWidth() / 2 - 91;
         int renderStartY = evt.getWindow().getScaledHeight() - ForgeIngameGui.left_height;
         ForgeIngameGui.left_height += (healthRows * rowHeight);
@@ -270,7 +272,7 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
             int posY = renderStartY - k4 * rowHeight;
             if (playerHealth <= 4) {
 
-                posY += this.rand.nextInt(2);
+                posY += this.random.nextInt(2);
             }
 
             if (i3 <= 0 && l5 == isRegenerating) {
