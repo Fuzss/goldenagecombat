@@ -12,7 +12,7 @@ import com.google.common.collect.Maps;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.fml.config.ModConfig;
-import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 
 import javax.annotation.Nullable;
@@ -227,7 +227,7 @@ public class ElementRegistry {
      * loads all elements, no matter which mod they're from
      * @param evt event type
      */
-    public static void load(ParallelDispatchEvent evt) {
+    public static void load(ModLifecycleEvent evt) {
 
         ELEMENTS.values().forEach(element -> element.load(evt));
     }

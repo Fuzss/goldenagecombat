@@ -46,7 +46,7 @@ public class PuzzlesLib {
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onCommonSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onClientSetup);
         FMLJavaModLoadingContext.get().getModEventBus().addListener(this::onServerSetup);
-        FMLJavaModLoadingContext.get().getModEventBus().register(getRegistryManager());
+        FMLJavaModLoadingContext.get().getModEventBus().addListener(getRegistryManager()::onRegistryRegister);
     }
 
     protected void onCommonSetup(final FMLCommonSetupEvent evt) {

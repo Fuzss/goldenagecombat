@@ -14,7 +14,7 @@ import net.minecraftforge.fml.config.ModConfig;
 import net.minecraftforge.fml.event.lifecycle.FMLClientSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLDedicatedServerSetupEvent;
-import net.minecraftforge.fml.event.lifecycle.ParallelDispatchEvent;
+import net.minecraftforge.fml.event.lifecycle.ModLifecycleEvent;
 import net.minecraftforge.fml.loading.FMLEnvironment;
 import org.apache.commons.lang3.StringUtils;
 
@@ -136,7 +136,7 @@ public abstract class AbstractElement extends EventListener implements IConfigur
      * no need to check physical side as the setup event won't be called by Forge anyways
      * @param evt setup event this is called from
      */
-    public final void load(ParallelDispatchEvent evt) {
+    public final void load(ModLifecycleEvent evt) {
 
         // don't load anything if an incompatible mod is detected
         if (this.isIncompatibilityPresent()) {
@@ -162,7 +162,7 @@ public abstract class AbstractElement extends EventListener implements IConfigur
      * initialize sided content, this will always happen, even when the element is not loaded
      * @param evt setup event this is called from
      */
-    private void initSide(ParallelDispatchEvent evt) {
+    private void initSide(ModLifecycleEvent evt) {
 
         if (evt instanceof FMLCommonSetupEvent && this instanceof ICommonElement) {
 

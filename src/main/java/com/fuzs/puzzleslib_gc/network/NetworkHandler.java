@@ -4,10 +4,10 @@ import com.fuzs.puzzleslib_gc.PuzzlesLib;
 import com.fuzs.puzzleslib_gc.network.message.Message;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.player.ServerPlayerEntity;
-import net.minecraft.util.RegistryKey;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.world.World;
+import net.minecraft.world.dimension.DimensionType;
 import net.minecraftforge.fml.LogicalSide;
 import net.minecraftforge.fml.network.NetworkEvent;
 import net.minecraftforge.fml.network.NetworkRegistry;
@@ -105,7 +105,7 @@ public class NetworkHandler {
      */
     public void sendToAllNearExcept(Message message, World world, BlockPos pos, @Nullable ServerPlayerEntity exclude) {
 
-        PacketDistributor.TargetPoint targetPoint = new PacketDistributor.TargetPoint(exclude, pos.getX(), pos.getY(), pos.getZ(), 64.0D, world.getDimensionKey());
+        PacketDistributor.TargetPoint targetPoint = new PacketDistributor.TargetPoint(exclude, pos.getX(), pos.getY(), pos.getZ(), 64.0D, world.dimension.getType());
         MAIN_CHANNEL.send(PacketDistributor.NEAR.with(() -> targetPoint), message);
     }
 
@@ -116,7 +116,7 @@ public class NetworkHandler {
      */
     public void sendToDimension(Message message, World world) {
 
-        this.sendToDimension(message, world.getDimensionKey());
+        this.sendToDimension(message, world.dimension.getType());
     }
 
     /**
@@ -124,7 +124,7 @@ public class NetworkHandler {
      * @param message message to send
      * @param dimension dimension to send message in
      */
-    public void sendToDimension(Message message, RegistryKey<World> dimension) {
+    public void sendToDimension(Message message, DimensionType dimension) {
 
         MAIN_CHANNEL.send(PacketDistributor.DIMENSION.with(() -> dimension), message);
     }

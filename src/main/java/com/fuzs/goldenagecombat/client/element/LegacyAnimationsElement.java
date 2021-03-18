@@ -9,8 +9,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.AbstractGui;
 import net.minecraft.client.renderer.FirstPersonRenderer;
+import net.minecraft.client.renderer.Vector3f;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
-import net.minecraft.entity.ai.attributes.Attributes;
+import net.minecraft.entity.SharedMonsterAttributes;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.CrossbowItem;
 import net.minecraft.item.FilledMapItem;
@@ -19,7 +20,6 @@ import net.minecraft.potion.Effects;
 import net.minecraft.util.Hand;
 import net.minecraft.util.HandSide;
 import net.minecraft.util.math.MathHelper;
-import net.minecraft.util.math.vector.Vector3f;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
@@ -59,7 +59,7 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
         addToConfig(builder.comment("Armor on entities turns red when they receive damage just like their body.").define("Render Damage On Armor", true), v -> this.damageOnArmor = v);
         addToConfig(builder.comment("Draw a bow or eat food while punching at the same time.").define("Allow Bow Punching", true), v -> this.bowPunching = v);
         addToConfig(builder.comment("Hit and block with your sword at the same time.").define("Allow Block Hitting", true), v -> this.blockHitting = v);
-        addToConfig(builder.comment("Use old third-person pose when blocking with a sword.").define("Old Blocking Pose", false), v -> this.oldBlockingPose = v);
+        addToConfig(builder.comment("Use old third-person pose when blocking with a sword.").define("Old Blocking Pose", true), v -> this.oldBlockingPose = v);
         addToConfig(builder.comment("Lost hearts no longer flash when disappearing.").define("Disable Flashing Hearts", false), v -> this.noFlashingHearts = v);
     }
 
@@ -224,7 +224,6 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
         RenderSystem.enableBlend();
 
         PlayerEntity playerentity = (PlayerEntity) this.mc.getRenderViewEntity();
-        MatrixStack matrixStack = evt.getMatrixStack();
         boolean raiseHeart = playerentity.hurtResistantTime / 3 % 2 == 1;
         if (playerentity.hurtResistantTime <= 10) {
 
@@ -233,7 +232,7 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
         }
 
         int playerHealth = MathHelper.ceil(playerentity.getHealth());
-        float maxHealth = (float) playerentity.getAttributeValue(Attributes.MAX_HEALTH);
+        float maxHealth = (float) playerentity.getAttribute(SharedMonsterAttributes.MAX_HEALTH).getValue();
         int playerAbsorption = MathHelper.ceil(playerentity.getAbsorptionAmount());
         int healthRows = MathHelper.ceil((maxHealth + playerAbsorption) / 2.0F / 10.0F);
         int rowHeight = Math.max(10 - (healthRows - 2), 3);
@@ -281,28 +280,28 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
             }
 
             int hardcoreTextureMargin = playerentity.world.getWorldInfo().isHardcore() ? 5 : 0;
-            AbstractGui.blit(matrixStack, posX, posY, 16 + heartYOffset * 9, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+            AbstractGui.blit(posX, posY, 16 + heartYOffset * 9, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
             if (i3 > 0) {
 
                 if (i3 == playerAbsorption && playerAbsorption % 2 == 1) {
 
-                    AbstractGui.blit(matrixStack, posX, posY, potionTextureMargin + 153, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+                    AbstractGui.blit(posX, posY, potionTextureMargin + 153, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
                     --i3;
                 } else {
 
-                    AbstractGui.blit(matrixStack, posX, posY, potionTextureMargin + 144, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+                    AbstractGui.blit(posX, posY, potionTextureMargin + 144, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
                     i3 -= 2;
                 }
             } else {
 
                 if (l5 * 2 + 1 < playerHealth) {
 
-                    AbstractGui.blit(matrixStack, posX, posY, potionTextureMargin + 36, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+                    AbstractGui.blit(posX, posY, potionTextureMargin + 36, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
                 }
 
                 if (l5 * 2 + 1 == playerHealth) {
 
-                    AbstractGui.blit(matrixStack, posX, posY, potionTextureMargin + 45, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
+                    AbstractGui.blit(posX, posY, potionTextureMargin + 45, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
                 }
             }
         }

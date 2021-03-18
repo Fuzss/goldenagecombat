@@ -127,8 +127,8 @@ public class StringEntryReader<T extends IForgeRegistryEntry<T>> {
 
         String regexPath = path.replace("*", "[a-z0-9/._-]*");
         List<R> entries = activeRegistry.getEntries().stream()
-                .filter(entry -> entry.getKey().getRegistryName().getNamespace().equals(namespace))
-                .filter(entry -> entry.getKey().getRegistryName().getPath().matches(regexPath))
+                .filter(entry -> entry.getKey().getNamespace().equals(namespace))
+                .filter(entry -> entry.getKey().getPath().matches(regexPath))
                 .map(Map.Entry::getValue).collect(Collectors.toList());
 
         if (entries.isEmpty()) {

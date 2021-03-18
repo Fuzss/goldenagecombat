@@ -53,7 +53,7 @@ public class CombatAdjustmentsElement extends ClientExtensibleElement<CombatAdju
         // prevent sweeping from taking effect unless the enchantment is in place, onGround flag is reset next tick anyways
         if (this.sweepingRequired && EnchantmentHelper.getSweepingDamageRatio(evt.getPlayer()) == 0.0F) {
 
-            evt.getPlayer().setOnGround(false);
+            evt.getPlayer().onGround = false;
         }
     }
 

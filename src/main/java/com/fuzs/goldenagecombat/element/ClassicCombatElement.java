@@ -2,33 +2,26 @@ package com.fuzs.goldenagecombat.element;
 
 import com.fuzs.goldenagecombat.GoldenAgeCombat;
 import com.fuzs.goldenagecombat.client.element.ClassicCombatExtension;
-import com.fuzs.goldenagecombat.mixin.accessor.IItemAccessor;
 import com.fuzs.goldenagecombat.mixin.accessor.ILivingEntityAccessor;
 import com.fuzs.puzzleslib_gc.element.extension.ClientExtensibleElement;
-import net.minecraft.entity.ai.attributes.AttributeModifier;
-import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.entity.projectile.ProjectileItemEntity;
-import net.minecraft.inventory.EquipmentSlotType;
-import net.minecraft.item.*;
+import net.minecraft.item.Item;
+import net.minecraft.item.Items;
 import net.minecraft.potion.EffectInstance;
 import net.minecraft.potion.Effects;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.math.RayTraceResult;
 import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.Tags;
-import net.minecraftforge.event.ItemAttributeModifierEvent;
-import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 
 public class ClassicCombatElement extends ClientExtensibleElement<ClassicCombatExtension> {
 
-    public static final Tags.IOptionalNamedTag<Item> ATTACK_DAMAGE_BLACKLIST_TAG = ItemTags.createOptional(new ResourceLocation(GoldenAgeCombat.MODID, "attack_damage_blacklist"));
+    public static final Tag<Item> ATTACK_DAMAGE_BLACKLIST_TAG = new ItemTags.Wrapper(new ResourceLocation(GoldenAgeCombat.MODID, "attack_damage_blacklist"));
 
     public boolean removeCooldown;
-    private boolean oldAttackDamage;
+    public boolean oldAttackDamage;
     public boolean noFastRegen;
     public boolean weakPlayerKnockback;
     public boolean criticalSprinting;
@@ -52,8 +45,6 @@ public class ClassicCombatElement extends ClientExtensibleElement<ClassicCombatE
     public void setupCommon() {
 
         this.addListener(this::onAttackEntity);
-        this.addListener(this::onItemAttributeModifier);
-        this.addListener(this::onThrowableImpact);
         this.addListener(this::onUseItemFinish);
     }
 
@@ -78,60 +69,6 @@ public class ClassicCombatElement extends ClientExtensibleElement<ClassicCombatE
         if (this.removeCooldown) {
 
             disableCooldownPeriod(evt.getPlayer());
-        }
-    }
-
-    @SuppressWarnings("ConstantConditions")
-    private void onItemAttributeModifier(final ItemAttributeModifierEvent evt) {
-
-        ItemStack stack = evt.getItemStack();
-        if (this.oldAttackDamage && !stack.getItem().isIn(ATTACK_DAMAGE_BLACKLIST_TAG)) {
-
-            if (stack.getItem() instanceof TieredItem && evt.getSlotType() == EquipmentSlotType.MAINHAND) {
-
-                // don't change items whose attributes have already been changed via the nbt tag
-                if (!stack.hasTag() || !stack.getTag().contains("AttributeModifiers", 9)) {
-
-                    // always one less to account for base value of 1.0
-                    if (stack.getItem() instanceof SwordItem) {
-
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 4.0F);
-                    } else if (stack.getItem() instanceof AxeItem) {
-
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 3.0F);
-                    } else if (stack.getItem() instanceof PickaxeItem) {
-
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 2.0F);
-                    } else if (stack.getItem() instanceof ShovelItem) {
-
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 1.0F);
-                    } else if (stack.getItem() instanceof HoeItem) {
-
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 0.0F);
-                    }
-                }
-            }
-        }
-    }
-
-    private void replaceDamageAttribute(ItemAttributeModifierEvent evt, TieredItem tieredItem, float damageBonus) {
-
-        evt.removeAttribute(Attributes.ATTACK_DAMAGE);
-        evt.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(IItemAccessor.getAttackDamageModifier(), GoldenAgeCombat.MODID + " modifier", tieredItem.getTier().getAttackDamage() + damageBonus, AttributeModifier.Operation.ADDITION));
-    }
-
-    private void onThrowableImpact(final ProjectileImpactEvent.Throwable evt) {
-
-        if (this.weakPlayerKnockback && evt.getEntity() instanceof ProjectileItemEntity) {
-
-            ProjectileItemEntity projectile = (ProjectileItemEntity) evt.getEntity();
-            // getThrower
-            if (evt.getRayTraceResult().getType() == RayTraceResult.Type.ENTITY && projectile.func_234616_v_() == null) {
-
-                // enable knockback for item projectiles fired from dispensers by making shooter not be null
-                // something similar is already done in AbstractArrowEntity::onEntityHit to account for arrows fired from dispensers
-                projectile.setShooter(projectile);
-            }
         }
     }
 

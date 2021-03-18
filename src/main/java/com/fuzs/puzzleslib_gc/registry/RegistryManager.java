@@ -4,7 +4,6 @@ import com.fuzs.puzzleslib_gc.util.INamespaceLocator;
 import com.google.common.collect.ArrayListMultimap;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.RegistryEvent;
-import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.registries.IForgeRegistry;
 import net.minecraftforge.registries.IForgeRegistryEntry;
 
@@ -25,8 +24,6 @@ public class RegistryManager implements INamespaceLocator {
      * listener is added in main mod class so it's always puzzles lib itself and not the first mod registering something
      * @param evt all forge registry events
      */
-    @SuppressWarnings("unused")
-    @SubscribeEvent
     public void onRegistryRegister(RegistryEvent.Register<?> evt) {
 
         this.addAllToRegistry(evt.getRegistry());

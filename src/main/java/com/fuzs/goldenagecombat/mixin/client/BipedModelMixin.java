@@ -26,7 +26,7 @@ public abstract class BipedModelMixin<T extends LivingEntity> extends AgeableMod
     public ModelRenderer bipedLeftArm;
 
     // setArmSwingRotations
-    @Inject(method = "setRotationAngles", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/renderer/entity/model/BipedModel;func_230486_a_(Lnet/minecraft/entity/LivingEntity;F)V"))
+    @Inject(method = "setRotationAngles", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/entity/model/BipedModel;swingProgress:F"))
     public void setRotationAngles(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo callbackInfo) {
 
         if (entityIn instanceof AbstractClientPlayerEntity) {

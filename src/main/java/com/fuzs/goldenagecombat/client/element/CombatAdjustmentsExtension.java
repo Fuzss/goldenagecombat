@@ -32,7 +32,7 @@ public class CombatAdjustmentsExtension extends ElementExtension<CombatAdjustmen
 
         if (this.removeAttackSpeedTooltip) {
 
-            evt.getToolTip().removeIf(component -> component.toString().contains("attribute.name.generic.attack_speed"));
+            evt.getToolTip().removeIf(component -> component.toString().contains("attribute.name.generic.attackSpeed"));
         }
     }
 

@@ -5,7 +5,7 @@ import com.mojang.brigadier.builder.LiteralArgumentBuilder;
 import com.mojang.brigadier.context.CommandContext;
 import net.minecraft.command.CommandSource;
 import net.minecraft.command.Commands;
-import net.minecraft.util.text.IFormattableTextComponent;
+import net.minecraft.util.text.ITextComponent;
 import net.minecraft.util.text.StringTextComponent;
 import net.minecraft.util.text.TextFormatting;
 import net.minecraft.util.text.TranslationTextComponent;
@@ -112,7 +112,7 @@ public class JsonCommandUtil {
      * @param translationKey translation key for success message
      * @return success message
      */
-    private static IFormattableTextComponent getFeedbackComponent(String jsonName, @Nullable String modId, String translationKey) {
+    private static ITextComponent getFeedbackComponent(String jsonName, @Nullable String modId, String translationKey) {
 
         return new TranslationTextComponent(translationKey, getClickableComponent(jsonName, modId));
     }
@@ -122,12 +122,12 @@ public class JsonCommandUtil {
      * @param modId mod this command belongs to, will be used as main command name
      * @return component for opening config file directory in file browser
      */
-    private static IFormattableTextComponent getClickableComponent(String jsonName, @Nullable String modId) {
+    private static ITextComponent getClickableComponent(String jsonName, @Nullable String modId) {
 
         File filePath = modId != null ? JsonConfigFileUtil.getPathInDir(jsonName, modId) : JsonConfigFileUtil.getPath(jsonName);
 
-        return new StringTextComponent(jsonName).mergeStyle(TextFormatting.UNDERLINE)
-                .modifyStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, filePath.getAbsolutePath())));
+        return new StringTextComponent(jsonName).applyTextStyle(TextFormatting.UNDERLINE)
+                .applyTextStyle(style -> style.setClickEvent(new ClickEvent(ClickEvent.Action.OPEN_FILE, filePath.getAbsolutePath())));
     }
 
 }

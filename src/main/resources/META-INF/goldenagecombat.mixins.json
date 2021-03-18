@@ -8,17 +8,19 @@
     "DamageEnchantmentMixin",
     "FishingBobberEntityMixin",
     "FoodStatsMixin",
+    "ItemStackMixin",
     "PlayerEntityMixin",
     "accessor.IItemAccessor",
     "accessor.ILivingEntityAccessor"
   ],
   "client": [
-    "client.BipedArmorLayerMixin",
+    "client.ArmorLayerMixin",
     "client.BipedModelMixin",
     "client.ElytraLayerMixin",
     "client.FirstPersonRendererMixin",
     "client.accessor.IFirstPersonRendererAccessor",
-    "client.accessor.ILivingRendererAccessor"
+    "client.accessor.ILivingRendererAccessor",
+    "client.accessor.IOptionButtonAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

@@ -2,9 +2,10 @@ package com.fuzs.goldenagecombat.client.element;
 
 import com.fuzs.goldenagecombat.GoldenAgeCombat;
 import com.fuzs.goldenagecombat.element.ClassicCombatElement;
+import com.fuzs.goldenagecombat.mixin.client.accessor.IOptionButtonAccessor;
 import com.fuzs.puzzleslib_gc.element.extension.ElementExtension;
 import com.fuzs.puzzleslib_gc.element.side.IClientElement;
-import net.minecraft.client.AbstractOption;
+import com.google.common.collect.Lists;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.IGuiEventListener;
 import net.minecraft.client.gui.screen.Screen;
@@ -12,10 +13,8 @@ import net.minecraft.client.gui.screen.VideoSettingsScreen;
 import net.minecraft.client.gui.widget.Widget;
 import net.minecraft.client.gui.widget.button.OptionButton;
 import net.minecraft.client.gui.widget.list.OptionsRowList;
+import net.minecraft.client.settings.AbstractOption;
 import net.minecraft.client.settings.AttackIndicatorStatus;
-import net.minecraft.util.IReorderingProcessor;
-import net.minecraft.util.text.ITextComponent;
-import net.minecraft.util.text.StringTextComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.ForgeConfigSpec;
@@ -28,8 +27,7 @@ import java.util.Optional;
 public class ClassicCombatExtension extends ElementExtension<ClassicCombatElement> implements IClientElement {
 
     private final Minecraft mc = Minecraft.getInstance();
-    private final ITextComponent disabledIndicatorComponent = new StringTextComponent("Attack Indicator has been disabled by " + GoldenAgeCombat.NAME + " mod");
-    private List<IReorderingProcessor> disabledIndicatorProcessor;
+    private final List<String> disabledIndicator = Lists.newArrayList("Attack Indicator has been disabled", "by " + GoldenAgeCombat.NAME + " mod");
 
     private AttackIndicatorStatus attackIndicator = AttackIndicatorStatus.OFF;
 
@@ -47,13 +45,6 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
         this.addListener(this::onClientTick);
         this.addListener(this::onGuiInit);
         this.addListener(this::onDrawScreen);
-    }
-
-    @Override
-    public void initClient() {
-
-        // leads to NullPointerException if ran much earlier
-        this.disabledIndicatorProcessor = Minecraft.getInstance().fontRenderer.trimStringToWidth(this.disabledIndicatorComponent, 200);
     }
 
     @Override
@@ -112,10 +103,10 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
 
             // disable attack indicator button in video settings screen
             getOptionsRowList(evt.getGui())
-                    .flatMap(optionsRowList -> optionsRowList.getEventListeners().stream()
-                            .flatMap(optionsRow -> optionsRow.getEventListeners().stream())
+                    .flatMap(optionsRowList -> optionsRowList.children().stream()
+                            .flatMap(optionsRow -> optionsRow.children().stream())
                             .filter(optionButton -> optionButton instanceof OptionButton)
-                            .filter(optionButton -> ((OptionButton) optionButton).func_238517_a_() == AbstractOption.ATTACK_INDICATOR)
+                            .filter(optionButton -> ((IOptionButtonAccessor) optionButton).getEnumOptions() == AbstractOption.ATTACK_INDICATOR)
                             .findFirst())
                     .ifPresent(eventListener -> ((Widget) eventListener).active = false);
         }
@@ -129,15 +120,15 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
             getOptionsRowList(evt.getGui())
                     .flatMap(rowList -> getWidgetAtPosition(rowList, evt.getMouseX(), evt.getMouseY())
                             .filter(widget -> widget instanceof OptionButton)
-                            .filter(widget -> ((OptionButton) widget).func_238517_a_() == AbstractOption.ATTACK_INDICATOR))
-                    .ifPresent(widget -> evt.getGui().renderTooltip(evt.getMatrixStack(), this.disabledIndicatorProcessor, evt.getMouseX(), evt.getMouseY()));
+                            .filter(widget -> ((IOptionButtonAccessor) widget).getEnumOptions() == AbstractOption.ATTACK_INDICATOR))
+                    .ifPresent(widget -> evt.getGui().renderTooltip(this.disabledIndicator, evt.getMouseX(), evt.getMouseY()));
         }
     }
 
     private static Optional<OptionsRowList> getOptionsRowList(Screen screen) {
 
         // don't access optionsRowList field directly using reflection or an accessor since OptiFine removes it
-        return screen.getEventListeners().stream()
+        return screen.children().stream()
                 .filter(listener -> listener instanceof OptionsRowList)
                 .findFirst()
                 .map(listener -> (OptionsRowList) listener);
@@ -145,9 +136,9 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
 
     private static Optional<Widget> getWidgetAtPosition(OptionsRowList optionsRowList, double mouseX, double mouseY) {
 
-        for (OptionsRowList.Row optionsRow : optionsRowList.getEventListeners()) {
+        for (OptionsRowList.Row optionsRow : optionsRowList.children()) {
 
-            for (IGuiEventListener guiEventListener : optionsRow.getEventListeners()) {
+            for (IGuiEventListener guiEventListener : optionsRow.children()) {
 
                 if (guiEventListener instanceof Widget && !((Widget) guiEventListener).active) {
 

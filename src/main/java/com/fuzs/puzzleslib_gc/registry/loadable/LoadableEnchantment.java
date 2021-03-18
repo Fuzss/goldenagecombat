@@ -31,18 +31,6 @@ public abstract class LoadableEnchantment extends Enchantment {
     }
 
     @Override
-    public boolean canVillagerTrade() {
-
-        return this.isEnabled() && super.canVillagerTrade();
-    }
-
-    @Override
-    public boolean canGenerateInLoot() {
-
-        return this.isEnabled() && super.canGenerateInLoot();
-    }
-
-    @Override
     public boolean canApplyAtEnchantingTable(ItemStack stack) {
 
         return this.isEnabled() && super.canApplyAtEnchantingTable(stack);

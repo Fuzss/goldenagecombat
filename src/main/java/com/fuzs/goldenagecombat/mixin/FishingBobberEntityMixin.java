@@ -7,9 +7,9 @@ import net.minecraft.entity.EntityType;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.entity.projectile.FishingBobberEntity;
 import net.minecraft.util.DamageSource;
-import net.minecraft.util.math.EntityRayTraceResult;
-import net.minecraft.util.math.vector.Vector3d;
+import net.minecraft.util.math.Vec3d;
 import net.minecraft.world.World;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -17,38 +17,36 @@ import org.spongepowered.asm.mixin.injection.Inject;
 import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
-/**
- * can't access constructor of {@link net.minecraft.entity.projectile.ProjectileEntity} as it's package-private,
- * so we extend the next class in the class hierarchy
- */
 @SuppressWarnings("unused")
 @Mixin(FishingBobberEntity.class)
 public abstract class FishingBobberEntityMixin extends Entity {
+
+    @Shadow
+    @Final
+    private PlayerEntity angler;
+    @Shadow
+    public Entity caughtEntity;
 
     public FishingBobberEntityMixin(EntityType<?> entityTypeIn, World worldIn) {
 
         super(entityTypeIn, worldIn);
     }
 
-    @Inject(method = "onEntityHit", at = @At("TAIL"))
-    protected void onEntityHit(EntityRayTraceResult raytraceresult, CallbackInfo callbackInfo) {
+    @Inject(method = "checkCollision", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/projectile/FishingBobberEntity;setHookedEntity()V"))
+    protected void checkCollision(CallbackInfo callbackInfo) {
 
         ClassicCombatElement element = (ClassicCombatElement) GoldenAgeCombat.CLASSIC_COMBAT;
-        if (element.isEnabled() && element.rodKnockback) {
+        if (element.isEnabled() && element.rodKnockback && this.caughtEntity != null) {
 
             // won't really do anything as attacks with an amount of 0 are ignored, this is patched elsewhere
-            raytraceresult.getEntity().attackEntityFrom(DamageSource.causeThrownDamage(this, this.func_234606_i_()), 0.0F);
+            this.caughtEntity.attackEntityFrom(DamageSource.causeThrownDamage(this, this.angler), 0.0F);
         }
     }
 
-    // getAngler
-    @Shadow
-    public abstract PlayerEntity func_234606_i_();
+    @Redirect(method = "bringInHookedEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getMotion()Lnet/minecraft/util/math/Vec3d;"))
+    public Vec3d getMotion(Entity entity) {
 
-    @Redirect(method = "bringInHookedEntity", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/Entity;getMotion()Lnet/minecraft/util/math/vector/Vector3d;"))
-    public Vector3d getMotion(Entity entity) {
-
-        Vector3d motion = entity.getMotion();
+        Vec3d motion = entity.getMotion();
         ClassicCombatElement element = (ClassicCombatElement) GoldenAgeCombat.CLASSIC_COMBAT;
         if (element.isEnabled() && element.rodLaunch) {
 

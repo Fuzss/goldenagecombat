@@ -11,11 +11,11 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.item.SwordItem;
 import net.minecraft.item.UseAction;
 import net.minecraft.tags.ItemTags;
+import net.minecraft.tags.Tag;
 import net.minecraft.util.ActionResultType;
 import net.minecraft.util.DamageSource;
 import net.minecraft.util.Hand;
 import net.minecraft.util.ResourceLocation;
-import net.minecraftforge.common.Tags;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -23,8 +23,8 @@ import net.minecraftforge.eventbus.api.EventPriority;
 
 public class SwordBlockingElement extends ClientExtensibleElement<SwordBlockingExtension> {
 
-    public static final Tags.IOptionalNamedTag<Item> SWORD_BLOCKING_EXCLUSIONS_TAG = ItemTags.createOptional(new ResourceLocation(GoldenAgeCombat.MODID, "sword_blocking_exclusions"));
-    public static final Tags.IOptionalNamedTag<Item> SWORD_BLOCKING_INCLUSIONS_TAG = ItemTags.createOptional(new ResourceLocation(GoldenAgeCombat.MODID, "sword_blocking_inclusions"));
+    public static final Tag<Item> SWORD_BLOCKING_EXCLUSIONS_TAG = new ItemTags.Wrapper(new ResourceLocation(GoldenAgeCombat.MODID, "sword_blocking_exclusions"));
+    public static final Tag<Item> SWORD_BLOCKING_INCLUSIONS_TAG = new ItemTags.Wrapper(new ResourceLocation(GoldenAgeCombat.MODID, "sword_blocking_inclusions"));
 
     public SwordBlockingElement() {
 
