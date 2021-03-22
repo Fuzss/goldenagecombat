@@ -84,33 +84,39 @@ public class ClassicCombatElement extends ClientExtensibleElement<ClassicCombatE
     @SuppressWarnings("ConstantConditions")
     private void onItemAttributeModifier(final ItemAttributeModifierEvent evt) {
 
-        ItemStack stack = evt.getItemStack();
-        if (this.oldAttackDamage && !stack.getItem().isIn(ATTACK_DAMAGE_BLACKLIST_TAG)) {
+        try {
 
-            if (stack.getItem() instanceof TieredItem && evt.getSlotType() == EquipmentSlotType.MAINHAND) {
+            ItemStack stack = evt.getItemStack();
+            if (this.oldAttackDamage && !stack.getItem().isIn(ATTACK_DAMAGE_BLACKLIST_TAG)) {
 
-                // don't change items whose attributes have already been changed via the nbt tag
-                if (!stack.hasTag() || !stack.getTag().contains("AttributeModifiers", 9)) {
+                if (stack.getItem() instanceof TieredItem && evt.getSlotType() == EquipmentSlotType.MAINHAND) {
 
-                    // always one less to account for base value of 1.0
-                    if (stack.getItem() instanceof SwordItem) {
+                    // don't change items whose attributes have already been changed via the nbt tag
+                    if (!stack.hasTag() || !stack.getTag().contains("AttributeModifiers", 9)) {
 
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 4.0F);
-                    } else if (stack.getItem() instanceof AxeItem) {
+                        // always one less to account for base value of 1.0
+                        if (stack.getItem() instanceof SwordItem) {
 
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 3.0F);
-                    } else if (stack.getItem() instanceof PickaxeItem) {
+                            this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 4.0F);
+                        } else if (stack.getItem() instanceof AxeItem) {
 
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 2.0F);
-                    } else if (stack.getItem() instanceof ShovelItem) {
+                            this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 3.0F);
+                        } else if (stack.getItem() instanceof PickaxeItem) {
 
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 1.0F);
-                    } else if (stack.getItem() instanceof HoeItem) {
+                            this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 2.0F);
+                        } else if (stack.getItem() instanceof ShovelItem) {
 
-                        this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 0.0F);
+                            this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 1.0F);
+                        } else if (stack.getItem() instanceof HoeItem) {
+
+                            this.replaceDamageAttribute(evt, (TieredItem) stack.getItem(), 0.0F);
+                        }
                     }
                 }
             }
+        } catch (IllegalStateException ignored) {
+
+            // item tag will crash with some mods due to not having been fetched yet, no way to check that really
         }
     }
 
