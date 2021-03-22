@@ -20,29 +20,35 @@ public class ItemStackMixin {
     public Multimap<String, AttributeModifier> getAttributeModifiers(Item item, EquipmentSlotType slot, ItemStack stack) {
 
         Multimap<String, AttributeModifier> multimap = item.getAttributeModifiers(slot, stack);
-        ClassicCombatElement element = (ClassicCombatElement) GoldenAgeCombat.CLASSIC_COMBAT;
-        if (element.isEnabled() && element.oldAttackDamage && !stack.getItem().isIn(ClassicCombatElement.ATTACK_DAMAGE_BLACKLIST_TAG)) {
+        try {
 
-            if (item instanceof TieredItem && slot == EquipmentSlotType.MAINHAND) {
+            ClassicCombatElement element = (ClassicCombatElement) GoldenAgeCombat.CLASSIC_COMBAT;
+            if (element.isEnabled() && element.oldAttackDamage && !stack.getItem().isIn(ClassicCombatElement.ATTACK_DAMAGE_BLACKLIST_TAG)) {
 
-                // always one less to account for base value of 1.0
-                if (stack.getItem() instanceof SwordItem) {
+                if (item instanceof TieredItem && slot == EquipmentSlotType.MAINHAND) {
 
-                    this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 4.0F);
-                } else if (stack.getItem() instanceof AxeItem) {
+                    // always one less to account for base value of 1.0
+                    if (stack.getItem() instanceof SwordItem) {
 
-                    this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 3.0F);
-                } else if (stack.getItem() instanceof PickaxeItem) {
+                        this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 4.0F);
+                    } else if (stack.getItem() instanceof AxeItem) {
 
-                    this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 2.0F);
-                } else if (stack.getItem() instanceof ShovelItem) {
+                        this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 3.0F);
+                    } else if (stack.getItem() instanceof PickaxeItem) {
 
-                    this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 1.0F);
-                } else if (stack.getItem() instanceof HoeItem) {
+                        this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 2.0F);
+                    } else if (stack.getItem() instanceof ShovelItem) {
 
-                    this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 0.0F);
+                        this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 1.0F);
+                    } else if (stack.getItem() instanceof HoeItem) {
+
+                        this.replaceDamageAttribute(multimap, (TieredItem) stack.getItem(), 0.0F);
+                    }
                 }
             }
+        } catch (IllegalStateException ignored) {
+
+            // item tag will crash with some mods due to not having been fetched yet, no way to check that really
         }
 
         return multimap;
