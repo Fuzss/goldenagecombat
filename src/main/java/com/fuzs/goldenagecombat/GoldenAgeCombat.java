@@ -13,7 +13,6 @@ import net.minecraftforge.fml.common.Mod;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-// client classes are otherwise loaded on server
 @SuppressWarnings({"WeakerAccess", "unused", "Convert2MethodRef"})
 @Mod(GoldenAgeCombat.MODID)
 public class GoldenAgeCombat extends PuzzlesLib {

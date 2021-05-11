@@ -66,7 +66,7 @@ public class SwordBlockingExtension extends ElementExtension<SwordBlockingElemen
 
             ((IFirstPersonRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, evt.getEquipProgress());
             LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
-            if (element.isEnabled() && element.blockHitting) {
+            if (element.isEnabled() && element.attackWhileUsing) {
 
                 ((IFirstPersonRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, evt.getSwingProgress());
             }

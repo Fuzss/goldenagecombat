@@ -1,24 +1,29 @@
 {
   "required": true,
-  "minVersion": "0.8.0",
+  "minVersion": "0.8",
   "compatibilityLevel": "JAVA_8",
   "package": "com.fuzs.goldenagecombat.mixin",
   "refmap": "goldenagecombat.refmap.json",
   "mixins": [
+    "accessor.IItemAccessor",
+    "accessor.ILivingEntityAccessor",
     "DamageEnchantmentMixin",
     "FishingBobberEntityMixin",
     "FoodStatsMixin",
-    "PlayerEntityMixin",
-    "accessor.IItemAccessor",
-    "accessor.ILivingEntityAccessor"
+    "LivingEntityMixin",
+    "PlayerEntityMixin"
   ],
   "client": [
+    "client.accessor.IFirstPersonRendererAccessor",
+    "client.accessor.ILivingRendererAccessor",
+    "client.ActiveRenderInfoMixin",
     "client.BipedArmorLayerMixin",
     "client.BipedModelMixin",
     "client.ElytraLayerMixin",
+    "client.EntityMixin",
     "client.FirstPersonRendererMixin",
-    "client.accessor.IFirstPersonRendererAccessor",
-    "client.accessor.ILivingRendererAccessor"
+    "client.MinecraftMixin",
+    "client.MovementInputMixin"
   ],
   "injectors": {
     "defaultRequire": 1

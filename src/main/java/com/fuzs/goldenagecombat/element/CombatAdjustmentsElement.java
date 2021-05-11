@@ -18,7 +18,7 @@ public class CombatAdjustmentsElement extends ClientExtensibleElement<CombatAdju
 
     private boolean sweepingRequired;
     public boolean prioritizeShield;
-    private Set<SoundEvent> removedAttackSounds;
+    private Set<SoundEvent> canceledAttackSounds;
     public boolean noDamageIndicators;
 
     public CombatAdjustmentsElement() {
@@ -44,7 +44,7 @@ public class CombatAdjustmentsElement extends ClientExtensibleElement<CombatAdju
 
         addToConfig(builder.comment("Is the sweeping edge enchantment required to perform a sweep attack.").define("Require Sweeping Edge", true), v -> this.sweepingRequired = v);
         addToConfig(builder.comment("Prioritize shield blocking over sword blocking in case both items are held at the same time.").define("Prioritize Shield", true), v -> this.prioritizeShield = v);
-        addToConfig(builder.comment("Prevent various attack sounds added for the cooldown mechanic from playing.", EntryCollectionBuilder.CONFIG_STRING).define("Removed Attack Sounds", ConfigManager.getKeyList(SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, SoundEvents.ENTITY_PLAYER_ATTACK_KNOCKBACK, SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE, SoundEvents.ENTITY_PLAYER_ATTACK_STRONG, SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundEvents.ENTITY_PLAYER_ATTACK_WEAK)), v -> this.removedAttackSounds = v, v -> deserializeToSet(v, ForgeRegistries.SOUND_EVENTS));
+        addToConfig(builder.comment("Prevent various attack sounds added for the cooldown mechanic from playing.", EntryCollectionBuilder.CONFIG_STRING).define("Canceled Attack Sounds", ConfigManager.getKeyList(SoundEvents.ENTITY_PLAYER_ATTACK_CRIT, SoundEvents.ENTITY_PLAYER_ATTACK_KNOCKBACK, SoundEvents.ENTITY_PLAYER_ATTACK_NODAMAGE, SoundEvents.ENTITY_PLAYER_ATTACK_STRONG, SoundEvents.ENTITY_PLAYER_ATTACK_SWEEP, SoundEvents.ENTITY_PLAYER_ATTACK_WEAK)), v -> this.canceledAttackSounds = v, v -> deserializeToSet(v, ForgeRegistries.SOUND_EVENTS));
         addToConfig(builder.comment("Stop heart particles spawned when the player attacks an entity from appearing.").define("Hide Damage Indicators", false), v -> this.noDamageIndicators = v);
     }
 
@@ -60,7 +60,7 @@ public class CombatAdjustmentsElement extends ClientExtensibleElement<CombatAdju
     private void onPlaySoundAtEntity(final PlaySoundAtEntityEvent evt) {
 
         // disable combat update player attack sounds
-        if (this.removedAttackSounds.contains(evt.getSound())) {
+        if (this.canceledAttackSounds.contains(evt.getSound())) {
 
             evt.setCanceled(true);
         }

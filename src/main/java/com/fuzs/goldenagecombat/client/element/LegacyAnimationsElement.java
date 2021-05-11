@@ -35,10 +35,10 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
     private final Random random = new Random();
 
     public boolean damageOnArmor;
-    private boolean bowPunching;
-    public boolean blockHitting;
+    public boolean attackWhileUsing;
     public boolean oldBlockingPose;
     public boolean noFlashingHearts;
+    public boolean instantEyeHeight;
 
     @Override
     public String[] getDescription() {
@@ -57,16 +57,16 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
     public void setupClientConfig(ForgeConfigSpec.Builder builder) {
 
         addToConfig(builder.comment("Armor on entities turns red when they receive damage just like their body.").define("Render Damage On Armor", true), v -> this.damageOnArmor = v);
-        addToConfig(builder.comment("Draw a bow or eat food while punching at the same time.").define("Allow Bow Punching", true), v -> this.bowPunching = v);
-        addToConfig(builder.comment("Hit and block with your sword at the same time.").define("Allow Block Hitting", true), v -> this.blockHitting = v);
+        addToConfig(builder.comment("Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching.").define("Attack While Using", true), v -> this.attackWhileUsing = v);
         addToConfig(builder.comment("Use old third-person pose when blocking with a sword.").define("Old Blocking Pose", false), v -> this.oldBlockingPose = v);
         addToConfig(builder.comment("Lost hearts no longer flash when disappearing.").define("Disable Flashing Hearts", false), v -> this.noFlashingHearts = v);
+        addToConfig(builder.comment("Eye height changes instantly without any interpolation. Affects mainly sneaking and swimming.").define("Instant Eye Height", false), v -> this.instantEyeHeight = v);
     }
 
     private void onRenderHand(final RenderHandEvent evt) {
 
         ItemStack stack = evt.getItemStack();
-        if (!this.bowPunching || stack.isEmpty() || stack.getItem() instanceof FilledMapItem) {
+        if (!this.attackWhileUsing || stack.isEmpty() || stack.getItem() instanceof FilledMapItem) {
 
             return;
         }

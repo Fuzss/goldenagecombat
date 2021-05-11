@@ -36,6 +36,7 @@ public class ClassicCombatElement extends ClientExtensibleElement<ClassicCombatE
     public boolean rodLaunch;
     public boolean boostSharpness;
     private boolean goldenAppleEffects;
+    public boolean backwardsWalking;
 
     public ClassicCombatElement() {
 
@@ -70,6 +71,7 @@ public class ClassicCombatElement extends ClientExtensibleElement<ClassicCombatE
         addToConfig(builder.comment("Boost sharpness enchantment to 1.25 damage points per level instead of just 0.5.").define("Boost Sharpness", false), v -> this.boostSharpness = v);
         addToConfig(builder.comment("Give Regeneration V and Absorption I instead of Regeneration II and Absorption IV after consuming a notch apple.").define("Notch Apple Effects", true), v -> this.goldenAppleEffects = v);
         addToConfig(builder.comment("A notch apple can be crafted from a single apple and eight gold blocks.").define("Notch Apple Recipe", true), v -> {});
+        addToConfig(builder.comment("The player's body turns sideways when walking backwards instead of remaining straight.").define("Backwards Walking", true), v -> this.backwardsWalking = v);
     }
 
     private void onAttackEntity(final AttackEntityEvent evt) {
