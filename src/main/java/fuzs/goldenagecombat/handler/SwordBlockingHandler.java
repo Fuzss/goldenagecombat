@@ -1,7 +1,6 @@
 package fuzs.goldenagecombat.handler;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.registry.ModRegistry;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.damagesource.DamageSource;
@@ -63,13 +62,14 @@ public class SwordBlockingHandler {
     }
 
     public static boolean canItemStackBlock(ItemStack stack) {
+        if (!GoldenAgeCombat.CONFIG.server().blocking.allowBlocking) return false;
         Item item = stack.getItem();
-        if (stack.is(ModRegistry.SWORD_BLOCKING_EXCLUSIONS_TAG)) {
+        if (GoldenAgeCombat.CONFIG.server().blocking.swordBlockingExclusions.contains(item)) {
             return false;
         } else if (item instanceof SwordItem) {
             return true;
         } else {
-            return stack.is(ModRegistry.SWORD_BLOCKING_INCLUSIONS_TAG);
+            return GoldenAgeCombat.CONFIG.server().blocking.swordBlockingInclusions.contains(item);
         }
     }
 }

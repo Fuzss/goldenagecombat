@@ -7,7 +7,7 @@ public class ClientConfig extends AbstractConfig {
     @Config
     public AnimationsConfig animations = new AnimationsConfig();
     @Config
-    public AdjustmentsConfig adjustments = new AdjustmentsConfig();
+    public TooltipConfig tooltip = new TooltipConfig();
 
     public ClientConfig() {
         super("");
@@ -20,7 +20,7 @@ public class ClientConfig extends AbstractConfig {
         public boolean attackWhileUsing = true;
         @Config(name = "disable_flashing_hearts", description = "Lost hearts no longer flash when disappearing.")
         public boolean noFlashingHearts = false;
-        @Config(name = "instant_eye_height_changes", description = "Eye height changes instantly without any interpolation. Affects mainly sneaking and swimming.")
+        @Config(name = "instant_eye_height_change", description = "Eye height changes instantly without any interpolation. Affects mainly sneaking and swimming.")
         public boolean instantEyeHeight = false;
 
         public AnimationsConfig() {
@@ -28,12 +28,16 @@ public class ClientConfig extends AbstractConfig {
         }
     }
 
-    public static class AdjustmentsConfig extends AbstractConfig {
-        @Config(name = "remove_attack_speed_tooltip", description = "Remove \"Attack Speed\" attribute from inventory tooltips.")
-        public boolean noAttackSpeedTooltip;
+    public static class TooltipConfig extends AbstractConfig {
+        @Config(name = "remove_all_attributes", description = "Remove all information regarding attributes from item tooltips.")
+        public boolean removeAllAttributes = false;
+        @Config(name = "old_attributes_style", description = "Use the pre-1.13 renderer for attributes on item tooltips.")
+        public boolean oldAttributes = true;
+        @Config(name = "remove_attack_speed", description = "Remove \"Attack Speed\" attribute from item tooltips.")
+        public boolean removeAttackSpeed = true;
 
-        public AdjustmentsConfig() {
-            super("combat_adjustments");
+        public TooltipConfig() {
+            super("attributes_tooltip");
         }
     }
 }

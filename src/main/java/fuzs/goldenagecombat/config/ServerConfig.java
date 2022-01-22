@@ -1,6 +1,5 @@
 package fuzs.goldenagecombat.config;
 
-import fuzs.goldenagecombat.GoldenAgeCombat;
 import fuzs.puzzleslib.config.AbstractConfig;
 import fuzs.puzzleslib.config.annotation.Config;
 import fuzs.puzzleslib.config.serialization.EntryCollectionBuilder;
@@ -17,6 +16,8 @@ public class ServerConfig extends AbstractConfig {
     @Config
     public ClassicConfig classic = new ClassicConfig();
     @Config
+    public BlockingConfig blocking = new BlockingConfig();
+    @Config
     public AdjustmentsConfig adjustments = new AdjustmentsConfig();
 
     public ServerConfig() {
@@ -26,6 +27,7 @@ public class ServerConfig extends AbstractConfig {
     @Override
     protected void afterConfigReload() {
         this.classic.afterConfigReload();
+        this.blocking.afterConfigReload();
         this.adjustments.afterConfigReload();
     }
 
@@ -66,11 +68,24 @@ public class ServerConfig extends AbstractConfig {
     }
 
     public static class BlockingConfig extends AbstractConfig {
-        @Config(name = "sword_blocking_blacklist", description = {"Blacklist for items not handled as expected by the \"Legacy Attack Damage\" option.", EntryCollectionBuilder.CONFIG_DESCRIPTION, "Mod developers may include their items in the \"" + GoldenAgeCombat.MOD_ID + ":attack_damage_blacklist\" item tag."})
-        private List<String> attackDamageBlacklistRaw = Lists.newArrayList();
+        @Config(name = "allow_blocking", description = "Allow blocking with swords, which will reduce most incoming attacks by 50% and render a parry animation.")
+        public boolean allowBlocking = true;
+        @Config(name = "sword_blocking_exclusions", description = {"Swords to exclude from blocking. Intended for modded swords that already have their own right-click function.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
+        private List<String> swordBlockingExclusionsRaw = Lists.newArrayList();
+        @Config(name = "sword_blocking_exclusions", description = {"Items to include for blocking. Intended for modded swords that don't extend vanilla swords.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
+        private List<String> swordBlockingInclusionsRaw = Lists.newArrayList();
+
+        public Set<Item> swordBlockingExclusions;
+        public Set<Item> swordBlockingInclusions;
 
         public BlockingConfig() {
             super("sword_blocking");
+        }
+
+        @Override
+        protected void afterConfigReload() {
+            this.swordBlockingExclusions = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildSet(this.swordBlockingExclusionsRaw);
+            this.swordBlockingInclusions = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildSet(this.swordBlockingInclusionsRaw);
         }
     }
 

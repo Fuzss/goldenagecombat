@@ -2,12 +2,11 @@ package fuzs.goldenagecombat.client.element;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
-import fuzs.goldenagecombat.mixin.client.accessor.IFirstPersonRendererAccessor;
+import fuzs.goldenagecombat.mixin.client.accessor.ItemInHandRendererAccessor;
 import com.fuzs.puzzleslib_gc.element.AbstractElement;
 import com.fuzs.puzzleslib_gc.element.side.IClientElement;
 import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
-import fuzs.puzzleslib.config.annotation.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.GuiComponent;
@@ -35,9 +34,6 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
-import net.minecraftforge.common.ForgeConfigSpec;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Random;
@@ -76,37 +72,37 @@ public class LegacyAnimationsRenderer {
                 case NONE:
                 case BLOCK:
 
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
                     break;
                 case EAT:
 
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformEatFirstPerson(matrixStack, partialTicks, handSide, stack);
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformEatFirstPerson(matrixStack, partialTicks, handSide, stack);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
                     break;
                 case DRINK:
 
                     // vanilla bug will cause a hit when using, screwing with the whole animation
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformEatFirstPerson(matrixStack, partialTicks, handSide, stack);
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformEatFirstPerson(matrixStack, partialTicks, handSide, stack);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
                     break;
                 case BOW:
 
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
                     this.transformBowFirstPerson(matrixStack, partialTicks, handSide, stack);
                     break;
                 case SPEAR:
 
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
                     this.transformSpearFirstPerson(matrixStack, partialTicks, handSide, stack);
                     break;
                 case CROSSBOW:
 
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((IFirstPersonRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
                     this.transformCrossbowFirstPerson(matrixStack, partialTicks, handSide, stack);
                     break;
             }
@@ -267,7 +263,7 @@ public class LegacyAnimationsRenderer {
                 posY -= 2;
             }
 
-            int hardcoreTextureMargin = player.world.getWorldInfo().isHardcore() ? 5 : 0;
+            int hardcoreTextureMargin = player.level.getLevelData().isHardcore() ? 5 : 0;
             GuiComponent.blit(matrixStack, posX, posY, 16 + heartYOffset * 9, 9 * hardcoreTextureMargin, 9, 9, 256, 256);
             if (i3 > 0) {
 

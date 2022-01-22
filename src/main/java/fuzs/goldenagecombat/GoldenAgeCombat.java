@@ -2,12 +2,10 @@ package fuzs.goldenagecombat;
 
 import fuzs.goldenagecombat.config.ClientConfig;
 import fuzs.goldenagecombat.config.ServerConfig;
-import fuzs.goldenagecombat.data.ModItemTagsProvider;
 import fuzs.goldenagecombat.data.ModRecipeProvider;
 import fuzs.goldenagecombat.handler.ClassicCombatHandler;
 import fuzs.goldenagecombat.handler.CombatAdjustmentsHandler;
 import fuzs.goldenagecombat.handler.SwordBlockingHandler;
-import fuzs.goldenagecombat.registry.ModRegistry;
 import fuzs.puzzleslib.config.ConfigHolder;
 import fuzs.puzzleslib.config.ConfigHolderImpl;
 import net.minecraft.data.DataGenerator;
@@ -34,7 +32,6 @@ public class GoldenAgeCombat {
     @SubscribeEvent
     public static void onConstructMod(final FMLConstructModEvent evt) {
         ((ConfigHolderImpl<?, ?>) CONFIG).addConfigs(MOD_ID);
-        ModRegistry.touch();
         registerHandlers();
     }
 
@@ -58,6 +55,5 @@ public class GoldenAgeCombat {
         DataGenerator generator = evt.getGenerator();
         final ExistingFileHelper existingFileHelper = evt.getExistingFileHelper();
         generator.addProvider(new ModRecipeProvider(generator));
-        generator.addProvider(new ModItemTagsProvider(generator, existingFileHelper));
     }
 }

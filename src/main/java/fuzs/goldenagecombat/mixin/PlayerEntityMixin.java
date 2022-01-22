@@ -21,7 +21,6 @@ public abstract class PlayerEntityMixin extends LivingEntity {
         super(type, worldIn);
     }
 
-    @SuppressWarnings("DefaultAnnotationParam")
     @ModifyConstant(method = "attackEntityFrom", constant = @Constant(floatValue = 0.0F))
     public float getIgnoredDamageAmount(float amount) {
 
