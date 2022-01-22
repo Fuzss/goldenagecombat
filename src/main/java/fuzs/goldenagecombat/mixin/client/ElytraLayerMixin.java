@@ -1,7 +1,7 @@
 package fuzs.goldenagecombat.mixin.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.client.element.LegacyAnimationsElement;
+import fuzs.goldenagecombat.client.element.LegacyAnimationsRenderer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
 import net.minecraft.client.renderer.entity.IEntityRenderer;
@@ -27,7 +27,7 @@ public abstract class ElytraLayerMixin<T extends LivingEntity, M extends EntityM
     @Redirect(method = "render", at = @At(value = "FIELD", target = "Lnet/minecraft/client/renderer/texture/OverlayTexture;NO_OVERLAY:I"))
     private int getPackedOverlay(MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, T entitylivingbaseIn) {
 
-        LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
+        LegacyAnimationsRenderer element = (LegacyAnimationsRenderer) GoldenAgeCombat.LEGACY_ANIMATIONS;
         if (element.isEnabled() && element.damageOnArmor) {
 
             return LivingRenderer.getPackedOverlay(entitylivingbaseIn, 0.0F);

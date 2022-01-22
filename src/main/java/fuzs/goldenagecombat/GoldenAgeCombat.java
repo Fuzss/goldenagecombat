@@ -6,12 +6,14 @@ import fuzs.goldenagecombat.data.ModItemTagsProvider;
 import fuzs.goldenagecombat.data.ModRecipeProvider;
 import fuzs.goldenagecombat.handler.ClassicCombatHandler;
 import fuzs.goldenagecombat.handler.CombatAdjustmentsHandler;
+import fuzs.goldenagecombat.handler.SwordBlockingHandler;
 import fuzs.goldenagecombat.registry.ModRegistry;
 import fuzs.puzzleslib.config.ConfigHolder;
 import fuzs.puzzleslib.config.ConfigHolderImpl;
 import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
@@ -45,6 +47,10 @@ public class GoldenAgeCombat {
         final CombatAdjustmentsHandler combatAdjustmentsHandler = new CombatAdjustmentsHandler();
         MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onCriticalHit);
         MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onPlaySoundAtEntity);
+        final SwordBlockingHandler swordBlockingHandler = new SwordBlockingHandler();
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, swordBlockingHandler::onRightClickItem);
+        MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onItemUseStart);
+        MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onLivingHurt);
     }
 
     @SubscribeEvent

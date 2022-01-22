@@ -1,16 +1,18 @@
 package fuzs.goldenagecombat.client.element;
 
 import com.mojang.blaze3d.vertex.PoseStack;
+import com.mojang.math.Vector3f;
 import fuzs.goldenagecombat.mixin.client.accessor.IFirstPersonRendererAccessor;
 import com.fuzs.puzzleslib_gc.element.AbstractElement;
 import com.fuzs.puzzleslib_gc.element.side.IClientElement;
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
 import com.mojang.blaze3d.systems.RenderSystem;
+import fuzs.puzzleslib.config.annotation.Config;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.gui.GuiComponent;
-import net.minecraft.client.gui.GuiComponent;
 import net.minecraft.client.renderer.FirstPersonRenderer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.client.renderer.model.ItemCameraTransforms;
 import net.minecraft.entity.ai.attributes.Attributes;
 import net.minecraft.entity.player.PlayerEntity;
@@ -23,50 +25,31 @@ import net.minecraft.util.HandSide;
 import net.minecraft.util.Mth;
 import net.minecraft.util.math.Mth;
 import net.minecraft.util.math.vector.Vector3f;
+import net.minecraft.world.InteractionHand;
+import net.minecraft.world.effect.MobEffects;
+import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.CrossbowItem;
+import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.client.gui.ForgeIngameGui;
 import net.minecraftforge.common.ForgeConfigSpec;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 
 import java.util.Random;
 
 @SuppressWarnings({"ConstantConditions", "DuplicatedCode"})
-public class LegacyAnimationsElement extends AbstractElement implements IClientElement {
+public class LegacyAnimationsRenderer {
 
-    private final Minecraft mc = Minecraft.getInstance();
+    private final Minecraft minecraft = Minecraft.getInstance();
     private final Random random = new Random();
 
-    public boolean damageOnArmor;
-    public boolean attackWhileUsing;
-    public boolean noFlashingHearts;
-    public boolean instantEyeHeight;
-
-    @Override
-    public String[] getDescription() {
-
-        return new String[]{"Legacy visuals and animations for miscellaneous things. Heavily inspired by the old \"Orange's 1.7 Animations Mod\" mod."};
-    }
-
-    @Override
-    public void setupClient() {
-
-        this.addListener(this::onRenderHand, EventPriority.LOW);
-        this.addListener(this::onRenderGameOverlay);
-    }
-
-    @Override
-    public void setupClientConfig(ForgeConfigSpec.Builder builder) {
-
-        addToConfig(builder.comment("Armor on entities turns red when they receive damage just like their body.").define("Render Damage On Armor", true), v -> this.damageOnArmor = v);
-        addToConfig(builder.comment("Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching.").define("Attack While Using", true), v -> this.attackWhileUsing = v);
-        addToConfig(builder.comment("Lost hearts no longer flash when disappearing.").define("Disable Flashing Hearts", false), v -> this.noFlashingHearts = v);
-        addToConfig(builder.comment("Eye height changes instantly without any interpolation. Affects mainly sneaking and swimming.").define("Instant Eye Height", false), v -> this.instantEyeHeight = v);
-    }
-
-    private void onRenderHand(final RenderHandEvent evt) {
+    @SubscribeEvent
+    public void onRenderHand(final RenderHandEvent evt) {
 
         ItemStack stack = evt.getItemStack();
         if (!this.attackWhileUsing || stack.isEmpty() || stack.getItem() instanceof FilledMapItem) {
@@ -74,21 +57,21 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
             return;
         }
 
-        ClientPlayerEntity player = this.mc.player;
+        Player player = this.minecraft.player;
         if (player.isHandActive() && player.getItemInUseCount() > 0 && player.getActiveHand() == evt.getHand()) {
 
             evt.setCanceled(true);
-            FirstPersonRenderer itemRenderer = this.mc.getFirstPersonRenderer();
-            MatrixStack matrixStack = evt.getMatrixStack();
+            ItemInHandRenderer itemRenderer = this.minecraft.getItemInHandRenderer();
+            PoseStack matrixStack = evt.getPoseStack();
             float partialTicks = evt.getPartialTicks();
             float equippedProgress = evt.getEquipProgress();
             float swingProgress = evt.getSwingProgress();
-            boolean isMainHand = evt.getHand() == Hand.MAIN_HAND;
-            HandSide handSide = isMainHand ? player.getPrimaryHand() : player.getPrimaryHand().opposite();
+            boolean isMainHand = evt.getHand() == InteractionHand.MAIN_HAND;
+            HumanoidArm handSide = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
             boolean isHandSideRight = (isMainHand ? player.getPrimaryHand() : player.getPrimaryHand().opposite()) == HandSide.RIGHT;
 
-            matrixStack.push();
-            switch(stack.getUseAction()) {
+            matrixStack.pushPose();
+            switch(stack.getUseAnimation()) {
 
                 case NONE:
                 case BLOCK:
@@ -128,19 +111,19 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
                     break;
             }
 
-            this.mc.getFirstPersonRenderer().renderItemSide(player, stack, isHandSideRight ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isHandSideRight, matrixStack, evt.getBuffers(), evt.getLight());
+            this.minecraft.getFirstPersonRenderer().renderItemSide(player, stack, isHandSideRight ? ItemCameraTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemCameraTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isHandSideRight, matrixStack, evt.getBuffers(), evt.getLight());
             matrixStack.pop();
         }
     }
 
-    private void transformBowFirstPerson(MatrixStack matrixStackIn, float partialTicks, HandSide handside, ItemStack stack) {
+    private void transformBowFirstPerson(PoseStack matrixStackIn, float partialTicks, HumanoidArm handside, ItemStack stack) {
 
-        int sideSignum = handside == HandSide.RIGHT ? 1 : -1;
+        int sideSignum = handside == HumanoidArm.RIGHT ? 1 : -1;
         matrixStackIn.translate(sideSignum * -0.2785682F, 0.18344387F, 0.15731531F);
-        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-13.935F));
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(sideSignum * 35.3F));
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(sideSignum * -9.785F));
-        float f8 = stack.getUseDuration() - ((this.mc.player != null ? this.mc.player.getItemInUseCount() : 0.0F) - partialTicks + 1.0F);
+        matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-13.935F));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(sideSignum * 35.3F));
+        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(sideSignum * -9.785F));
+        float f8 = stack.getUseDuration() - ((this.minecraft.player != null ? this.minecraft.player.getItemInUseCount() : 0.0F) - partialTicks + 1.0F);
         float f12 = f8 / 20.0F;
         f12 = (f12 * f12 + f12 * 2.0F) / 3.0F;
         if (f12 > 1.0F) {
@@ -158,17 +141,17 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
 
         matrixStackIn.translate(f12 * 0.0F, f12 * 0.0F, f12 * 0.04F);
         matrixStackIn.scale(1.0F, 1.0F, 1.0F + f12 * 0.2F);
-        matrixStackIn.rotate(Vector3f.YN.rotationDegrees(sideSignum * 45.0F));
+        matrixStackIn.mulPose(Vector3f.YN.rotationDegrees(sideSignum * 45.0F));
     }
 
-    private void transformSpearFirstPerson(MatrixStack matrixStackIn, float partialTicks, HandSide handside, ItemStack stack) {
+    private void transformSpearFirstPerson(PoseStack matrixStackIn, float partialTicks, HandSide handside, ItemStack stack) {
 
         int sideSignum = handside == HandSide.RIGHT ? 1 : -1;
         matrixStackIn.translate(sideSignum * -0.5F, 0.7F, 0.1F);
-        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-55.0F));
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(sideSignum * 35.3F));
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(sideSignum * -9.785F));
-        float f7 = stack.getUseDuration() - ((this.mc.player != null ? this.mc.player.getItemInUseCount() : 0.0F) - partialTicks + 1.0F);
+        matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-55.0F));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(sideSignum * 35.3F));
+        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(sideSignum * -9.785F));
+        float f7 = stack.getUseDuration() - ((this.minecraft.player != null ? this.minecraft.player.getItemInUseCount() : 0.0F) - partialTicks + 1.0F);
         float f11 = f7 / 10.0F;
         if (f11 > 1.0F) {
 
@@ -185,18 +168,18 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
 
         matrixStackIn.translate(0.0D, 0.0D, f11 * 0.2F);
         matrixStackIn.scale(1.0F, 1.0F, 1.0F + f11 * 0.2F);
-        matrixStackIn.rotate(Vector3f.YN.rotationDegrees(sideSignum * 45.0F));
+        matrixStackIn.mulPose(Vector3f.YN.rotationDegrees(sideSignum * 45.0F));
     }
 
-    private void transformCrossbowFirstPerson(MatrixStack matrixStackIn, float partialTicks, HandSide handside, ItemStack stack) {
+    private void transformCrossbowFirstPerson(PoseStack matrixStackIn, float partialTicks, HandSide handside, ItemStack stack) {
 
         int sideSignum = handside == HandSide.RIGHT ? 1 : -1;
         matrixStackIn.translate(sideSignum * -0.4785682F, -0.094387F, 0.05731531F);
-        matrixStackIn.rotate(Vector3f.XP.rotationDegrees(-11.935F));
-        matrixStackIn.rotate(Vector3f.YP.rotationDegrees(sideSignum * 65.3F));
-        matrixStackIn.rotate(Vector3f.ZP.rotationDegrees(sideSignum * -9.785F));
-        float f9 = stack.getUseDuration() - (this.mc.player.getItemInUseCount() - partialTicks + 1.0F);
-        float f13 = f9 / CrossbowItem.getChargeTime(stack);
+        matrixStackIn.mulPose(Vector3f.XP.rotationDegrees(-11.935F));
+        matrixStackIn.mulPose(Vector3f.YP.rotationDegrees(sideSignum * 65.3F));
+        matrixStackIn.mulPose(Vector3f.ZP.rotationDegrees(sideSignum * -9.785F));
+        float f9 = stack.getUseDuration() - (this.minecraft.player.getUseItemRemainingTicks() - partialTicks + 1.0F);
+        float f13 = f9 / CrossbowItem.getChargeDuration(stack);
         if (f13 > 1.0F) {
 
             f13 = 1.0F;
@@ -212,22 +195,23 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
 
         matrixStackIn.translate(f13 * 0.0F, f13 * 0.0F, f13 * 0.04F);
         matrixStackIn.scale(1.0F, 1.0F, 1.0F + f13 * 0.2F);
-        matrixStackIn.rotate(Vector3f.YN.rotationDegrees(sideSignum * 45.0F));
+        matrixStackIn.mulPose(Vector3f.YN.rotationDegrees(sideSignum * 45.0F));
     }
 
-    private void onRenderGameOverlay(final RenderGameOverlayEvent.Pre evt) {
+    @SubscribeEvent
+    public void onRenderGameOverlay(final RenderGameOverlayEvent.Pre evt) {
 
-        if (!this.noFlashingHearts || evt.getType() != RenderGameOverlayEvent.ElementType.HEALTH || !(this.mc.getRenderViewEntity() instanceof PlayerEntity)) {
+        if (!this.noFlashingHearts || evt.getType() != RenderGameOverlayEvent.ElementType.HEALTH || !(this.minecraft.getRenderViewEntity() instanceof PlayerEntity)) {
 
             return;
         }
 
         evt.setCanceled(true);
-        this.mc.getProfiler().startSection("health");
+        this.minecraft.getProfiler().startSection("health");
         RenderSystem.enableBlend();
 
-        Player player = (Player) this.mc.getRenderViewEntity();
-        PoseStack matrixStack = evt.getMatrixStack();
+        Player player = (Player) this.minecraft.getRenderViewEntity();
+        PoseStack matrixStack = evt.getPoseStack();
         boolean raiseHeart = player.hurtResistantTime / 3 % 2 == 1;
         if (player.hurtResistantTime <= 10) {
 
@@ -241,7 +225,7 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
         int healthRows = Mth.ceil((maxHealth + playerAbsorption) / 2.0F / 10.0F);
         int rowHeight = Math.max(10 - (healthRows - 2), 3);
 
-        int ticks = this.mc.gui.getGuiTicks();
+        int ticks = this.minecraft.gui.getGuiTicks();
         this.random.setSeed(ticks * 312871L);
         int renderStartX = evt.getWindow().getScaledWidth() / 2 - 91;
         int renderStartY = evt.getWindow().getScaledHeight() - ForgeIngameGui.left_height;
@@ -253,7 +237,7 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
 
         int i3 = playerAbsorption;
         int isRegenerating = -1;
-        if (player.isPotionActive(Effects.REGENERATION)) {
+        if (player.isPotionActive(MobEffects.REGENERATION)) {
 
             isRegenerating = ticks % Mth.ceil(maxHealth + 5.0F);
         }
@@ -261,10 +245,10 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
         for (int l5 = Mth.ceil((maxHealth + playerAbsorption) / 2.0F) - 1; l5 >= 0; --l5) {
 
             int potionTextureMargin = 16;
-            if (player.isPotionActive(Effects.POISON)) {
+            if (player.isPotionActive(MobEffects.POISON)) {
 
                 potionTextureMargin += 36;
-            } else if (player.isPotionActive(Effects.WITHER)) {
+            } else if (player.hasEffect(MobEffects.WITHER)) {
 
                 potionTextureMargin += 72;
             }
@@ -311,7 +295,7 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
         }
 
         RenderSystem.disableBlend();
-        this.mc.getProfiler().endSection();
+        this.minecraft.getProfiler().pop();
     }
 
 }

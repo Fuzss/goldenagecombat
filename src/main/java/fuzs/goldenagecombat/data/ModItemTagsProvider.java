@@ -18,7 +18,8 @@ public class ModItemTagsProvider extends TagsProvider<Item> {
 
     @Override
     protected void addTags() {
-        this.tag(ModRegistry.ATTACK_DAMAGE_BLACKLIST_TAG);
+        this.tag(ModRegistry.SWORD_BLOCKING_EXCLUSIONS_TAG);
+        this.tag(ModRegistry.SWORD_BLOCKING_INCLUSIONS_TAG);
     }
 
     @Override

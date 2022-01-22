@@ -1,22 +1,23 @@
 package fuzs.goldenagecombat.mixin.client.accessor;
 
-import com.mojang.blaze3d.matrix.MatrixStack;
+import com.mojang.blaze3d.matrix.PoseStack;
+import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.FirstPersonRenderer;
+import net.minecraft.client.renderer.ItemInHandRenderer;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.HandSide;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
-@Mixin(FirstPersonRenderer.class)
+@Mixin(ItemInHandRenderer.class)
 public interface IFirstPersonRendererAccessor {
+    @Invoker
+    void callTransformEatFirstPerson(PoseStack matrixStackIn, float partialTicks, HandSide handIn, ItemStack stack);
 
     @Invoker
-    void callTransformEatFirstPerson(MatrixStack matrixStackIn, float partialTicks, HandSide handIn, ItemStack stack);
+    void callTransformFirstPerson(PoseStack matrixStackIn, HandSide handIn, float swingProgress);
 
     @Invoker
-    void callTransformFirstPerson(MatrixStack matrixStackIn, HandSide handIn, float swingProgress);
-
-    @Invoker
-    void callTransformSideFirstPerson(MatrixStack matrixStackIn, HandSide handIn, float equippedProg);
+    void callTransformSideFirstPerson(PoseStack matrixStackIn, HandSide handIn, float equippedProg);
     
 }

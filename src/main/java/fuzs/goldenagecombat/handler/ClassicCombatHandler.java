@@ -1,8 +1,9 @@
 package fuzs.goldenagecombat.handler;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.mixin.accessor.IItemAccessor;
+import fuzs.goldenagecombat.mixin.accessor.ItemAccessor;
 import fuzs.goldenagecombat.mixin.accessor.LivingEntityAccessor;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.EquipmentSlot;
@@ -55,7 +56,7 @@ public class ClassicCombatHandler {
 
     private void replaceDamageAttribute(ItemAttributeModifierEvent evt, TieredItem item, float damageBonus) {
         evt.removeAttribute(Attributes.ATTACK_DAMAGE);
-        evt.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(IItemAccessor.getAttackDamageModifier(), GoldenAgeCombat.MOD_ID + " modifier", item.getTier().getAttackDamageBonus() + damageBonus, AttributeModifier.Operation.ADDITION));
+        evt.addModifier(Attributes.ATTACK_DAMAGE, new AttributeModifier(ItemAccessor.getBaseAttackDamageUUID(), new ResourceLocation(GoldenAgeCombat.MOD_ID, "attack_damage_modifier").toString(), item.getTier().getAttackDamageBonus() + damageBonus, AttributeModifier.Operation.ADDITION));
     }
 
     @SubscribeEvent
@@ -83,5 +84,4 @@ public class ClassicCombatHandler {
     public static void disableCooldownPeriod(Player player) {
         ((LivingEntityAccessor) player).setAttackStrengthTicker((int) Math.ceil(player.getCurrentItemAttackStrengthDelay()));
     }
-
 }

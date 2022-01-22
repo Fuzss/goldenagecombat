@@ -3,7 +3,7 @@ package fuzs.goldenagecombat.client.element;
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.handler.SwordBlockingElement;
+import fuzs.goldenagecombat.handler.SwordBlockingHandler;
 import fuzs.goldenagecombat.mixin.client.accessor.IFirstPersonRendererAccessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.ItemInHandRenderer;
@@ -21,7 +21,7 @@ public class SwordBlockingRenderer {
         final Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
         ItemStack stack = evt.getItemStack();
-        if (player.getUsedItemHand() == evt.getHand() && SwordBlockingElement.isActiveItemStackBlocking(player)) {
+        if (player.getUsedItemHand() == evt.getHand() && SwordBlockingHandler.isActiveItemStackBlocking(player)) {
             evt.setCanceled(true);
             ItemInHandRenderer itemRenderer = minecraft.getItemInHandRenderer();
             PoseStack matrixStack = evt.getPoseStack();
@@ -30,7 +30,7 @@ public class SwordBlockingRenderer {
             HumanoidArm handSide = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
             boolean isHandSideRight = handSide == HumanoidArm.RIGHT;
             ((IFirstPersonRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, evt.getEquipProgress());
-            LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
+            LegacyAnimationsRenderer element = (LegacyAnimationsRenderer) GoldenAgeCombat.LEGACY_ANIMATIONS;
             if (element.isEnabled() && element.attackWhileUsing) {
                 ((IFirstPersonRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, evt.getSwingProgress());
             }
@@ -48,5 +48,4 @@ public class SwordBlockingRenderer {
         matrixStack.mulPose(Vector3f.YP.rotationDegrees(signum * 13.365F));
         matrixStack.mulPose(Vector3f.ZP.rotationDegrees(signum * 78.05F));
     }
-
 }

@@ -1,8 +1,8 @@
 package fuzs.goldenagecombat.mixin.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.client.element.LegacyAnimationsElement;
-import fuzs.goldenagecombat.handler.SwordBlockingElement;
+import fuzs.goldenagecombat.client.element.LegacyAnimationsRenderer;
+import fuzs.goldenagecombat.handler.SwordBlockingHandler;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.entity.model.AgeableModel;
 import net.minecraft.client.renderer.entity.model.BipedModel;
@@ -31,9 +31,9 @@ public abstract class BipedModelMixin<T extends LivingEntity> extends AgeableMod
 
         if (entityIn instanceof AbstractClientPlayerEntity) {
 
-            if (GoldenAgeCombat.SWORD_BLOCKING.isEnabled() && SwordBlockingElement.isActiveItemStackBlocking((PlayerEntity) entityIn)) {
+            if (GoldenAgeCombat.SWORD_BLOCKING.isEnabled() && SwordBlockingHandler.isActiveItemStackBlocking((PlayerEntity) entityIn)) {
 
-                LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
+                LegacyAnimationsRenderer element = (LegacyAnimationsRenderer) GoldenAgeCombat.LEGACY_ANIMATIONS;
                 boolean renderModernPose = !element.isEnabled() || !element.oldBlockingPose;
                 if (entityIn.getActiveHand() == Hand.OFF_HAND) {
 

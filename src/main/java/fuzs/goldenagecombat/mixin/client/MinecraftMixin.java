@@ -1,7 +1,7 @@
 package fuzs.goldenagecombat.mixin.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.client.element.LegacyAnimationsElement;
+import fuzs.goldenagecombat.client.element.LegacyAnimationsRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.player.ClientPlayerEntity;
 import net.minecraft.client.multiplayer.PlayerController;
@@ -22,7 +22,7 @@ public abstract class MinecraftMixin extends RecursiveEventLoop<Runnable> {
     @Redirect(method = "rightClickMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/PlayerController;getIsHittingBlock()Z"))
     public boolean getIsHittingBlock(PlayerController playerController) {
 
-        LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
+        LegacyAnimationsRenderer element = (LegacyAnimationsRenderer) GoldenAgeCombat.LEGACY_ANIMATIONS;
         if (element.isEnabled() && element.attackWhileUsing) {
 
             return false;
@@ -34,7 +34,7 @@ public abstract class MinecraftMixin extends RecursiveEventLoop<Runnable> {
     @Redirect(method = "sendClickBlockToController", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/player/ClientPlayerEntity;isHandActive()Z"))
     public boolean isHandActive(ClientPlayerEntity player) {
 
-        LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
+        LegacyAnimationsRenderer element = (LegacyAnimationsRenderer) GoldenAgeCombat.LEGACY_ANIMATIONS;
         if (element.isEnabled() && element.attackWhileUsing) {
 
             return false;

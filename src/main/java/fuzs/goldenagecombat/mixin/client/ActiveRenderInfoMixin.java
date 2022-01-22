@@ -1,7 +1,7 @@
 package fuzs.goldenagecombat.mixin.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.client.element.LegacyAnimationsElement;
+import fuzs.goldenagecombat.client.element.LegacyAnimationsRenderer;
 import net.minecraft.client.renderer.ActiveRenderInfo;
 import net.minecraft.entity.Entity;
 import org.spongepowered.asm.mixin.Mixin;
@@ -24,7 +24,7 @@ public abstract class ActiveRenderInfoMixin {
     @Inject(method = "interpolateHeight", at = @At("TAIL"))
     public void interpolateHeight(CallbackInfo callbackInfo) {
 
-        LegacyAnimationsElement element = (LegacyAnimationsElement) GoldenAgeCombat.LEGACY_ANIMATIONS;
+        LegacyAnimationsRenderer element = (LegacyAnimationsRenderer) GoldenAgeCombat.LEGACY_ANIMATIONS;
         if (element.isEnabled() && element.instantEyeHeight) {
 
             if (this.renderViewEntity != null) {

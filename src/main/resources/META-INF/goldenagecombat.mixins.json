@@ -5,17 +5,15 @@
   "package": "fuzs.goldenagecombat.mixin",
   "refmap": "META-INF/goldenagecombat.refmap.json",
   "mixins": [
-    "accessor.IItemAccessor",
-    "accessor.ILivingEntityAccessor",
     "DamageEnchantmentMixin",
     "FishingBobberEntityMixin",
     "FoodStatsMixin",
     "LivingEntityMixin",
-    "PlayerEntityMixin"
+    "PlayerEntityMixin",
+    "accessor.ItemAccessor",
+    "accessor.LivingEntityAccessor"
   ],
   "client": [
-    "client.accessor.IFirstPersonRendererAccessor",
-    "client.accessor.ILivingRendererAccessor",
     "client.ActiveRenderInfoMixin",
     "client.BipedArmorLayerMixin",
     "client.BipedModelMixin",
@@ -23,7 +21,9 @@
     "client.EntityMixin",
     "client.FirstPersonRendererMixin",
     "client.MinecraftMixin",
-    "client.MovementInputMixin"
+    "client.MovementInputMixin",
+    "client.accessor.IFirstPersonRendererAccessor",
+    "client.accessor.ILivingRendererAccessor"
   ],
   "injectors": {
     "defaultRequire": 1
