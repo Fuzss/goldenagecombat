@@ -1,4 +1,4 @@
-package fuzs.goldenagecombat.client.element;
+package fuzs.goldenagecombat.client.handler;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;

@@ -1,4 +1,4 @@
-package fuzs.goldenagecombat.client.element;
+package fuzs.goldenagecombat.client.handler;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
@@ -72,37 +72,37 @@ public class LegacyAnimationsRenderer {
                 case NONE:
                 case BLOCK:
 
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmTransform(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmAttackTransform(matrixStack, handSide, swingProgress);
                     break;
                 case EAT:
 
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformEatFirstPerson(matrixStack, partialTicks, handSide, stack);
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyEatTransform(matrixStack, partialTicks, handSide, stack);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmTransform(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmAttackTransform(matrixStack, handSide, swingProgress);
                     break;
                 case DRINK:
 
                     // vanilla bug will cause a hit when using, screwing with the whole animation
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformEatFirstPerson(matrixStack, partialTicks, handSide, stack);
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyEatTransform(matrixStack, partialTicks, handSide, stack);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmTransform(matrixStack, handSide, equippedProgress);
                     break;
                 case BOW:
 
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmTransform(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmAttackTransform(matrixStack, handSide, swingProgress);
                     this.transformBowFirstPerson(matrixStack, partialTicks, handSide, stack);
                     break;
                 case SPEAR:
 
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmTransform(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmAttackTransform(matrixStack, handSide, swingProgress);
                     this.transformSpearFirstPerson(matrixStack, partialTicks, handSide, stack);
                     break;
                 case CROSSBOW:
 
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, equippedProgress);
-                    ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, swingProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmTransform(matrixStack, handSide, equippedProgress);
+                    ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmAttackTransform(matrixStack, handSide, swingProgress);
                     this.transformCrossbowFirstPerson(matrixStack, partialTicks, handSide, stack);
                     break;
             }

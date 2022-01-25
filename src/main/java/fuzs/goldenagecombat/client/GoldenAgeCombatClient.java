@@ -1,9 +1,7 @@
 package fuzs.goldenagecombat.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.client.element.AttributesTooltipHandler;
-import fuzs.goldenagecombat.client.element.LegacyAnimationsRenderer;
-import fuzs.goldenagecombat.client.element.SwordBlockingRenderer;
+import fuzs.goldenagecombat.client.handler.*;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.eventbus.api.EventPriority;
@@ -26,5 +24,11 @@ public class GoldenAgeCombatClient {
         MinecraftForge.EVENT_BUS.addListener(attributesTooltipHandler::onItemTooltip);
         final SwordBlockingRenderer swordBlockingRenderer = new SwordBlockingRenderer();
         MinecraftForge.EVENT_BUS.addListener(swordBlockingRenderer::onRenderHand);
+        final ClientCooldownHandler clientCooldownHandler = new ClientCooldownHandler();
+        MinecraftForge.EVENT_BUS.addListener(clientCooldownHandler::onRenderGameOverlay);
+        MinecraftForge.EVENT_BUS.addListener(clientCooldownHandler::onClientTick);
+        final AttackIndicatorOptionHandler attackIndicatorOptionHandler = new AttackIndicatorOptionHandler();
+        MinecraftForge.EVENT_BUS.addListener(attackIndicatorOptionHandler::onScreenInit);
+        MinecraftForge.EVENT_BUS.addListener(attackIndicatorOptionHandler::onDrawScreen);
     }
 }

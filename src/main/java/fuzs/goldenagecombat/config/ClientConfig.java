@@ -5,12 +5,23 @@ import fuzs.puzzleslib.config.annotation.Config;
 
 public class ClientConfig extends AbstractConfig {
     @Config
+    public ClassicConfig classic = new ClassicConfig();
+    @Config
     public AnimationsConfig animations = new AnimationsConfig();
     @Config
     public TooltipConfig tooltip = new TooltipConfig();
 
     public ClientConfig() {
         super("");
+    }
+
+    public static class ClassicConfig extends AbstractConfig {
+        @Config(name = "hide_attack_indicator", description = "Prevent attack indicator from rendering regardless of what's been set for the \"Attack Indicator\" option in video settings.")
+        public boolean hideAttackIndicator = true;
+
+        public ClassicConfig() {
+            super("classic_combat");
+        }
     }
 
     public static class AnimationsConfig extends AbstractConfig {

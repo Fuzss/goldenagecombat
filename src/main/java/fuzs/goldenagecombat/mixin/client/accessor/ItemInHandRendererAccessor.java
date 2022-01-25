@@ -2,20 +2,19 @@ package fuzs.goldenagecombat.mixin.client.accessor;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.ItemInHandRenderer;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.HandSide;
+import net.minecraft.world.entity.HumanoidArm;
+import net.minecraft.world.item.ItemStack;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.gen.Invoker;
 
 @Mixin(ItemInHandRenderer.class)
 public interface ItemInHandRendererAccessor {
     @Invoker
-    void callTransformEatFirstPerson(PoseStack matrixStackIn, float partialTicks, HandSide handIn, ItemStack stack);
+    void callApplyEatTransform(PoseStack matrixStackIn, float partialTicks, HumanoidArm handIn, ItemStack stack);
 
     @Invoker
-    void callTransformFirstPerson(PoseStack matrixStackIn, HandSide handIn, float swingProgress);
+    void callApplyItemArmAttackTransform(PoseStack matrixStackIn, HumanoidArm handIn, float swingProgress);
 
     @Invoker
-    void callTransformSideFirstPerson(PoseStack matrixStackIn, HandSide handIn, float equippedProg);
-    
+    void callApplyItemArmTransform(PoseStack matrixStackIn, HumanoidArm handIn, float equippedProg);
 }

@@ -8,29 +8,28 @@ import net.minecraft.entity.LivingEntity;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.particles.IParticleData;
 import net.minecraft.world.World;
+import net.minecraft.world.entity.EntityType;
+import net.minecraft.world.entity.LivingEntity;
+import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.server.ServerWorld;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
 
-@SuppressWarnings("unused")
-@Mixin(PlayerEntity.class)
+@Mixin(Player.class)
 public abstract class PlayerEntityMixin extends LivingEntity {
-
-    protected PlayerEntityMixin(EntityType<? extends LivingEntity> type, World worldIn) {
-
-        super(type, worldIn);
+    protected PlayerEntityMixin(EntityType<? extends LivingEntity> p_20966_, Level p_20967_) {
+        super(p_20966_, p_20967_);
     }
 
-    @ModifyConstant(method = "attackEntityFrom", constant = @Constant(floatValue = 0.0F))
-    public float getIgnoredDamageAmount(float amount) {
-
-        ClassicCombatHandler element = (ClassicCombatHandler) GoldenAgeCombat.CLASSIC_COMBAT;
-        if (element.isEnabled() && element.weakPlayerKnockback) {
-
+    @ModifyConstant(method = "hurt", constant = @Constant(floatValue = 0.0F))
+    public float hurt$ignoredDamageAmount(float oldAmount) {
+        // replaces value used for comparing what amount to ignore, but also damage amount for peaceful mode
+        // both are necessary as the values are compared using '=='
+        if (GoldenAgeCombat.CONFIG.server().classic.weakPlayerKnockback) {
             return Float.MIN_VALUE;
         }
-
-        return amount;
+        return oldAmount;
     }
 
     @Redirect(method = "attackTargetEntityWithCurrentItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/entity/player/PlayerEntity;isSprinting()Z"), slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/entity/player/PlayerEntity;fallDistance:F")))

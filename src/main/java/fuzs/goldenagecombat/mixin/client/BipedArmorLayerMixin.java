@@ -1,7 +1,7 @@
 package fuzs.goldenagecombat.mixin.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.client.element.LegacyAnimationsRenderer;
+import fuzs.goldenagecombat.client.handler.LegacyAnimationsRenderer;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;

@@ -38,8 +38,8 @@ public class ServerConfig extends AbstractConfig {
         public boolean oldAttackDamage = true;
         @Config(name = "attack_damage_blacklist", description = {"Blacklist for items to not have their damage value changed by the \"Legacy Attack Damage\" option.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
         private List<String> attackDamageBlacklistRaw = Lists.newArrayList();
-        @Config(name = "disable_health_regen_boost", description = "Surplus saturation is no longer used for quick health regeneration, resulting in health only being regenerated from food every 4 seconds.")
-        public boolean noFastRegen = true;
+        @Config(name = "food_mechanics", description = "Surplus saturation is no longer used for quick health regeneration, resulting in health only being regenerated from food every 4 seconds.")
+        public boolean foodMechanics = true;
         @Config(name = "weak_attacks_knock_back_player", description = "Player is knocked back by attacks which do not cause any damage, such as when hit by snowballs.")
         public boolean weakPlayerKnockback = true;
         @Config(name = "critical_sprint_hits", description = "Sprinting and attacking no longer interfere with each other, making critical hits possible at all times.")
@@ -54,6 +54,10 @@ public class ServerConfig extends AbstractConfig {
         public boolean goldenAppleEffects = true;
         @Config(name = "sideways_backwards_walking", description = "The player's body turns sideways when walking backwards instead of remaining straight.")
         public boolean backwardsWalking = true;
+        @Config(name = "inflate_hitboxes", description = "Expand all entity hitboxes by 10%, making hitting a target possible from a slightly greater range and with much increased accuracy.")
+        public boolean inflateHitboxes = false;
+        @Config(name = "quick_slowdown", description = "When slowing down movement or stopping completely momentum is lost much quicker.")
+        public boolean quickSlowdown = false;
 
         public Set<Item> attackDamageBlacklist;
 

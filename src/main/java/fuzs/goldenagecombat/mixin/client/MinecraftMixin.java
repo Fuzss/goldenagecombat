@@ -1,46 +1,42 @@
 package fuzs.goldenagecombat.mixin.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.client.element.LegacyAnimationsRenderer;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.player.ClientPlayerEntity;
-import net.minecraft.client.multiplayer.PlayerController;
-import net.minecraft.util.concurrent.RecursiveEventLoop;
+import net.minecraft.client.Options;
+import net.minecraft.client.multiplayer.MultiPlayerGameMode;
+import net.minecraft.client.player.LocalPlayer;
+import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
+import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Redirect;
 
-@SuppressWarnings("unused")
 @Mixin(Minecraft.class)
-public abstract class MinecraftMixin extends RecursiveEventLoop<Runnable> {
+public abstract class MinecraftMixin {
+    @Shadow
+    @Final
+    public Options options;
+    @Shadow
+    public MultiPlayerGameMode gameMode;
+    @Shadow
+    public LocalPlayer player;
 
-    public MinecraftMixin(String name) {
-
-        super(name);
-    }
-
-    @Redirect(method = "rightClickMouse", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/PlayerController;getIsHittingBlock()Z"))
-    public boolean getIsHittingBlock(PlayerController playerController) {
-
-        LegacyAnimationsRenderer element = (LegacyAnimationsRenderer) GoldenAgeCombat.LEGACY_ANIMATIONS;
-        if (element.isEnabled() && element.attackWhileUsing) {
-
-            return false;
+    @Redirect(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0))
+    public boolean handleKeybinds$isUsingItem(LocalPlayer player) {
+        if (!GoldenAgeCombat.CONFIG.client().animations.attackWhileUsing) return player.isUsingItem();
+        if (player.isUsingItem()) {
+            if (!this.options.keyUse.isDown()) {
+                this.gameMode.releaseUsingItem(this.player);
+            }
+            while (this.options.keyUse.consumeClick()) {
+            }
         }
-
-        return playerController.getIsHittingBlock();
+        return false;
     }
 
-    @Redirect(method = "sendClickBlockToController", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/entity/player/ClientPlayerEntity;isHandActive()Z"))
-    public boolean isHandActive(ClientPlayerEntity player) {
-
-        LegacyAnimationsRenderer element = (LegacyAnimationsRenderer) GoldenAgeCombat.LEGACY_ANIMATIONS;
-        if (element.isEnabled() && element.attackWhileUsing) {
-
-            return false;
-        }
-
-        return player.isHandActive();
+    @Redirect(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z"))
+    public boolean continueAttack$isUsingItem(LocalPlayer player) {
+        if (!GoldenAgeCombat.CONFIG.client().animations.attackWhileUsing) return player.isUsingItem();
+        return false;
     }
-
 }

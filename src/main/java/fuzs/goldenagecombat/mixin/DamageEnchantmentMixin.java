@@ -1,12 +1,6 @@
 package fuzs.goldenagecombat.mixin;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.handler.ClassicCombatHandler;
-import net.minecraft.enchantment.DamageEnchantment;
-import net.minecraft.enchantment.Enchantment;
-import net.minecraft.enchantment.EnchantmentType;
-import net.minecraft.entity.CreatureAttribute;
-import net.minecraft.inventory.EquipmentSlotType;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.MobType;
 import net.minecraft.world.item.enchantment.DamageEnchantment;
@@ -31,12 +25,8 @@ public abstract class DamageEnchantmentMixin extends Enchantment {
 
     @Inject(method = "getDamageBonus", at = @At("HEAD"), cancellable = true)
     public void getDamageBonus(int level, MobType creatureType, CallbackInfoReturnable<Float> callbackInfo) {
-
-        ClassicCombatHandler element = (ClassicCombatHandler) GoldenAgeCombat.CLASSIC_COMBAT;
-        if (element.isEnabled() && element.boostSharpness && this.damageType == 0) {
-
+        if (this.damageType == 0 && GoldenAgeCombat.CONFIG.server().classic.boostSharpness) {
             callbackInfo.setReturnValue(level * 1.25F);
         }
     }
-
 }

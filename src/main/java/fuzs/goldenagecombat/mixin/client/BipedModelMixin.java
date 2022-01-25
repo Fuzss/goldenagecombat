@@ -1,7 +1,7 @@
 package fuzs.goldenagecombat.mixin.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.client.element.LegacyAnimationsRenderer;
+import fuzs.goldenagecombat.client.handler.LegacyAnimationsRenderer;
 import fuzs.goldenagecombat.handler.SwordBlockingHandler;
 import net.minecraft.client.entity.player.AbstractClientPlayerEntity;
 import net.minecraft.client.renderer.entity.model.AgeableModel;

@@ -1,4 +1,4 @@
-package fuzs.goldenagecombat.client.element;
+package fuzs.goldenagecombat.client.handler;
 
 import com.mojang.blaze3d.vertex.PoseStack;
 import com.mojang.math.Vector3f;
@@ -22,20 +22,20 @@ public class SwordBlockingRenderer {
         Player player = minecraft.player;
         ItemStack stack = evt.getItemStack();
         if (player.getUsedItemHand() == evt.getHand() && SwordBlockingHandler.isActiveItemStackBlocking(player)) {
-            evt.setCanceled(true);
             ItemInHandRenderer itemRenderer = minecraft.getItemInHandRenderer();
             PoseStack matrixStack = evt.getPoseStack();
             matrixStack.pushPose();
             boolean isMainHand = evt.getHand() == InteractionHand.MAIN_HAND;
             HumanoidArm handSide = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
             boolean isHandSideRight = handSide == HumanoidArm.RIGHT;
-            ((ItemInHandRendererAccessor) itemRenderer).callTransformSideFirstPerson(matrixStack, handSide, evt.getEquipProgress());
+            ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmTransform(matrixStack, handSide, evt.getEquipProgress());
             if (GoldenAgeCombat.CONFIG.client().animations.attackWhileUsing) {
-                ((ItemInHandRendererAccessor) itemRenderer).callTransformFirstPerson(matrixStack, handSide, evt.getSwingProgress());
+                ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmAttackTransform(matrixStack, handSide, evt.getSwingProgress());
             }
             this.transformBlockFirstPerson(matrixStack, handSide);
             itemRenderer.renderItem(player, stack, isHandSideRight ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isHandSideRight, matrixStack, evt.getMultiBufferSource(), evt.getPackedLight());
             matrixStack.popPose();
+            evt.setCanceled(true);
         }
     }
 
