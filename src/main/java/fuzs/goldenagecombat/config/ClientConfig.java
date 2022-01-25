@@ -29,6 +29,8 @@ public class ClientConfig extends AbstractConfig {
         public boolean damageOnArmor = true;
         @Config(name = "attack_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching.")
         public boolean attackWhileUsing = true;
+        @Config(name = "old_blocking_pose", description = "Use old third-person pose when blocking with a sword.")
+        public boolean oldBlockingPose = true;
         @Config(name = "disable_flashing_hearts", description = "Lost hearts no longer flash when disappearing.")
         public boolean noFlashingHearts = false;
         @Config(name = "instant_eye_height_change", description = "Eye height changes instantly without any interpolation. Affects mainly sneaking and swimming.")

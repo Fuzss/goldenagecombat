@@ -52,8 +52,6 @@ public class ServerConfig extends AbstractConfig {
         public boolean boostSharpness = false;
         @Config(name = "notch_apple_effects", description = "Give Regeneration V and Absorption I instead of Regeneration II and Absorption IV after consuming a notch apple.")
         public boolean goldenAppleEffects = true;
-        @Config(name = "sideways_backwards_walking", description = "The player's body turns sideways when walking backwards instead of remaining straight.")
-        public boolean backwardsWalking = true;
         @Config(name = "inflate_hitboxes", description = "Expand all entity hitboxes by 10%, making hitting a target possible from a slightly greater range and with much increased accuracy.")
         public boolean inflateHitboxes = false;
         @Config(name = "quick_slowdown", description = "When slowing down movement or stopping completely momentum is lost much quicker.")

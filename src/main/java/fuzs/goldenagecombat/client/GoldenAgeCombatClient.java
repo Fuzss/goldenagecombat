@@ -17,9 +17,8 @@ public class GoldenAgeCombatClient {
     }
 
     private static void registerHandlers() {
-        final LegacyAnimationsRenderer legacyAnimationsRenderer = new LegacyAnimationsRenderer();
-        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, legacyAnimationsRenderer::onRenderHand);
-        MinecraftForge.EVENT_BUS.addListener(legacyAnimationsRenderer::onRenderGameOverlay);
+        final ItemInHandHandler itemInHandHandler = new ItemInHandHandler();
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, itemInHandHandler::onRenderHand);
         final AttributesTooltipHandler attributesTooltipHandler = new AttributesTooltipHandler();
         MinecraftForge.EVENT_BUS.addListener(attributesTooltipHandler::onItemTooltip);
         final SwordBlockingRenderer swordBlockingRenderer = new SwordBlockingRenderer();

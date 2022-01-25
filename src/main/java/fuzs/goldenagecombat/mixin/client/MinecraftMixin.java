@@ -28,6 +28,7 @@ public abstract class MinecraftMixin {
             if (!this.options.keyUse.isDown()) {
                 this.gameMode.releaseUsingItem(this.player);
             }
+            // all other keys should work, but not this one as it is the one need to keep using the item
             while (this.options.keyUse.consumeClick()) {
             }
         }
@@ -37,6 +38,12 @@ public abstract class MinecraftMixin {
     @Redirect(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z"))
     public boolean continueAttack$isUsingItem(LocalPlayer player) {
         if (!GoldenAgeCombat.CONFIG.client().animations.attackWhileUsing) return player.isUsingItem();
+        return false;
+    }
+
+    @Redirect(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isDestroying()Z"))
+    public boolean startUseItem$isDestroying(MultiPlayerGameMode gameMode) {
+        if (!GoldenAgeCombat.CONFIG.client().animations.attackWhileUsing) return gameMode.isDestroying();
         return false;
     }
 }

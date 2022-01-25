@@ -1,7 +1,7 @@
 package fuzs.goldenagecombat.mixin.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.client.handler.LegacyAnimationsRenderer;
+import fuzs.goldenagecombat.client.handler.ItemInHandHandler;
 import com.mojang.blaze3d.matrix.MatrixStack;
 import com.mojang.blaze3d.vertex.IVertexBuilder;
 import net.minecraft.client.renderer.IRenderTypeBuffer;
@@ -45,7 +45,7 @@ public abstract class BipedArmorLayerMixin<T extends LivingEntity, M extends Bip
     private void renderArmor(BipedArmorLayer<T, M, A> armorLayer, MatrixStack matrixStackIn, IRenderTypeBuffer bufferIn, int packedLightIn, boolean glintIn, A modelIn, float red, float green, float blue, ResourceLocation armorResource, MatrixStack matrixStackIn2, IRenderTypeBuffer bufferIn2, T entityIn) {
 
         IVertexBuilder ivertexbuilder = ItemRenderer.getBuffer(bufferIn, RenderType.getEntityCutoutNoCull(armorResource), false, glintIn);
-        LegacyAnimationsRenderer element = (LegacyAnimationsRenderer) GoldenAgeCombat.LEGACY_ANIMATIONS;
+        ItemInHandHandler element = (ItemInHandHandler) GoldenAgeCombat.LEGACY_ANIMATIONS;
         modelIn.render(matrixStackIn, ivertexbuilder, packedLightIn, element.isEnabled() && element.damageOnArmor ? LivingRenderer.getPackedOverlay(entityIn, 0.0F) : OverlayTexture.NO_OVERLAY, red, green, blue, 1.0F);
     }
 
