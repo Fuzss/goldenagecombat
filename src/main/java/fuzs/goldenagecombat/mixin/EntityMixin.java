@@ -1,4 +1,4 @@
-package fuzs.goldenagecombat.mixin.client;
+package fuzs.goldenagecombat.mixin;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
 import net.minecraft.world.entity.Entity;

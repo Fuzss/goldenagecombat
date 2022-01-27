@@ -2,20 +2,16 @@ package fuzs.goldenagecombat;
 
 import fuzs.goldenagecombat.config.ClientConfig;
 import fuzs.goldenagecombat.config.ServerConfig;
-import fuzs.goldenagecombat.data.ModRecipeProvider;
 import fuzs.goldenagecombat.handler.ClassicCombatHandler;
 import fuzs.goldenagecombat.handler.CombatAdjustmentsHandler;
 import fuzs.goldenagecombat.handler.SwordBlockingHandler;
 import fuzs.puzzleslib.config.ConfigHolder;
 import fuzs.puzzleslib.config.ConfigHolderImpl;
-import net.minecraft.data.DataGenerator;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.data.ExistingFileHelper;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
-import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -48,12 +44,5 @@ public class GoldenAgeCombat {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, swordBlockingHandler::onRightClickItem);
         MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onItemUseStart);
         MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onLivingHurt);
-    }
-
-    @SubscribeEvent
-    public static void onGatherData(final GatherDataEvent evt) {
-        DataGenerator generator = evt.getGenerator();
-        final ExistingFileHelper existingFileHelper = evt.getExistingFileHelper();
-        generator.addProvider(new ModRecipeProvider(generator));
     }
 }

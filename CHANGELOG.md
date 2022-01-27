@@ -15,11 +15,10 @@ The format is based on [Keep a Changelog].
 - Converted some item tags to config options to allow for easier access
 ### Fixed
 - Sword blocking in third-person now correctly renders the old pose from 1.7 
-- Block hitting/food punching/bow punching now work reliably
-- Fixed potion punching animation
+- Animations for block hitting/food punching/bow punching now work more reliably
 ### Removed
 - Removed armor and elytra turning red when taking damage, this seems to no longer work in 1.18
-- Removed fishing rod mechanics for now, they'll return soon
 - Removed option for disabling lost health from flashing, should also return soon
+- Removed option for hiding damage indicator particles, will return soon
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/

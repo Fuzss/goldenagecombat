@@ -5,8 +5,6 @@ import fuzs.puzzleslib.config.annotation.Config;
 
 public class ClientConfig extends AbstractConfig {
     @Config
-    public ClassicConfig classic = new ClassicConfig();
-    @Config
     public AnimationsConfig animations = new AnimationsConfig();
     @Config
     public TooltipConfig tooltip = new TooltipConfig();
@@ -15,20 +13,10 @@ public class ClientConfig extends AbstractConfig {
         super("");
     }
 
-    public static class ClassicConfig extends AbstractConfig {
-        @Config(name = "hide_attack_indicator", description = "Prevent attack indicator from rendering regardless of what's been set for the \"Attack Indicator\" option in video settings.")
-        public boolean hideAttackIndicator = true;
-
-        public ClassicConfig() {
-            super("classic_combat");
-        }
-    }
-
     public static class AnimationsConfig extends AbstractConfig {
-        @Config(name = "sword_blocking_with_shield", description = {"When holding a shield in your offhand, hide it and show a sword block when actively blocking instead.", "Mainly useful on some servers that enable sword blocking by temporarily giving you a shield."})
-        public boolean swordBlockingWithShield = true;
-        @Config(name = "attack_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching.")
-        public boolean attackWhileUsing = true;
+        // TODO finish implementation
+//        @Config(name = "sword_blocking_with_shield", description = {"When holding a shield in your offhand, hide it and show a sword block when actively blocking instead.", "Mainly useful on some servers that enable sword blocking by temporarily giving you a shield."})
+        public boolean swordBlockingWithShield = false;
         @Config(name = "simple_blocking_pose", description = "Use the much simpler third-person pose when blocking with a sword from minecaft 1.8 instead of the default one from before that.")
         public boolean simpleBlockingPose = false;
         @Config(name = "disable_flashing_hearts", description = "Lost hearts no longer flash when disappearing.")
@@ -46,8 +34,6 @@ public class ClientConfig extends AbstractConfig {
         public boolean removeAllAttributes = false;
         @Config(name = "old_attributes_style", description = "Use the pre-1.13 renderer for attributes on item tooltips.")
         public boolean oldAttributes = true;
-        @Config(name = "remove_attack_speed", description = "Remove \"Attack Speed\" attribute from item tooltips.")
-        public boolean removeAttackSpeed = true;
 
         public TooltipConfig() {
             super("attributes_tooltip");

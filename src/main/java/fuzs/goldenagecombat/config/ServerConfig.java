@@ -32,7 +32,7 @@ public class ServerConfig extends AbstractConfig {
     }
 
     public enum FoodMechanics {
-        VANILLA, COMBAT_UPDATE, LEGACY
+        VANILLA, COMBAT_UPDATE, LEGACY_COMBAT, CUSTOM
     }
 
     public static class ClassicConfig extends AbstractConfig {
@@ -42,8 +42,8 @@ public class ServerConfig extends AbstractConfig {
         public boolean oldAttackDamage = true;
         @Config(name = "attack_damage_blacklist", description = {"Blacklist for items to not have their damage value changed by the \"Legacy Attack Damage\" option.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
         private List<String> attackDamageBlacklistRaw = Lists.newArrayList();
-        @Config(name = "food_mechanics", description = {"Choose the food mechanics to use:", "\"VANILLA\" will change nothing and use surplus saturation for very quick health regeneration.", "\"LEGACY\" will make health only regenerated every 4 seconds, while requiring 18 or more food points.", "\"COMBAT_TEST\" will make health regenerated every 2 seconds, which requires more than 6 food points."})
-        public FoodMechanics foodMechanics = FoodMechanics.COMBAT_UPDATE;
+        @Config(name = "food_mechanics", description = {"Choose the food mechanics to use:", "\"VANILLA\" will change nothing and use surplus saturation for very quick health regeneration.", "\"LEGACY_COMBAT\" will make health only regenerated every 4 seconds, while requiring 18 or more food points.", "\"CUSTOM\" will make health only regenerated every 3 seconds, which requires more than 6 food points.", "\"COMBAT_TEST\" will make health regenerated every 2 seconds, which requires more than 6 food points. Also food points will be directly consumed when healing."})
+        public FoodMechanics foodMechanics = FoodMechanics.CUSTOM;
         @Config(name = "weak_attacks_knock_back_player", description = "Player is knocked back by attacks which do not cause any damage, such as when hit by snowballs.")
         public boolean weakPlayerKnockback = true;
         @Config(name = "critical_hits_while_sprinting", description = "Sprinting and attacking no longer interfere with each other, making critical hits possible at all times.")
@@ -52,6 +52,8 @@ public class ServerConfig extends AbstractConfig {
         public boolean fishingRodKnockback = true;
         @Config(name = "fishing_rod_launches_entities", description = "Entities reeled in using a fishing rod are slightly launched upwards.")
         public boolean fishingRodLaunch = true;
+        @Config(name = "fishing_rod_breaks_slower", description = "Hooking entities with a fishing rod causes only 3 damage points to the rod instead of 5.")
+        public boolean fishingRodSlowerBreaking = true;
         @Config(name = "boost_sharpness", description = "Boost sharpness enchantment to 1.25 damage points per level instead of just 0.5.")
         public boolean boostSharpness = false;
         @Config(name = "notch_apple_effects", description = "Give Regeneration V and Absorption I instead of Regeneration II and Absorption IV after consuming a notch apple.")
@@ -62,6 +64,8 @@ public class ServerConfig extends AbstractConfig {
         public boolean inflateHitboxes = true;
         @Config(name = "quick_slowdown", description = "When slowing down movement or stopping completely momentum is lost much quicker.")
         public boolean quickSlowdown = true;
+        @Config(name = "attack_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching.")
+        public boolean attackWhileUsing = true;
 
         public Set<Item> attackDamageBlacklist;
 
@@ -108,6 +112,10 @@ public class ServerConfig extends AbstractConfig {
         private List<String> canceledAttackSoundsRaw = EntryCollectionBuilder.getKeyList(ForgeRegistries.SOUND_EVENTS, SoundEvents.PLAYER_ATTACK_CRIT, SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundEvents.PLAYER_ATTACK_STRONG, SoundEvents.PLAYER_ATTACK_WEAK);
         @Config(name = "hide_damage_indicators", description = "Stop heart particles spawned when the player attacks an entity from appearing.")
         public boolean noDamageIndicators = true;
+        @Config(name = "min_hitbox_size", description = {"Force all entity hitboxes to have a cubic size of at least 0.9 blocks.", "This only affects targeting an entity, no collisions or whatsoever. Useful for e.g. bats, rabbits, silverfish, fish, and most baby animals."})
+        public boolean minHitboxSize = true;
+        @Config(name = "half_sweeping_damage", description = "Only apply half the sweeping damage to indirectly hit mobs as seen in most recent combat test snapshots.")
+        public boolean halfSweepingDamage = true;
 
         public Set<SoundEvent> canceledAttackSounds;
 

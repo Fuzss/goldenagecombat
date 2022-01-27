@@ -35,7 +35,7 @@ public class AttributesTooltipHandler {
             if (!GoldenAgeCombat.CONFIG.client().tooltip.removeAllAttributes && startIndex != -1 && GoldenAgeCombat.CONFIG.client().tooltip.oldAttributes) {
                 this.addOldStyleAttributes(list, evt.getItemStack(), evt.getPlayer(), startIndex);
             }
-        } else if (GoldenAgeCombat.CONFIG.client().tooltip.removeAttackSpeed) {
+        } else if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
             this.removeAttackSpeedAttribute(list);
         }
     }
@@ -134,7 +134,7 @@ public class AttributesTooltipHandler {
 
     private void addAttributesToTooltip(List<Component> list, Player player, ItemStack stack, Multimap<Attribute, AttributeModifier> multimap) {
         for (Map.Entry<Attribute, AttributeModifier> entry : multimap.entries()) {
-            if (GoldenAgeCombat.CONFIG.client().tooltip.removeAttackSpeed && entry.getKey().equals(Attributes.ATTACK_SPEED)) continue;
+            if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown && entry.getKey().equals(Attributes.ATTACK_SPEED)) continue;
             AttributeModifier attributemodifier = entry.getValue();
             double d0 = attributemodifier.getAmount();
             boolean flag = false;

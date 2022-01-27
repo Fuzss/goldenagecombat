@@ -6,16 +6,18 @@
   "refmap": "META-INF/goldenagecombat.refmap.json",
   "mixins": [
     "DamageEnchantmentMixin",
+    "EntityMixin",
+    "FishingHookMixin",
     "FoodDataMixin",
     "LivingEntityMixin",
     "PlayerMixin",
     "ProjectileUtilMixin",
+    "SweepingEdgeEnchantmentMixin",
     "accessor.ItemAccessor",
     "accessor.LivingEntityAccessor"
   ],
   "client": [
     "client.CameraMixin",
-    "client.EntityMixin",
     "client.HumanoidModelMixin",
     "client.InputMixin",
     "client.ItemInHandRendererMixin",
