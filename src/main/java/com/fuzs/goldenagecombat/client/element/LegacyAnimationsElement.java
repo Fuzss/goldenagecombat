@@ -58,7 +58,7 @@ public class LegacyAnimationsElement extends AbstractElement implements IClientE
 
         addToConfig(builder.comment("Armor on entities turns red when they receive damage just like their body.").define("Render Damage On Armor", true), v -> this.damageOnArmor = v);
         addToConfig(builder.comment("Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching.").define("Attack While Using", true), v -> this.attackWhileUsing = v);
-        addToConfig(builder.comment("Use old third-person pose when blocking with a sword.").define("Old Blocking Pose", false), v -> this.oldBlockingPose = v);
+        addToConfig(builder.comment("Use old third-person pose when blocking with a sword.").define("Old Blocking Pose", true), v -> this.oldBlockingPose = v);
         addToConfig(builder.comment("Lost hearts no longer flash when disappearing.").define("Disable Flashing Hearts", false), v -> this.noFlashingHearts = v);
         addToConfig(builder.comment("Eye height changes instantly without any interpolation. Affects mainly sneaking and swimming.").define("Instant Eye Height", false), v -> this.instantEyeHeight = v);
     }

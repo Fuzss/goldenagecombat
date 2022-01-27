@@ -61,8 +61,8 @@ public class ClassicCombatExtension extends ElementExtension<ClassicCombatElemen
     @Override
     public void setupClientConfig(ForgeConfigSpec.Builder builder) {
 
-        addToConfig(builder.comment("Expand all entity hitboxes by 10%, making hitting a target possible from a slightly greater range and with much increased accuracy.").define("Inflate Hitboxes", false), v -> this.inflateHitboxes = v);
-        addToConfig(builder.comment("When slowing down movement or stopping completely momentum is lost much quicker.").define("Quick Slowdown", false), v -> this.quickSlowdown = v);
+        addToConfig(builder.comment("Expand all entity hitboxes by 10%, making hitting a target possible from a slightly greater range and with much increased accuracy.").define("Inflate Hitboxes", true), v -> this.inflateHitboxes = v);
+        addToConfig(builder.comment("When slowing down movement or stopping completely momentum is lost much quicker.").define("Quick Slowdown", true), v -> this.quickSlowdown = v);
         addToConfig(builder.comment("Prevent attack indicator from rendering regardless of what's been set for the \"Attack Indicator\" option in video settings.").define("Remove Attack Indicator", true), v -> this.hideAttackIndicator = v);
     }
 
