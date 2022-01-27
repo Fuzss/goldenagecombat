@@ -25,12 +25,12 @@ public class ClientConfig extends AbstractConfig {
     }
 
     public static class AnimationsConfig extends AbstractConfig {
-        @Config(name = "render_damage_on_armor", description = "Armor on entities turns red when they receive damage just like their body.")
-        public boolean damageOnArmor = true;
+        @Config(name = "sword_blocking_with_shield", description = {"When holding a shield in your offhand, hide it and show a sword block when actively blocking instead.", "Mainly useful on some servers that enable sword blocking by temporarily giving you a shield."})
+        public boolean swordBlockingWithShield = true;
         @Config(name = "attack_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching.")
         public boolean attackWhileUsing = true;
-        @Config(name = "old_blocking_pose", description = "Use old third-person pose when blocking with a sword.")
-        public boolean oldBlockingPose = true;
+        @Config(name = "simple_blocking_pose", description = "Use the much simpler third-person pose when blocking with a sword from minecaft 1.8 instead of the default one from before that.")
+        public boolean simpleBlockingPose = false;
         @Config(name = "disable_flashing_hearts", description = "Lost hearts no longer flash when disappearing.")
         public boolean noFlashingHearts = false;
         @Config(name = "instant_eye_height_change", description = "Eye height changes instantly without any interpolation. Affects mainly sneaking and swimming.")

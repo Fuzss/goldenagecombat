@@ -6,24 +6,22 @@
   "refmap": "META-INF/goldenagecombat.refmap.json",
   "mixins": [
     "DamageEnchantmentMixin",
-    "FishingBobberEntityMixin",
-    "FoodStatsMixin",
+    "FoodDataMixin",
     "LivingEntityMixin",
-    "PlayerEntityMixin",
+    "PlayerMixin",
+    "ProjectileUtilMixin",
     "accessor.ItemAccessor",
     "accessor.LivingEntityAccessor"
   ],
   "client": [
-    "client.ActiveRenderInfoMixin",
-    "client.BipedArmorLayerMixin",
-    "client.BipedModelMixin",
-    "client.ElytraLayerMixin",
+    "client.CameraMixin",
     "client.EntityMixin",
-    "client.FirstPersonRendererMixin",
+    "client.HumanoidModelMixin",
+    "client.InputMixin",
+    "client.ItemInHandRendererMixin",
     "client.MinecraftMixin",
-    "client.MovementInputMixin",
-    "client.accessor.IFirstPersonRendererAccessor",
-    "client.accessor.ILivingRendererAccessor"
+    "client.PlayerItemInHandLayerMixin",
+    "client.accessor.ItemInHandRendererAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

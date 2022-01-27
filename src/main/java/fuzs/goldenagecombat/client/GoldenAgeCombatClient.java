@@ -24,7 +24,8 @@ public class GoldenAgeCombatClient {
         final SwordBlockingRenderer swordBlockingRenderer = new SwordBlockingRenderer();
         MinecraftForge.EVENT_BUS.addListener(swordBlockingRenderer::onRenderHand);
         final ClientCooldownHandler clientCooldownHandler = new ClientCooldownHandler();
-        MinecraftForge.EVENT_BUS.addListener(clientCooldownHandler::onRenderGameOverlay);
+        MinecraftForge.EVENT_BUS.addListener(clientCooldownHandler::onRenderGameOverlay$Pre);
+        MinecraftForge.EVENT_BUS.addListener(clientCooldownHandler::onRenderGameOverlay$Post);
         MinecraftForge.EVENT_BUS.addListener(clientCooldownHandler::onClientTick);
         final AttackIndicatorOptionHandler attackIndicatorOptionHandler = new AttackIndicatorOptionHandler();
         MinecraftForge.EVENT_BUS.addListener(attackIndicatorOptionHandler::onScreenInit);

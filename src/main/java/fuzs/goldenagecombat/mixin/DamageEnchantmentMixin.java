@@ -17,7 +17,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class DamageEnchantmentMixin extends Enchantment {
     @Shadow
     @Final
-    public int damageType;
+    public int type;
 
     protected DamageEnchantmentMixin(Rarity p_44676_, EnchantmentCategory p_44677_, EquipmentSlot[] p_44678_) {
         super(p_44676_, p_44677_, p_44678_);
@@ -25,7 +25,7 @@ public abstract class DamageEnchantmentMixin extends Enchantment {
 
     @Inject(method = "getDamageBonus", at = @At("HEAD"), cancellable = true)
     public void getDamageBonus(int level, MobType creatureType, CallbackInfoReturnable<Float> callbackInfo) {
-        if (this.damageType == 0 && GoldenAgeCombat.CONFIG.server().classic.boostSharpness) {
+        if (this.type == 0 && GoldenAgeCombat.CONFIG.server().classic.boostSharpness) {
             callbackInfo.setReturnValue(level * 1.25F);
         }
     }

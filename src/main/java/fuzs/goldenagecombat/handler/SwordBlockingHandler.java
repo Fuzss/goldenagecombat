@@ -24,7 +24,8 @@ public class SwordBlockingHandler {
             if (!GoldenAgeCombat.CONFIG.server().adjustments.prioritizeShield || evt.getHand() != InteractionHand.MAIN_HAND || player.getOffhandItem().getUseAnimation() != UseAnim.BLOCK) {
                 player.startUsingItem(evt.getHand());
                 // cause reequip animation, but don't swing hand, not to be confused with ActionResultType#SUCCESS
-                evt.setCancellationResult(InteractionResult.CONSUME);
+                // partial version seems to not affect game stats which is probably better since you can just spam sword blocking haha
+                evt.setCancellationResult(InteractionResult.CONSUME_PARTIAL);
                 evt.setCanceled(true);
             }
         }

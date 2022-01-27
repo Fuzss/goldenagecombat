@@ -20,7 +20,6 @@ public class SwordBlockingRenderer {
     public void onRenderHand(final RenderHandEvent evt) {
         final Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
-        ItemStack stack = evt.getItemStack();
         if (player.getUsedItemHand() == evt.getHand() && SwordBlockingHandler.isActiveItemStackBlocking(player)) {
             ItemInHandRenderer itemRenderer = minecraft.getItemInHandRenderer();
             PoseStack matrixStack = evt.getPoseStack();
@@ -33,7 +32,7 @@ public class SwordBlockingRenderer {
                 ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmAttackTransform(matrixStack, handSide, evt.getSwingProgress());
             }
             this.transformBlockFirstPerson(matrixStack, handSide);
-            itemRenderer.renderItem(player, stack, isHandSideRight ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isHandSideRight, matrixStack, evt.getMultiBufferSource(), evt.getPackedLight());
+            itemRenderer.renderItem(player, evt.getItemStack(), isHandSideRight ? ItemTransforms.TransformType.FIRST_PERSON_RIGHT_HAND : ItemTransforms.TransformType.FIRST_PERSON_LEFT_HAND, !isHandSideRight, matrixStack, evt.getMultiBufferSource(), evt.getPackedLight());
             matrixStack.popPose();
             evt.setCanceled(true);
         }

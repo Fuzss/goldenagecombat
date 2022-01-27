@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 
 @Mixin(Entity.class)
 public abstract class EntityMixin {
-    @Inject(method = "getPickRadius", at = @At("TAIL"), cancellable = true)
+    @Inject(method = "getPickRadius", at = @At("HEAD"), cancellable = true)
     public void getPickRadius(CallbackInfoReturnable<Float> callbackInfo) {
         if (GoldenAgeCombat.CONFIG.server().classic.inflateHitboxes) {
             callbackInfo.setReturnValue(0.1F);
