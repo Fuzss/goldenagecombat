@@ -9,7 +9,7 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 
 @Mixin(ProjectileUtil.class)
 public abstract class ProjectileUtilMixin {
-    @ModifyVariable(method = "getEntityHitResult(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;D)Lnet/minecraft/world/phys/EntityHitResult;", at = @At(value = "STORE"), ordinal = 1)
+    @ModifyVariable(method = "getEntityHitResult(Lnet/minecraft/world/entity/Entity;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/Vec3;Lnet/minecraft/world/phys/AABB;Ljava/util/function/Predicate;D)Lnet/minecraft/world/phys/EntityHitResult;", at = @At("STORE"), ordinal = 1)
     private static AABB getEntityHitResult$aabb(AABB oldAABB) {
         if (GoldenAgeCombat.CONFIG.server().adjustments.minHitboxSize) {
             final double minSize = 0.9F;

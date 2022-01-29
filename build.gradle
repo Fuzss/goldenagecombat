@@ -50,14 +50,17 @@ minecraft {
             property 'fml.earlyprogresswindow', 'false'
             // mixin properties
             args '--mixin.config', "META-INF/${project.modid}.mixins.json".toString()
-            properties 'mixin.env.remapRefMap': 'true', 'mixin.env.refMapRemappingFile': "${project.projectDir}/build/createSrgToMcp/output.srg".toString()
+            properties 'mixin.env.remapRefMap': 'true', 'mixin.env.refMapRemappingFile': "${project.projectDir}/build/createSrgToMcp/output.srg".toString(), 'mixin.debug.export': 'true'
         }
         server {
             jvmArgs '-ea', '-Xms1G', '-Xmx4G'
             arg 'nogui'
             // mixin properties
             args '--mixin.config', "META-INF/${project.modid}.mixins.json".toString()
-            properties 'mixin.env.remapRefMap': 'true', 'mixin.env.refMapRemappingFile': "${project.projectDir}/build/createSrgToMcp/output.srg".toString()
+            properties 'mixin.env.remapRefMap': 'true', 'mixin.env.refMapRemappingFile': "${project.projectDir}/build/createSrgToMcp/output.srg".toString(), 'mixin.debug.export': 'true'
+        }
+        data {
+            args '--mod', "${project.modid}", '--all', '--output', file('src/generated/resources/'), '--existing', file('src/main/resources/')
         }
     }
 }

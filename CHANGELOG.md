@@ -12,13 +12,12 @@ The format is based on [Keep a Changelog].
 - Added an option to hide shields and render a sword block instead, intended for servers that temporarily give you a shield for your offhand to mimic sword blocking
 - Added an option to make the player not stop sprinting when attacking, which is mainly useful while swimming (since swimming essentially is sprinting underwater)
 ### Changed
-- Converted some item tags to config options to allow for easier access
+- Blacklisting items from receiving a new damage value has been turned into overrides, so you can set your own custom attack damage value for every item
+- Item tags for sword blocking now have additional config options, to make it easier for users to use them
 ### Fixed
 - Sword blocking in third-person now correctly renders the old pose from 1.7 
 - Animations for block hitting/food punching/bow punching now work more reliably
 ### Removed
 - Removed armor and elytra turning red when taking damage, this seems to no longer work in 1.18
-- Removed option for disabling lost health from flashing, should also return soon
-- Removed option for hiding damage indicator particles, will return soon
 
 [Keep a Changelog]: https://keepachangelog.com/en/1.0.0/

@@ -3,6 +3,7 @@ package fuzs.goldenagecombat.config;
 import fuzs.puzzleslib.config.AbstractConfig;
 import fuzs.puzzleslib.config.annotation.Config;
 import fuzs.puzzleslib.config.serialization.EntryCollectionBuilder;
+import it.unimi.dsi.fastutil.ints.Int2ByteMap;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
@@ -10,7 +11,9 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.apache.commons.compress.utils.Lists;
 
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ServerConfig extends AbstractConfig {
     @Config
@@ -40,11 +43,11 @@ public class ServerConfig extends AbstractConfig {
         public boolean removeCooldown = true;
         @Config(name = "legacy_attack_damage", description = "Revert weapon and tool attack damage to legacy values.")
         public boolean oldAttackDamage = true;
-        @Config(name = "attack_damage_blacklist", description = {"Blacklist for items to not have their damage value changed by the \"Legacy Attack Damage\" option.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
-        private List<String> attackDamageBlacklistRaw = Lists.newArrayList();
-        @Config(name = "food_mechanics", description = {"Choose the food mechanics to use:", "\"VANILLA\" will change nothing and use surplus saturation for very quick health regeneration.", "\"LEGACY_COMBAT\" will make health only regenerated every 4 seconds, while requiring 18 or more food points.", "\"CUSTOM\" will make health only regenerated every 3 seconds, which requires more than 6 food points.", "\"COMBAT_TEST\" will make health regenerated every 2 seconds, which requires more than 6 food points. Also food points will be directly consumed when healing."})
+        @Config(name = "attack_damage_overrides", description = {"Overrides for balancing attack values of items when they are changed by the \"legacy_attack_damage\" option.", "As with all items, this value is added ON TOP of the default attack strength of the player (which is 1 by default).", "Format for every entry is \"<namespace>:<path>,<amount>\". Path may use asterisk as wildcard parameter. Tags are not supported."})
+        private List<String> attackDamageOverridesRaw = Lists.newArrayList();
+        @Config(name = "food_mechanics", description = {"Choose the food mechanics to use:", "VANILLA will change nothing and use surplus saturation for very quick health regeneration.", "LEGACY_COMBAT will make health only regenerated every 4 seconds, while requiring 18 or more food points.", "CUSTOM will make health only regenerated every 3 seconds, which requires more than 6 food points.", "COMBAT_TEST will make health regenerated every 2 seconds, which requires more than 6 food points. Also food points will be directly consumed when healing."})
         public FoodMechanics foodMechanics = FoodMechanics.CUSTOM;
-        @Config(name = "weak_attacks_knock_back_player", description = "Player is knocked back by attacks which do not cause any damage, such as when hit by snowballs.")
+        @Config(name = "weak_attacks_knock_back_player", description = "Player is knocked back by attacks which do not cause any damage, such as when hit by snowballs and eggs.")
         public boolean weakPlayerKnockback = true;
         @Config(name = "critical_hits_while_sprinting", description = "Sprinting and attacking no longer interfere with each other, making critical hits possible at all times.")
         public boolean criticalHitsSprinting = true;
@@ -58,16 +61,16 @@ public class ServerConfig extends AbstractConfig {
         public boolean boostSharpness = false;
         @Config(name = "notch_apple_effects", description = "Give Regeneration V and Absorption I instead of Regeneration II and Absorption IV after consuming a notch apple.")
         public boolean goldenAppleEffects = true;
-        @Config(name = "sideways_backwards_walking", description = "The player's body turns sideways when walking backwards instead of remaining straight.")
+        @Config(name = "sideways_backwards_walking", description = "The player's body turns sideways when walking backwards instead of remaining straight. Only a visual feature.")
         public boolean backwardsWalking = true;
         @Config(name = "inflate_hitboxes", description = "Expand all entity hitboxes by 10%, making hitting a target possible from a slightly greater range and with much increased accuracy.")
         public boolean inflateHitboxes = true;
         @Config(name = "quick_slowdown", description = "When slowing down movement or stopping completely momentum is lost much quicker.")
         public boolean quickSlowdown = true;
-        @Config(name = "attack_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching.")
+        @Config(name = "attack_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching (or at least a proper animation).")
         public boolean attackWhileUsing = true;
 
-        public Set<Item> attackDamageBlacklist;
+        public Map<Item, Double> attackDamageOverrides;
 
         public ClassicConfig() {
             super("classic_combat");
@@ -75,16 +78,17 @@ public class ServerConfig extends AbstractConfig {
 
         @Override
         protected void afterConfigReload() {
-            this.attackDamageBlacklist = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildSet(this.attackDamageBlacklistRaw);
+            this.attackDamageOverrides = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildMap(this.attackDamageOverridesRaw, (item, amount) -> amount.length == 1, "Wrong number of arguments").entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
         }
     }
 
     public static class BlockingConfig extends AbstractConfig {
         @Config(name = "allow_blocking", description = "Allow blocking with swords, which will reduce most incoming attacks by 50% and render a parry animation.")
         public boolean allowBlocking = true;
-        @Config(name = "sword_blocking_exclusions", description = {"Swords to exclude from blocking. Intended for modded swords that already have their own right-click function.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
+        @Config(name = "sword_blocking_exclusions", description = {"Swords to exclude from blocking. Intended for modded swords that already have their own right-click function.", EntryCollectionBuilder.CONFIG_DESCRIPTION, "Mod authors may access this option for registering their custom weapons by adding them to the \"goldenagecombat:sword_blocking_exclusions\" item tag."})
         private List<String> swordBlockingExclusionsRaw = Lists.newArrayList();
-        @Config(name = "sword_blocking_inclusions", description = {"Items to include for blocking. Intended for modded swords that don't extend vanilla swords, although any item can be added.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
+        @Config(name = "sword_blocking_inclusions", description = {"Items to include for blocking. Intended for modded swords that don't extend vanilla swords, although any item can be added.", EntryCollectionBuilder.CONFIG_DESCRIPTION, "Mod authors may access this option for registering their custom weapons by adding them to the \"goldenagecombat:sword_blocking_inclusions\" item tag."})
         private List<String> swordBlockingInclusionsRaw = Lists.newArrayList();
 
         public Set<Item> swordBlockingExclusions;
@@ -106,16 +110,18 @@ public class ServerConfig extends AbstractConfig {
         public boolean sweepingRequired = true;
         @Config(name = "prioritize_shield", description = "Prioritize shield blocking over sword blocking in case both items are held at the same time.")
         public boolean prioritizeShield = true;
-        @Config(name = "sprint_attacks", description = "Attacking will no longer stop the player from sprinting.")
+        @Config(name = "sprint_attacks", description = "Attacking will no longer stop the player from sprinting. Very useful when swimming, so you can fight underwater without being stopped on every hit.")
         public boolean sprintAttacks = true;
         @Config(name = "canceled_attack_sounds", description = {"Prevent various attack sounds added for the cooldown mechanic from playing.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
         private List<String> canceledAttackSoundsRaw = EntryCollectionBuilder.getKeyList(ForgeRegistries.SOUND_EVENTS, SoundEvents.PLAYER_ATTACK_CRIT, SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundEvents.PLAYER_ATTACK_STRONG, SoundEvents.PLAYER_ATTACK_WEAK);
         @Config(name = "hide_damage_indicators", description = "Stop heart particles spawned when the player attacks an entity from appearing.")
         public boolean noDamageIndicators = true;
-        @Config(name = "min_hitbox_size", description = {"Force all entity hitboxes to have a cubic size of at least 0.9 blocks.", "This only affects targeting an entity, no collisions or whatsoever. Useful for e.g. bats, rabbits, silverfish, fish, and most baby animals."})
+        @Config(name = "min_hitbox_size", description = {"Force all entity hitboxes to have a cubic size of at least 0.9 blocks.", "This only affects targeting an entity, no collisions or whatsoever. Useful for hitting e.g. bats, rabbits, silverfish, fish, and most baby animals."})
         public boolean minHitboxSize = true;
         @Config(name = "half_sweeping_damage", description = "Only apply half the sweeping damage to indirectly hit mobs as seen in most recent combat test snapshots.")
         public boolean halfSweepingDamage = true;
+        @Config(name = "no_sweeping_when_sneaking", description = "Do not perform sweep attacks when sneaking.")
+        public boolean noSneakSweeping = false;
 
         public Set<SoundEvent> canceledAttackSounds;
 

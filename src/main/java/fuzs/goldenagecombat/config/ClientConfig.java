@@ -17,9 +17,9 @@ public class ClientConfig extends AbstractConfig {
         // TODO finish implementation
 //        @Config(name = "sword_blocking_with_shield", description = {"When holding a shield in your offhand, hide it and show a sword block when actively blocking instead.", "Mainly useful on some servers that enable sword blocking by temporarily giving you a shield."})
         public boolean swordBlockingWithShield = false;
-        @Config(name = "simple_blocking_pose", description = "Use the much simpler third-person pose when blocking with a sword from minecaft 1.8 instead of the default one from before that.")
+        @Config(name = "simple_blocking_pose", description = "Use the much simpler third-person pose when blocking with a sword from Minecaft 1.8 instead of the default one from before that.")
         public boolean simpleBlockingPose = false;
-        @Config(name = "disable_flashing_hearts", description = "Lost hearts no longer flash when disappearing.")
+        @Config(name = "disable_flashing_hearts", description = "Lost hearts no longer flash when disappearing, so it is easier to see how much health you currently have.")
         public boolean noFlashingHearts = false;
         @Config(name = "instant_eye_height_change", description = "Eye height changes instantly without any interpolation. Affects mainly sneaking and swimming.")
         public boolean instantEyeHeight = false;

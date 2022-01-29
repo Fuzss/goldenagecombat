@@ -27,10 +27,8 @@ public abstract class PlayerMixin extends LivingEntity {
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;isSprinting()Z"), slice = @Slice(from = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;fallDistance:F")))
     public boolean attack$isSprinting(Player player) {
         // allow landing critical hits when sprint jumping like before 1.9 and in combat test snapshots
-        if (GoldenAgeCombat.CONFIG.server().classic.criticalHitsSprinting) {
-            return false;
-        }
-        return player.isSprinting();
+        if (!GoldenAgeCombat.CONFIG.server().classic.criticalHitsSprinting) return player.isSprinting();
+        return false;
     }
 
     @Redirect(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setSprinting(Z)V"))
@@ -40,5 +38,12 @@ public abstract class PlayerMixin extends LivingEntity {
         if (!GoldenAgeCombat.CONFIG.server().adjustments.sprintAttacks) {
             player.setSprinting(oldValue);
         }
+    }
+
+    @ModifyVariable(method = "attack", at = @At("LOAD"), ordinal = 5, slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V")))
+    public float attack$damageDealth(float damageDealt) {
+        // hide dealt damage heart particles, since they are much better suited for a slow combat system, but are just annoying with a fast-paced one
+        if (!GoldenAgeCombat.CONFIG.server().adjustments.noDamageIndicators) return damageDealt;
+        return 0.0F;
     }
 }
