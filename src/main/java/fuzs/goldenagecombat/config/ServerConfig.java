@@ -64,7 +64,7 @@ public class ServerConfig extends AbstractConfig {
         @Config(name = "inflate_hitboxes", description = "Expand all entity hitboxes by 10%, making hitting a target possible from a slightly greater range and with much increased accuracy.")
         public boolean inflateHitboxes = true;
         @Config(name = "quick_slowdown", description = "When slowing down movement or stopping completely momentum is lost much quicker.")
-        public boolean quickSlowdown = true;
+        public boolean quickSlowdown = false;
         @Config(name = "attack_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching (or at least a proper animation).")
         public boolean attackWhileUsing = true;
         @Config(name = "upwards_knockback", description = "Makes knockback stronger towards targets not on the ground.")
@@ -109,6 +109,8 @@ public class ServerConfig extends AbstractConfig {
         public boolean halfSweepingDamage = true;
         @Config(name = "no_sweeping_when_sneaking", description = "Do not perform sweep attacks when sneaking.")
         public boolean noSneakSweeping = false;
+        @Config(name = "hold_attack_button", description = "Holding down the attack button keeps attacking continuously. No more spam clicking required.")
+        public boolean holdAttackButton = true;
 
         public Set<SoundEvent> canceledAttackSounds;
 

@@ -87,4 +87,17 @@ public abstract class MinecraftMixin {
         if (!GoldenAgeCombat.CONFIG.server().classic.attackWhileUsing) return gameMode.isDestroying();
         return false;
     }
+
+    @Inject(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;stopDestroyBlock()V"), cancellable = true)
+    private void continueAttack$startAttack(boolean attacking, CallbackInfo callbackInfo) {
+        if (GoldenAgeCombat.CONFIG.server().adjustments.holdAttackButton && attacking) {
+            this.startAttack();
+            callbackInfo.cancel();
+        }
+    }
+
+    @Shadow
+    private void startAttack() {
+        throw new IllegalStateException();
+    }
 }
