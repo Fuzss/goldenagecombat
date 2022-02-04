@@ -15,9 +15,11 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.*;
 import net.minecraft.world.phys.HitResult;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -87,6 +89,17 @@ public class ClassicCombatHandler {
             entity.removeEffect(MobEffects.ABSORPTION);
             entity.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0));
             entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600, 4));
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingKnockBack(final LivingKnockBackEvent evt) {
+        final LivingEntity entity = evt.getEntityLiving();
+        if (GoldenAgeCombat.CONFIG.server().classic.upwardsKnockback && !entity.isOnGround() && !entity.isInWater()) {
+            float strength = evt.getOriginalStrength();
+            strength *= 1.0 - entity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
+            final Vec3 deltaMovement = entity.getDeltaMovement();
+            entity.setDeltaMovement(deltaMovement.x, Math.min(0.4, deltaMovement.y / 2.0D + strength), deltaMovement.x);
         }
     }
 

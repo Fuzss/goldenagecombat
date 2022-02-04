@@ -3,7 +3,6 @@ package fuzs.goldenagecombat.config;
 import fuzs.puzzleslib.config.AbstractConfig;
 import fuzs.puzzleslib.config.annotation.Config;
 import fuzs.puzzleslib.config.serialization.EntryCollectionBuilder;
-import it.unimi.dsi.fastutil.ints.Int2ByteMap;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
@@ -30,7 +29,6 @@ public class ServerConfig extends AbstractConfig {
     @Override
     protected void afterConfigReload() {
         this.classic.afterConfigReload();
-        this.blocking.afterConfigReload();
         this.adjustments.afterConfigReload();
     }
 
@@ -69,6 +67,8 @@ public class ServerConfig extends AbstractConfig {
         public boolean quickSlowdown = true;
         @Config(name = "attack_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching (or at least a proper animation).")
         public boolean attackWhileUsing = true;
+        @Config(name = "upwards_knockback", description = "Makes knockback stronger towards targets not on the ground.")
+        public boolean upwardsKnockback = true;
 
         public Map<Item, Double> attackDamageOverrides;
 
@@ -86,22 +86,9 @@ public class ServerConfig extends AbstractConfig {
     public static class BlockingConfig extends AbstractConfig {
         @Config(name = "allow_blocking", description = "Allow blocking with swords, which will reduce most incoming attacks by 50% and render a parry animation.")
         public boolean allowBlocking = true;
-        @Config(name = "sword_blocking_exclusions", description = {"Swords to exclude from blocking. Intended for modded swords that already have their own right-click function.", EntryCollectionBuilder.CONFIG_DESCRIPTION, "Mod authors may access this option for registering their custom weapons by adding them to the \"goldenagecombat:sword_blocking_exclusions\" item tag."})
-        private List<String> swordBlockingExclusionsRaw = Lists.newArrayList();
-        @Config(name = "sword_blocking_inclusions", description = {"Items to include for blocking. Intended for modded swords that don't extend vanilla swords, although any item can be added.", EntryCollectionBuilder.CONFIG_DESCRIPTION, "Mod authors may access this option for registering their custom weapons by adding them to the \"goldenagecombat:sword_blocking_inclusions\" item tag."})
-        private List<String> swordBlockingInclusionsRaw = Lists.newArrayList();
-
-        public Set<Item> swordBlockingExclusions;
-        public Set<Item> swordBlockingInclusions;
 
         public BlockingConfig() {
             super("sword_blocking");
-        }
-
-        @Override
-        protected void afterConfigReload() {
-            this.swordBlockingExclusions = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildSet(this.swordBlockingExclusionsRaw);
-            this.swordBlockingInclusions = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildSet(this.swordBlockingInclusionsRaw);
         }
     }
 
