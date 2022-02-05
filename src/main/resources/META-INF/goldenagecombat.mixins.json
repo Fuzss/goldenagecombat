@@ -23,9 +23,11 @@
     "client.HumanoidModelMixin",
     "client.InputMixin",
     "client.ItemInHandRendererMixin",
+    "client.LivingEntityMixin",
     "client.MinecraftMixin",
     "client.PlayerItemInHandLayerMixin",
-    "client.accessor.ItemInHandRendererAccessor"
+    "client.accessor.ItemInHandRendererAccessor",
+    "client.accessor.MinecraftAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

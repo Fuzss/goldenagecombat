@@ -37,11 +37,14 @@ public abstract class PlayerMixin extends LivingEntity {
         // this is mainly nice to have since you always stop to swim when attacking creatures underwater
         if (!GoldenAgeCombat.CONFIG.server().adjustments.sprintAttacks) {
             player.setSprinting(oldValue);
+        } else if (!player.isSprinting()) {
+            // cancel slowdown when not sprinting, this makes walking really weird when attack at the same time
+            player.setDeltaMovement(player.getDeltaMovement().multiply(10.0 / 6.0, 1.0, 10.0 / 6.0));
         }
     }
 
     @ModifyVariable(method = "attack", at = @At("LOAD"), ordinal = 5, slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V")))
-    public float attack$damageDealth(float damageDealt) {
+    public float attack$damageDealt(float damageDealt) {
         // hide dealt damage heart particles, since they are much better suited for a slow combat system, but are just annoying with a fast-paced one
         if (!GoldenAgeCombat.CONFIG.server().adjustments.noDamageIndicators) return damageDealt;
         return 0.0F;

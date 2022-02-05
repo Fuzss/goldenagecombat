@@ -111,6 +111,8 @@ public class ServerConfig extends AbstractConfig {
         public boolean noSneakSweeping = false;
         @Config(name = "hold_attack_button", description = "Holding down the attack button keeps attacking continuously. No more spam clicking required.")
         public boolean holdAttackButton = true;
+        @Config(name = "swing_through_grass", description = "Hit mobs through blocks without a collision shape such as tall grass without having to break the block first.")
+        public boolean swingThroughGrass = true;
 
         public Set<SoundEvent> canceledAttackSounds;
 

@@ -88,11 +88,12 @@ public abstract class MinecraftMixin {
         return false;
     }
 
-    @Inject(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;stopDestroyBlock()V"), cancellable = true)
+    @Inject(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;stopDestroyBlock()V", shift = At.Shift.AFTER))
     private void continueAttack$startAttack(boolean attacking, CallbackInfo callbackInfo) {
-        if (GoldenAgeCombat.CONFIG.server().adjustments.holdAttackButton && attacking) {
+        // do not cancel stopDestroyBlock as in combat snapshots
+        // also additional check for an item being used
+        if (GoldenAgeCombat.CONFIG.server().adjustments.holdAttackButton && attacking && !this.player.isUsingItem()) {
             this.startAttack();
-            callbackInfo.cancel();
         }
     }
 

@@ -23,6 +23,8 @@ public class ClientConfig extends AbstractConfig {
         public boolean noFlashingHearts = false;
         @Config(name = "instant_eye_height_change", description = "Eye height changes instantly without any interpolation. Affects mainly sneaking and swimming.")
         public boolean instantEyeHeight = false;
+        @Config(name = "alternative_swing_animation", description = "Improved arm swing animation to emphasize the rhythm of the attacks from combat test snapshots.")
+        public boolean swingAnimation = false;
 
         public AnimationsConfig() {
             super("legacy_animations");
