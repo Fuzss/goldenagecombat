@@ -4,6 +4,7 @@ import fuzs.goldenagecombat.GoldenAgeCombat;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.enchantment.EnchantmentHelper;
 import net.minecraft.world.level.Level;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.injection.*;
@@ -45,5 +46,14 @@ public abstract class PlayerMixin extends LivingEntity {
         // hide dealt damage heart particles, since they are much better suited for a slow combat system, but are just annoying with a fast-paced one
         if (!GoldenAgeCombat.CONFIG.server().adjustments.noDamageIndicators) return damageDealt;
         return 0.0F;
+    }
+
+    @ModifyVariable(method = "attack", at = @At("LOAD"), ordinal = 3, slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;sweepAttack()V")))
+    public boolean attack$triggerSweepAttack(boolean triggerSweepAttack) {
+        // prevent sweeping from taking effect unless the enchantment is in place, onGround flag is reset next tick anyways
+        if (GoldenAgeCombat.CONFIG.server().adjustments.sweepingRequired && EnchantmentHelper.getSweepingDamageRatio(this) == 0.0F || GoldenAgeCombat.CONFIG.server().adjustments.noSneakSweeping && this.isShiftKeyDown()) {
+            return false;
+        }
+        return triggerSweepAttack;
     }
 }

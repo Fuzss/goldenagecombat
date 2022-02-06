@@ -20,9 +20,7 @@ public abstract class LivingEntityMixin extends Entity {
     @ModifyConstant(method = "tick", constant = @Constant(floatValue = 180.0F), slice = @Slice(to = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/LivingEntity;attackAnim:F")))
     public float tick$backwardsRotation(float oldRotation) {
         // before 1.12 the player's body would tilt to the side when walking backwards, now it remains straight
-        if (GoldenAgeCombat.CONFIG.server().classic.backwardsWalking) {
-            return 0.0F;
-        }
-        return oldRotation;
+        if (!GoldenAgeCombat.CONFIG.server().classic.backwardsWalking) return oldRotation;
+        return 0.0F;
     }
 }

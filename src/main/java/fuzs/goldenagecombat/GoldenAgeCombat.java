@@ -43,7 +43,6 @@ public class GoldenAgeCombat {
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onUseItemFinish);
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onLivingKnockBack);
         final CombatAdjustmentsHandler combatAdjustmentsHandler = new CombatAdjustmentsHandler();
-        MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onCriticalHit);
         MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onPlaySoundAtEntity);
         MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onLeftClickEmpty);
         final SwordBlockingHandler swordBlockingHandler = new SwordBlockingHandler();
