@@ -37,9 +37,6 @@ public abstract class PlayerMixin extends LivingEntity {
         // this is mainly nice to have since you always stop to swim when attacking creatures underwater
         if (!GoldenAgeCombat.CONFIG.server().adjustments.sprintAttacks) {
             player.setSprinting(oldValue);
-        } else if (!player.isSprinting()) {
-            // cancel slowdown when not sprinting, this makes walking really weird when attack at the same time
-            player.setDeltaMovement(player.getDeltaMovement().multiply(10.0 / 6.0, 1.0, 10.0 / 6.0));
         }
     }
 

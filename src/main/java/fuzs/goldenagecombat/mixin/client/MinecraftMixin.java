@@ -9,9 +9,7 @@ import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.phys.BlockHitResult;
-import net.minecraft.world.phys.EntityHitResult;
 import net.minecraft.world.phys.HitResult;
-import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.spongepowered.asm.mixin.Final;
 import org.spongepowered.asm.mixin.Mixin;
@@ -45,7 +43,7 @@ public abstract class MinecraftMixin {
     public void handleKeybinds$isUsingItem(CallbackInfo callbackInfo) {
         // required for enabling block breaking while e.g. sword blocking
         // it is actually enabled by a different patch below, this just makes sure breaking particles show correctly (which only works sometimes otherwise)
-        if (!GoldenAgeCombat.CONFIG.server().classic.attackWhileUsing || !this.player.isUsingItem()) return;
+        if (!GoldenAgeCombat.CONFIG.server().classic.interactWhileUsing || !this.player.isUsingItem()) return;
         while (this.options.keyAttack.consumeClick()) {
             this.startBlockAttack();
         }
@@ -78,13 +76,13 @@ public abstract class MinecraftMixin {
 
     @Redirect(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z"))
     public boolean continueAttack$isUsingItem(LocalPlayer player) {
-        if (!GoldenAgeCombat.CONFIG.server().classic.attackWhileUsing) return player.isUsingItem();
+        if (!GoldenAgeCombat.CONFIG.server().classic.interactWhileUsing) return player.isUsingItem();
         return false;
     }
 
     @Redirect(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isDestroying()Z"))
     public boolean startUseItem$isDestroying(MultiPlayerGameMode gameMode) {
-        if (!GoldenAgeCombat.CONFIG.server().classic.attackWhileUsing) return gameMode.isDestroying();
+        if (!GoldenAgeCombat.CONFIG.server().classic.interactWhileUsing) return gameMode.isDestroying();
         return false;
     }
 

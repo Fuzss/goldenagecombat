@@ -65,8 +65,8 @@ public class ServerConfig extends AbstractConfig {
         public boolean inflateHitboxes = true;
         @Config(name = "quick_slowdown", description = "When slowing down movement or stopping completely momentum is lost much quicker.")
         public boolean quickSlowdown = false;
-        @Config(name = "attack_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held. Enables block hitting, also bow and food punching (or at least a proper animation).")
-        public boolean attackWhileUsing = true;
+        @Config(name = "interact_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held for mining blocks. Also allows block hitting, bow and food punching to render properly.")
+        public boolean interactWhileUsing = true;
         @Config(name = "upwards_knockback", description = "Makes knockback stronger towards targets not on the ground.")
         public boolean upwardsKnockback = true;
 

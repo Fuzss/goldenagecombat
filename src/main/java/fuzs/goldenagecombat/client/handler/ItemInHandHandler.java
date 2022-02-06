@@ -21,7 +21,7 @@ public class ItemInHandHandler {
     @SubscribeEvent
     public void onRenderHand(final RenderHandEvent evt) {
         ItemStack stack = evt.getItemStack();
-        if (!GoldenAgeCombat.CONFIG.server().classic.attackWhileUsing || stack.isEmpty() || stack.is(Items.FILLED_MAP)) return;
+        if (!GoldenAgeCombat.CONFIG.server().classic.interactWhileUsing || stack.isEmpty() || stack.is(Items.FILLED_MAP)) return;
         final Minecraft minecraft = Minecraft.getInstance();
         Player player = minecraft.player;
         if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == evt.getHand()) {

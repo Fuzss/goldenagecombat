@@ -11,7 +11,6 @@ import net.minecraft.client.renderer.block.model.ItemTransforms;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.HumanoidArm;
 import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
 import net.minecraftforge.client.event.RenderHandEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -28,7 +27,7 @@ public class SwordBlockingRenderer {
             HumanoidArm handSide = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
             boolean isHandSideRight = handSide == HumanoidArm.RIGHT;
             ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmTransform(matrixStack, handSide, evt.getEquipProgress());
-            if (GoldenAgeCombat.CONFIG.server().classic.attackWhileUsing) {
+            if (GoldenAgeCombat.CONFIG.server().classic.interactWhileUsing) {
                 ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmAttackTransform(matrixStack, handSide, evt.getSwingProgress());
             }
             this.transformBlockFirstPerson(matrixStack, handSide);
