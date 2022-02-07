@@ -27,7 +27,7 @@ public class SwordBlockingRenderer {
             HumanoidArm handSide = isMainHand ? player.getMainArm() : player.getMainArm().getOpposite();
             boolean isHandSideRight = handSide == HumanoidArm.RIGHT;
             ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmTransform(matrixStack, handSide, evt.getEquipProgress());
-            if (GoldenAgeCombat.CONFIG.server().classic.interactWhileUsing) {
+            if (GoldenAgeCombat.CONFIG.client().animations.interactAnimations) {
                 ((ItemInHandRendererAccessor) itemRenderer).callApplyItemArmAttackTransform(matrixStack, handSide, evt.getSwingProgress());
             }
             this.transformBlockFirstPerson(matrixStack, handSide);

@@ -25,6 +25,8 @@ public class ClientConfig extends AbstractConfig {
         public boolean instantEyeHeight = false;
         @Config(name = "alternative_swing_animation", description = "Improved arm swing animation to emphasize the rhythm of the attacks from combat test snapshots.")
         public boolean swingAnimation = false;
+        @Config(name = "full_interact_animations", description = "Allows block hitting, bow and food punching to render properly (meaning attacking and then using the item directly afterwards). The hitting animation is no longer consumed as in vanilla.")
+        public boolean interactAnimations = true;
 
         public AnimationsConfig() {
             super("legacy_animations");
