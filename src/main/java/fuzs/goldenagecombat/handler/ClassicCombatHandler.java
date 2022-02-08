@@ -36,41 +36,6 @@ public class ClassicCombatHandler {
     }
 
     @SubscribeEvent
-    public void onItemAttributeModifier(final ItemAttributeModifierEvent evt) {
-        if (!GoldenAgeCombat.CONFIG.server().classic.oldAttackDamage) return;
-        if (evt.getSlotType() != EquipmentSlot.MAINHAND) return;
-        ItemStack stack = evt.getItemStack();
-        // don't change items whose attributes have already been changed via the nbt tag
-        if (!stack.hasTag() || !stack.getTag().contains("AttributeModifiers", 9)) {
-            if (GoldenAgeCombat.CONFIG.server().classic.attackDamageOverrides.containsKey(stack.getItem())) {
-                this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, GoldenAgeCombat.CONFIG.server().classic.attackDamageOverrides.get(stack.getItem()));
-            } else if (stack.getItem() instanceof TieredItem) {
-                // always one less to account for base value of 1.0
-                if (stack.getItem() instanceof SwordItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 4.0);
-                } else if (stack.getItem() instanceof AxeItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 3.0);
-                } else if (stack.getItem() instanceof PickaxeItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 2.0);
-                } else if (stack.getItem() instanceof ShovelItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 1.0);
-                } else if (stack.getItem() instanceof HoeItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 0.0);
-                }
-            }
-        }
-    }
-
-    private void replaceDamageAttribute(Consumer<Attribute> removeAttribute, BiConsumer<Attribute, AttributeModifier> addModifier, TieredItem item, double damageBonus) {
-        this.replaceDamageAttribute(removeAttribute, addModifier, item.getTier().getAttackDamageBonus() + damageBonus);
-    }
-
-    private void replaceDamageAttribute(Consumer<Attribute> removeAttribute, BiConsumer<Attribute, AttributeModifier> addModifier, double newValue) {
-        removeAttribute.accept(Attributes.ATTACK_DAMAGE);
-        addModifier.accept(Attributes.ATTACK_DAMAGE, new AttributeModifier(ItemAccessor.getBaseAttackDamageUUID(), new ResourceLocation(GoldenAgeCombat.MOD_ID, "attack_damage_modifier").toString(), newValue, AttributeModifier.Operation.ADDITION));
-    }
-
-    @SubscribeEvent
     public void onThrowableImpact(final ProjectileImpactEvent evt) {
         if (!GoldenAgeCombat.CONFIG.server().classic.weakPlayerKnockback) return;
         final Projectile projectile = evt.getProjectile();

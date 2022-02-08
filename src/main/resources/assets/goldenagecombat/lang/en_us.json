@@ -1,0 +1,6 @@
+{
+  "attribute.name.generic.attack_reach": "Attack Reach",
+  "tool.stats.harvest_level": "Harvest Level: %s",
+  "tool.stats.mining_speed": "Mining Speed: %s",
+  "tool.stats.durability": "Durability: %s"
+}

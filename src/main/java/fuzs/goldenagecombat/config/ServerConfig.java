@@ -18,6 +18,8 @@ public class ServerConfig extends AbstractConfig {
     @Config
     public ClassicConfig classic = new ClassicConfig();
     @Config
+    public AttributesConfig attributes = new AttributesConfig();
+    @Config
     public BlockingConfig blocking = new BlockingConfig();
     @Config
     public AdjustmentsConfig adjustments = new AdjustmentsConfig();
@@ -28,7 +30,7 @@ public class ServerConfig extends AbstractConfig {
 
     @Override
     protected void afterConfigReload() {
-        this.classic.afterConfigReload();
+        this.attributes.afterConfigReload();
         this.adjustments.afterConfigReload();
     }
 
@@ -39,10 +41,6 @@ public class ServerConfig extends AbstractConfig {
     public static class ClassicConfig extends AbstractConfig {
         @Config(name = "remove_attack_cooldown", description = "Completely remove the attack cooldown as if it never even existed in the first place.")
         public boolean removeCooldown = true;
-        @Config(name = "legacy_attack_damage", description = "Revert weapon and tool attack damage to legacy values.")
-        public boolean oldAttackDamage = true;
-        @Config(name = "attack_damage_overrides", description = {"Overrides for balancing attack values of items when they are changed by the \"legacy_attack_damage\" option.", "As with all items, this value is added ON TOP of the default attack strength of the player (which is 1 by default).", "Format for every entry is \"<namespace>:<path>,<amount>\". Path may use asterisk as wildcard parameter. Tags are not supported."})
-        private List<String> attackDamageOverridesRaw = Lists.newArrayList();
         @Config(name = "food_mechanics", description = {"Choose the food mechanics to use:", "VANILLA will change nothing and use surplus saturation for very quick health regeneration.", "LEGACY_COMBAT will make health only regenerated every 4 seconds, while requiring 18 or more food points.", "CUSTOM will make health only regenerated every 3 seconds, which requires more than 6 food points.", "COMBAT_TEST will make health regenerated every 2 seconds, which requires more than 6 food points. Also food points will be directly consumed when healing."})
         public FoodMechanics foodMechanics = FoodMechanics.CUSTOM;
         @Config(name = "weak_attacks_knock_back_player", description = "Player is knocked back by attacks which do not cause any damage, such as when hit by snowballs and eggs.")
@@ -70,15 +68,33 @@ public class ServerConfig extends AbstractConfig {
         @Config(name = "upwards_knockback", description = "Makes knockback stronger towards targets not on the ground.")
         public boolean upwardsKnockback = true;
 
-        public Map<Item, Double> attackDamageOverrides;
-
         public ClassicConfig() {
             super("classic_combat");
+        }
+    }
+
+    public static class AttributesConfig extends AbstractConfig {
+        @Config(name = "legacy_attack_damage", description = "Revert weapon and tool attack damage to legacy values.")
+        public boolean oldAttackDamage = true;
+        @Config(name = "attack_damage_overrides", description = {"Overrides for setting and balancing attack damage values of items.", "Takes precedence over any changes made by \"legacy_attack_damage\" option, but requires it to be enabled.", "As with all items, this value is added ON TOP of the default attack strength of the player (which is 1.0 by default).", "Format for every entry is \"<namespace>:<path>,<amount>\". Path may use asterisk as wildcard parameter. Tags are not supported."})
+        private List<String> attackDamageOverridesRaw = Lists.newArrayList();
+        @Config(name = "increased_attack_reach", description = "Makes it so that swords, hoes, and tridents have an increased reach when attacking.")
+        public boolean increasedAttackReach = true;
+        @Config(name = "attack_reach_overrides", description = {"Overrides for setting and balancing attack reach values of items.", "Takes precedence over any changes made by \"increasedAttackReach\" option, but requires it to be enabled.", "As with all items, this value is added ON TOP of the default attack reach of the player (which is 3.0 by default).", "Format for every entry is \"<namespace>:<path>,<amount>\". Path may use asterisk as wildcard parameter. Tags are not supported."})
+        private List<String> attackReachOverridesRaw = Lists.newArrayList();
+
+        public Map<Item, Double> attackDamageOverrides;
+        public Map<Item, Double> attackReachOverrides;
+
+        public AttributesConfig() {
+            super("attributes");
         }
 
         @Override
         protected void afterConfigReload() {
             this.attackDamageOverrides = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildMap(this.attackDamageOverridesRaw, (item, amount) -> amount.length == 1, "Wrong number of arguments").entrySet().stream()
+                    .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
+            this.attackReachOverrides = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildMap(this.attackReachOverridesRaw, (item, amount) -> amount.length == 1, "Wrong number of arguments").entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
         }
     }

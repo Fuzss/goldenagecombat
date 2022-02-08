@@ -3,14 +3,18 @@ package fuzs.goldenagecombat;
 import fuzs.goldenagecombat.config.ClientConfig;
 import fuzs.goldenagecombat.config.ServerConfig;
 import fuzs.goldenagecombat.data.ModItemTagsProvider;
+import fuzs.goldenagecombat.handler.AttackAttributeHandler;
 import fuzs.goldenagecombat.handler.ClassicCombatHandler;
 import fuzs.goldenagecombat.handler.CombatAdjustmentsHandler;
 import fuzs.goldenagecombat.handler.SwordBlockingHandler;
+import fuzs.goldenagecombat.registry.ModRegistry;
 import fuzs.puzzleslib.config.ConfigHolder;
 import fuzs.puzzleslib.config.ConfigHolderImpl;
 import net.minecraft.data.DataGenerator;
+import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.data.ExistingFileHelper;
+import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
@@ -32,13 +36,13 @@ public class GoldenAgeCombat {
     @SubscribeEvent
     public static void onConstructMod(final FMLConstructModEvent evt) {
         ((ConfigHolderImpl<?, ?>) CONFIG).addConfigs(MOD_ID);
+        ModRegistry.touch();
         registerHandlers();
     }
 
     private static void registerHandlers() {
         final ClassicCombatHandler classicCombatHandler = new ClassicCombatHandler();
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onAttackEntity);
-        MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onItemAttributeModifier);
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onThrowableImpact);
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onUseItemFinish);
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onLivingKnockBack);
@@ -49,6 +53,14 @@ public class GoldenAgeCombat {
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, swordBlockingHandler::onRightClickItem);
         MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onItemUseStart);
         MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onLivingHurt);
+        final AttackAttributeHandler attackAttributeHandler = new AttackAttributeHandler();
+        MinecraftForge.EVENT_BUS.addListener(attackAttributeHandler::onItemAttributeModifier$Damage);
+        MinecraftForge.EVENT_BUS.addListener(attackAttributeHandler::onItemAttributeModifier$Reach);
+    }
+
+    @SubscribeEvent
+    public static void onEntityAttributeModification(final EntityAttributeModificationEvent evt) {
+        evt.add(EntityType.PLAYER, ModRegistry.ATTACK_REACH_ATTRIBUTE.get(), 3.0);
     }
 
     @SubscribeEvent

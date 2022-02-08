@@ -3,6 +3,12 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [v3.1.0-1.18.1] - 2022-02-08
+### Added
+- Added attack reach attribute from combat test snapshots, it is available for swords, hoes, and tridents
+### Changed
+- Moved item attribute changes to their own config section with new options
+
 ## [v3.0.0-1.18.1] - 2022-02-07
 - Ported to Minecraft 1.18
 - In addition to all the old combat from Minecraft 1.8 and before, the mod now also contains a few features from combat test snapshots, and more should follow in the future
