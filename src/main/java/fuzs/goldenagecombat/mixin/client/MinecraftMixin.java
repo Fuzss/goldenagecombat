@@ -90,7 +90,7 @@ public abstract class MinecraftMixin {
     private void continueAttack$startAttack(boolean attacking, CallbackInfo callbackInfo) {
         // do not cancel stopDestroyBlock as in combat snapshots
         // also additional check for an item being used
-        if (GoldenAgeCombat.CONFIG.server().adjustments.holdAttackButton && attacking && !this.player.isUsingItem()) {
+        if (GoldenAgeCombat.CONFIG.server().combatTests.holdAttackButton && attacking && !this.player.isUsingItem()) {
             this.startAttack();
         }
     }

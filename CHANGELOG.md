@@ -3,11 +3,13 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
-## [v3.1.0-1.18.1] - 2022-02-08
+## [v3.1.0-1.18.1] - 2022-02-10
 ### Added
 - Added attack reach attribute from combat test snapshots, it is available for swords, hoes, and tridents
 - Made players blocking with a sword take slightly less knockback
 - Made armor attributes render just as they do on tools and weapons
+- Sweep attacks now work when hitting air
+- Added fix for the vanilla bug of shields not knocking back attackers
 ### Changed
 - Moved item attribute changes to their own config section with new options
 - Also moved some more options around in the config

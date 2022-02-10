@@ -5,11 +5,13 @@ import fuzs.goldenagecombat.config.ServerConfig;
 import fuzs.goldenagecombat.data.ModItemTagsProvider;
 import fuzs.goldenagecombat.handler.AttackAttributeHandler;
 import fuzs.goldenagecombat.handler.ClassicCombatHandler;
-import fuzs.goldenagecombat.handler.CombatAdjustmentsHandler;
 import fuzs.goldenagecombat.handler.SwordBlockingHandler;
+import fuzs.goldenagecombat.network.client.C2SSweepAttackMessage;
 import fuzs.goldenagecombat.registry.ModRegistry;
 import fuzs.puzzleslib.config.ConfigHolder;
 import fuzs.puzzleslib.config.ConfigHolderImpl;
+import fuzs.puzzleslib.network.MessageDirection;
+import fuzs.puzzleslib.network.NetworkHandler;
 import net.minecraft.data.DataGenerator;
 import net.minecraft.world.entity.EntityType;
 import net.minecraftforge.common.MinecraftForge;
@@ -30,6 +32,7 @@ public class GoldenAgeCombat {
     public static final String MOD_NAME = "Golden Age Combat";
     public static final Logger LOGGER = LogManager.getLogger(GoldenAgeCombat.MOD_NAME);
 
+    public static final NetworkHandler NETWORK = NetworkHandler.of(MOD_ID);
     @SuppressWarnings("Convert2MethodRef")
     public static final ConfigHolder<ClientConfig, ServerConfig> CONFIG = ConfigHolder.of(() -> new ClientConfig(), () -> new ServerConfig());
 
@@ -37,6 +40,7 @@ public class GoldenAgeCombat {
     public static void onConstructMod(final FMLConstructModEvent evt) {
         ((ConfigHolderImpl<?, ?>) CONFIG).addConfigs(MOD_ID);
         ModRegistry.touch();
+        registerMessages();
         registerHandlers();
     }
 
@@ -46,10 +50,7 @@ public class GoldenAgeCombat {
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onThrowableImpact);
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onUseItemFinish);
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, classicCombatHandler::onLivingKnockBack);
-        final CombatAdjustmentsHandler combatAdjustmentsHandler = new CombatAdjustmentsHandler();
-        MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onPlaySoundAtEntity);
-        MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onLeftClickEmpty);
-        MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onLivingKnockBack);
+        MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onPlaySoundAtEntity);
         final SwordBlockingHandler swordBlockingHandler = new SwordBlockingHandler();
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, swordBlockingHandler::onRightClickItem);
         MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onItemUseStart);
@@ -58,6 +59,10 @@ public class GoldenAgeCombat {
         final AttackAttributeHandler attackAttributeHandler = new AttackAttributeHandler();
         MinecraftForge.EVENT_BUS.addListener(attackAttributeHandler::onItemAttributeModifier$Damage);
         MinecraftForge.EVENT_BUS.addListener(attackAttributeHandler::onItemAttributeModifier$Reach);
+    }
+
+    private static void registerMessages() {
+        NETWORK.register(C2SSweepAttackMessage.class, C2SSweepAttackMessage::new, MessageDirection.TO_SERVER);
     }
 
     @SubscribeEvent

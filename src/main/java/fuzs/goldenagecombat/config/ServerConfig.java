@@ -22,7 +22,7 @@ public class ServerConfig extends AbstractConfig {
     @Config
     public BlockingConfig blocking = new BlockingConfig();
     @Config
-    public AdjustmentsConfig adjustments = new AdjustmentsConfig();
+    public CombatTestsConfig combatTests = new CombatTestsConfig();
 
     public ServerConfig() {
         super("");
@@ -30,16 +30,12 @@ public class ServerConfig extends AbstractConfig {
 
     @Override
     protected void afterConfigReload() {
+        this.classic.afterConfigReload();
         this.attributes.afterConfigReload();
-        this.adjustments.afterConfigReload();
     }
 
     public enum FoodMechanics {
         VANILLA, COMBAT_UPDATE, LEGACY_COMBAT, CUSTOM
-    }
-
-    public enum UpwardsKnockback {
-        NONE, OLD_COMBAT, COMBAT_TESTS
     }
 
     public static class ClassicConfig extends AbstractConfig {
@@ -70,10 +66,23 @@ public class ServerConfig extends AbstractConfig {
         @Config(name = "interact_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held for mining blocks. Does not make a lot of sense, but it used to be a feature in old pvp.")
         public boolean interactWhileUsing = false;
         @Config(name = "upwards_knockback", description = "Makes knockback stronger towards targets not on the ground.")
-        public UpwardsKnockback upwardsKnockback = UpwardsKnockback.OLD_COMBAT;
+        public boolean upwardsKnockback = true;
+        @Config(category = "adjustments", name = "canceled_attack_sounds", description = {"Prevent various attack sounds added for the cooldown mechanic from playing.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
+        private List<String> canceledAttackSoundsRaw = EntryCollectionBuilder.getKeyList(ForgeRegistries.SOUND_EVENTS, SoundEvents.PLAYER_ATTACK_CRIT, SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundEvents.PLAYER_ATTACK_STRONG, SoundEvents.PLAYER_ATTACK_WEAK);
+        @Config(category = "adjustments", name = "hide_damage_indicators", description = "Stop heart particles spawned when the player attacks an entity from appearing since they kinda clutter the screen since attacks can be dealt much quicker with classic combat options enabled.")
+        public boolean noDamageIndicators = true;
+
+        public Set<SoundEvent> canceledAttackSounds;
 
         public ClassicConfig() {
             super("classic_combat");
+            this.addComment("Classic combat is the focus of this mod, bringing back combat exactly as it used to be before the combat update. The option for removing the attack cooldown is probably the most important one here.");
+            this.addComment(Lists.newArrayList( "adjustments"), "Some adjustments to modern combat features to make them fit in better with classic combat.");
+        }
+
+        @Override
+        protected void afterConfigReload() {
+            this.canceledAttackSounds = EntryCollectionBuilder.of(ForgeRegistries.SOUND_EVENTS).buildSet(this.canceledAttackSoundsRaw);
         }
     }
 
@@ -82,23 +91,23 @@ public class ServerConfig extends AbstractConfig {
         public boolean oldAttackDamage = true;
         @Config(name = "attack_damage_overrides", description = {"Overrides for setting and balancing attack damage values of items.", "Takes precedence over any changes made by \"legacy_attack_damage\" option, but requires it to be enabled.", "As with all items, this value is added ON TOP of the default attack strength of the player (which is 1.0 by default).", "Format for every entry is \"<namespace>:<path>,<amount>\". Path may use asterisk as wildcard parameter. Tags are not supported."})
         private List<String> attackDamageOverridesRaw = Lists.newArrayList();
-        @Config(name = "increased_attack_reach", description = "Makes it so that swords, hoes, and tridents have an increased reach when attacking.")
-        public boolean increasedAttackReach = true;
-        @Config(name = "attack_reach_overrides", description = {"Overrides for setting and balancing attack reach values of items.", "Takes precedence over any changes made by \"increasedAttackReach\" option, but requires it to be enabled.", "As with all items, this value is added ON TOP of the default attack reach of the player (which is 3.0 by default).", "Format for every entry is \"<namespace>:<path>,<amount>\". Path may use asterisk as wildcard parameter. Tags are not supported."})
+        @Config(name = "attack_reach", description = "Makes it so that swords, hoes, and tridents have an increased reach when attacking.")
+        public boolean attackReach = true;
+        @Config(name = "attack_reach_overrides", description = {"Overrides for setting and balancing attack reach values of items.", "Takes precedence over any changes made by \"attack_reach\" option, but requires it to be enabled.", "As with all items, this value is added ON TOP of the default attack reach of the player (which is 3.0 by default, and has a hard cap at 6.0 in total).", "Format for every entry is \"<namespace>:<path>,<amount>\". Path may use asterisk as wildcard parameter. Tags are not supported."})
         private List<String> attackReachOverridesRaw = Lists.newArrayList();
 
         public Map<Item, Double> attackDamageOverrides;
         public Map<Item, Double> attackReachOverrides;
 
         public AttributesConfig() {
-            super("attributes");
+            super("combat_attributes");
         }
 
         @Override
         protected void afterConfigReload() {
-            this.attackDamageOverrides = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildMap(this.attackDamageOverridesRaw, (item, amount) -> amount.length == 1, "Wrong number of arguments").entrySet().stream()
+            this.attackDamageOverrides = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildMap(this.attackDamageOverridesRaw, (item, amount) -> amount.length == 1 && amount[0] >= 0.0, "Only a single argument allowed, which must be >=0").entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
-            this.attackReachOverrides = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildMap(this.attackReachOverridesRaw, (item, amount) -> amount.length == 1, "Wrong number of arguments").entrySet().stream()
+            this.attackReachOverrides = EntryCollectionBuilder.of(ForgeRegistries.ITEMS).buildMap(this.attackReachOverridesRaw, (item, amount) -> amount.length == 1 && amount[0] >= 0.0, "Only a single argument allowed, which must be >=0").entrySet().stream()
                     .collect(Collectors.toMap(Map.Entry::getKey, e -> e.getValue()[0]));
         }
     }
@@ -110,47 +119,36 @@ public class ServerConfig extends AbstractConfig {
         public boolean prioritizeShield = true;
         @Config(name = "knockback_reduction", description = "Percentage to reduce knockback by while sword blocking.")
         @Config.DoubleRange(min = 0.0, max = 1.0)
-        public double knockbackReduction = 0.25;
+        public double knockbackReduction = 0.2;
 
         public BlockingConfig() {
             super("sword_blocking");
         }
     }
 
-    public static class AdjustmentsConfig extends AbstractConfig {
+    public static class CombatTestsConfig extends AbstractConfig {
         @Config(category = "sweeping", name = "require_sweeping_edge", description = "Is the sweeping edge enchantment required to perform a sweep attack.")
         public boolean sweepingRequired = true;
-        @Config(category = "sweeping", name = "half_sweeping_damage", description = "Only apply half the sweeping damage to indirectly hit mobs as seen in most recent combat test snapshots.")
+        @Config(category = "sweeping", name = "half_sweeping_damage", description = "Only apply half the sweeping damage to indirectly hit mobs for better balancing of the sweeping feature.")
         public boolean halfSweepingDamage = true;
         @Config(category = "sweeping", name = "no_sweeping_when_sneaking", description = "Do not perform sweep attacks when sneaking.")
         public boolean noSneakSweeping = false;
+        @Config(category = "sweeping", name = "air_sweep_attack", description = {"Allow sweep attack without hitting mobs, just by attacking air basically.", "This attack will not work when the attack button is held for continuous attacking."})
+        public boolean airSweepAttack = true;
         @Config(name = "sprint_attacks", description = "Attacking will no longer stop the player from sprinting. Very useful when swimming, so you can fight underwater without being stopped on every hit.")
         public boolean sprintAttacks = true;
-        @Config(name = "canceled_attack_sounds", description = {"Prevent various attack sounds added for the cooldown mechanic from playing.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
-        private List<String> canceledAttackSoundsRaw = EntryCollectionBuilder.getKeyList(ForgeRegistries.SOUND_EVENTS, SoundEvents.PLAYER_ATTACK_CRIT, SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundEvents.PLAYER_ATTACK_STRONG, SoundEvents.PLAYER_ATTACK_WEAK);
-        @Config(name = "hide_damage_indicators", description = "Stop heart particles spawned when the player attacks an entity from appearing.")
-        public boolean noDamageIndicators = true;
         @Config(name = "min_hitbox_size", description = {"Force all entity hitboxes to have a cubic size of at least 0.9 blocks.", "This only affects targeting an entity, no collisions or whatsoever. Useful for hitting e.g. bats, rabbits, silverfish, fish, and most baby animals."})
         public boolean minHitboxSize = true;
         @Config(name = "hold_attack_button", description = "Holding down the attack button keeps attacking continuously. No more spam clicking required.")
         public boolean holdAttackButton = true;
         @Config(name = "swing_through_grass", description = "Hit mobs through blocks without a collision shape such as tall grass without having to break the block first.")
         public boolean swingThroughGrass = true;
-        @Config(name = "shield_knockback_reduction", description = "Percentage to reduce knockback by while blocking with a shield.")
-        @Config.DoubleRange(min = 0.0, max = 1.0)
-        public double knockbackReduction = 0.5;
         @Config(name = "shield_knockback_fix", description = "Fix shields not knocking back attackers (see MC-147694).")
         public boolean shieldKnockbackFix = true;
 
-        public Set<SoundEvent> canceledAttackSounds;
-
-        public AdjustmentsConfig() {
-            super("combat_adjustments");
-        }
-
-        @Override
-        protected void afterConfigReload() {
-            this.canceledAttackSounds = EntryCollectionBuilder.of(ForgeRegistries.SOUND_EVENTS).buildSet(this.canceledAttackSoundsRaw);
+        public CombatTestsConfig() {
+            super("combat_tests");
+            this.addComment("This section offers a selection of features related to Mojang's combat test snapshots which fit rather well alongside classic combat.");
         }
     }
 }

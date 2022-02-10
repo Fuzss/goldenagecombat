@@ -15,11 +15,9 @@ public class ClientCooldownHandler {
     @SubscribeEvent
     public void onRenderGameOverlay$Pre(final RenderGameOverlayEvent.Pre evt) {
         if (evt.getType() != RenderGameOverlayEvent.ElementType.ALL) return;
-        if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
-            // this will mostly just remove the attack indicator, except for one niche case when looking at an entity
-            // just for that reason the whole indicator is also disabled later on
-            ClassicCombatHandler.disableCooldownPeriod(this.minecraft.player);
-        }
+        // this will mostly just remove the attack indicator, except for one niche case when looking at an entity
+        // just for that reason the whole indicator is also disabled later on
+        ClassicCombatHandler.disableCooldownPeriod(this.minecraft.player);
         if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
             // indicator would otherwise render when looking at an entity, even when there is no cooldown
             this.attackIndicator = this.minecraft.options.attackIndicator;
@@ -40,11 +38,9 @@ public class ClientCooldownHandler {
     @SubscribeEvent
     public void onClientTick(final TickEvent.ClientTickEvent evt) {
         if (evt.phase != TickEvent.Phase.END) return;
-        if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
-            if (this.minecraft.player != null && !this.minecraft.isPaused()) {
-                // FirstPersonRenderer::tick uses cooldown period, so we reset it before calling that
-                ClassicCombatHandler.disableCooldownPeriod(this.minecraft.player);
-            }
+        if (this.minecraft.player != null && !this.minecraft.isPaused()) {
+            // FirstPersonRenderer::tick uses cooldown period, so we reset it before calling that
+            ClassicCombatHandler.disableCooldownPeriod(this.minecraft.player);
         }
     }
 }

@@ -1,7 +1,6 @@
 package fuzs.goldenagecombat.handler;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.config.ServerConfig;
 import fuzs.goldenagecombat.mixin.accessor.LivingEntityAccessor;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
@@ -12,6 +11,7 @@ import net.minecraft.world.entity.projectile.Projectile;
 import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
+import net.minecraftforge.event.entity.PlaySoundAtEntityEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
@@ -22,9 +22,7 @@ public class ClassicCombatHandler {
     @SubscribeEvent
     public void onAttackEntity(final AttackEntityEvent evt) {
         // reset cooldown right before every attack
-        if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
-            disableCooldownPeriod(evt.getPlayer());
-        }
+        disableCooldownPeriod(evt.getPlayer());
     }
 
     @SubscribeEvent
@@ -51,17 +49,27 @@ public class ClassicCombatHandler {
 
     @SubscribeEvent
     public void onLivingKnockBack(final LivingKnockBackEvent evt) {
-        if (GoldenAgeCombat.CONFIG.server().classic.upwardsKnockback == ServerConfig.UpwardsKnockback.NONE) return;
+        if (!GoldenAgeCombat.CONFIG.server().classic.upwardsKnockback) return;
         final LivingEntity entity = evt.getEntityLiving();
         if (!entity.isOnGround() && !entity.isInWater()) {
             float strength = evt.getStrength();
             strength *= 1.0 - entity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
             final Vec3 deltaMovement = entity.getDeltaMovement();
-            entity.setDeltaMovement(deltaMovement.x, Math.min(0.4, GoldenAgeCombat.CONFIG.server().classic.upwardsKnockback == ServerConfig.UpwardsKnockback.OLD_COMBAT ? deltaMovement.y / 2.0D + strength : deltaMovement.y + strength * 0.5), deltaMovement.x);
+            entity.setDeltaMovement(deltaMovement.x, Math.min(0.4, deltaMovement.y / 2.0D + strength), deltaMovement.x);
         }
     }
 
     public static void disableCooldownPeriod(Player player) {
-        ((LivingEntityAccessor) player).setAttackStrengthTicker((int) Math.ceil(player.getCurrentItemAttackStrengthDelay()));
+        if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
+            ((LivingEntityAccessor) player).setAttackStrengthTicker((int) Math.ceil(player.getCurrentItemAttackStrengthDelay()));
+        }
+    }
+
+    @SubscribeEvent
+    public void onPlaySoundAtEntity(final PlaySoundAtEntityEvent evt) {
+        // disable combat update player attack sounds
+        if (GoldenAgeCombat.CONFIG.server().classic.canceledAttackSounds.contains(evt.getSound())) {
+            evt.setCanceled(true);
+        }
     }
 }

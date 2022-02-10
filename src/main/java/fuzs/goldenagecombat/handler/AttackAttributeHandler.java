@@ -53,7 +53,7 @@ public class AttackAttributeHandler {
 
     @SubscribeEvent
     public void onItemAttributeModifier$Reach(final ItemAttributeModifierEvent evt) {
-        if (!GoldenAgeCombat.CONFIG.server().attributes.increasedAttackReach) return;
+        if (!GoldenAgeCombat.CONFIG.server().attributes.attackReach) return;
         if (evt.getSlotType() != EquipmentSlot.MAINHAND) return;
         ItemStack stack = evt.getItemStack();
         // don't change items whose attributes have already been changed via the nbt tag

@@ -11,7 +11,7 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfoReturnable;
 public abstract class SweepingEdgeEnchantmentMixin {
     @Inject(method = "getSweepingDamageRatio", at = @At("TAIL"), cancellable = true)
     private static void getSweepingDamageRatio(int level, CallbackInfoReturnable<Float> callbackInfo) {
-        if (GoldenAgeCombat.CONFIG.server().adjustments.halfSweepingDamage) {
+        if (GoldenAgeCombat.CONFIG.server().combatTests.halfSweepingDamage) {
             callbackInfo.setReturnValue(callbackInfo.getReturnValueF() * 0.5F);
         }
     }

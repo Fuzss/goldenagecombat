@@ -46,7 +46,7 @@ public class AttributesTooltipHandler {
         if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
             this.removeAttribute(list, Attributes.ATTACK_SPEED);
         }
-        if (GoldenAgeCombat.CONFIG.server().attributes.increasedAttackReach) {
+        if (GoldenAgeCombat.CONFIG.server().attributes.attackReach) {
             this.replaceOrAddDefaultAttribute(list, AttackAttributeHandler.BASE_ATTACK_REACH_UUID, evt.getItemStack(), evt.getPlayer());
         } else {
             this.removeAttribute(list, ModRegistry.ATTACK_REACH_ATTRIBUTE.get());
@@ -230,7 +230,7 @@ public class AttributesTooltipHandler {
     private void addAttributesToTooltip(List<Component> list, @Nullable Player player, ItemStack stack, Multimap<Attribute, AttributeModifier> multimap) {
         for (Map.Entry<Attribute, AttributeModifier> entry : multimap.entries()) {
             if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown && entry.getKey().equals(Attributes.ATTACK_SPEED)) continue;
-            if (!GoldenAgeCombat.CONFIG.server().attributes.increasedAttackReach && entry.getKey().equals(ModRegistry.ATTACK_REACH_ATTRIBUTE.get())) continue;
+            if (!GoldenAgeCombat.CONFIG.server().attributes.attackReach && entry.getKey().equals(ModRegistry.ATTACK_REACH_ATTRIBUTE.get())) continue;
             AttributeModifier attributemodifier = entry.getValue();
             double d0 = attributemodifier.getAmount();
             boolean flag = false;

@@ -25,7 +25,7 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Inject(method = "blockedByShield", at = @At("HEAD"), cancellable = true)
     protected void blockedByShield$head(LivingEntity target, CallbackInfo callbackInfo) {
-        if (!GoldenAgeCombat.CONFIG.server().adjustments.shieldKnockbackFix) return;
+        if (!GoldenAgeCombat.CONFIG.server().combatTests.shieldKnockbackFix) return;
         this.knockback(0.5, target.getX() - this.getX(), target.getZ() - this.getZ());
         callbackInfo.cancel();
     }
