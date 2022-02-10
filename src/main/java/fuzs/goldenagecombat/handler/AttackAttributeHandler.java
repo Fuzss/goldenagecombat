@@ -28,19 +28,16 @@ public class AttackAttributeHandler {
         if (!stack.hasTag() || !stack.getTag().contains("AttributeModifiers", 9)) {
             if (GoldenAgeCombat.CONFIG.server().attributes.attackDamageOverrides.containsKey(stack.getItem())) {
                 this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, GoldenAgeCombat.CONFIG.server().attributes.attackDamageOverrides.get(stack.getItem()));
-            } else if (stack.getItem() instanceof TieredItem) {
-                // always one less to account for base value of 1.0
-                if (stack.getItem() instanceof SwordItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 4.0);
-                } else if (stack.getItem() instanceof AxeItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 3.0);
-                } else if (stack.getItem() instanceof PickaxeItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 2.0);
-                } else if (stack.getItem() instanceof ShovelItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 1.0);
-                } else if (stack.getItem() instanceof HoeItem) {
-                    this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 0.0);
-                }
+            } else if (stack.getItem() instanceof SwordItem) {
+                this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 4.0);
+            } else if (stack.getItem() instanceof AxeItem) {
+                this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 3.0);
+            } else if (stack.getItem() instanceof PickaxeItem) {
+                this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 2.0);
+            } else if (stack.getItem() instanceof ShovelItem) {
+                this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 1.0);
+            } else if (stack.getItem() instanceof HoeItem) {
+                this.replaceDamageAttribute(evt::removeAttribute, evt::addModifier, (TieredItem) stack.getItem(), 0.0);
             }
         }
     }
@@ -59,14 +56,17 @@ public class AttackAttributeHandler {
         if (!GoldenAgeCombat.CONFIG.server().attributes.increasedAttackReach) return;
         if (evt.getSlotType() != EquipmentSlot.MAINHAND) return;
         ItemStack stack = evt.getItemStack();
-        if (GoldenAgeCombat.CONFIG.server().attributes.attackReachOverrides.containsKey(stack.getItem())) {
-            this.setReachAttribute(evt::addModifier, GoldenAgeCombat.CONFIG.server().attributes.attackReachOverrides.get(stack.getItem()));
-        } else if (stack.getItem() instanceof TridentItem) {
-            this.setReachAttribute(evt::addModifier, 1.0);
-        } else if (stack.getItem() instanceof SwordItem || stack.getItem() instanceof HoeItem) {
-            this.setReachAttribute(evt::addModifier, 0.5);
-        } else if (stack.getItem() instanceof TieredItem) {
-            this.setReachAttribute(evt::addModifier, 0.0);
+        // don't change items whose attributes have already been changed via the nbt tag
+        if (!stack.hasTag() || !stack.getTag().contains("AttributeModifiers", 9)) {
+            if (GoldenAgeCombat.CONFIG.server().attributes.attackReachOverrides.containsKey(stack.getItem())) {
+                this.setReachAttribute(evt::addModifier, GoldenAgeCombat.CONFIG.server().attributes.attackReachOverrides.get(stack.getItem()));
+            } else if (stack.getItem() instanceof TridentItem || stack.getItem() instanceof HoeItem) {
+                this.setReachAttribute(evt::addModifier, 1.0);
+            } else if (stack.getItem() instanceof SwordItem) {
+                this.setReachAttribute(evt::addModifier, 0.5);
+            } else if (stack.getItem() instanceof TieredItem) {
+                this.setReachAttribute(evt::addModifier, 0.0);
+            }
         }
     }
 

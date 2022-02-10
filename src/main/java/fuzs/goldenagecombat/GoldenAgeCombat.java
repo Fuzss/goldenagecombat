@@ -45,14 +45,16 @@ public class GoldenAgeCombat {
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onAttackEntity);
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onThrowableImpact);
         MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onUseItemFinish);
-        MinecraftForge.EVENT_BUS.addListener(classicCombatHandler::onLivingKnockBack);
+        MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, classicCombatHandler::onLivingKnockBack);
         final CombatAdjustmentsHandler combatAdjustmentsHandler = new CombatAdjustmentsHandler();
         MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onPlaySoundAtEntity);
         MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onLeftClickEmpty);
+        MinecraftForge.EVENT_BUS.addListener(combatAdjustmentsHandler::onLivingKnockBack);
         final SwordBlockingHandler swordBlockingHandler = new SwordBlockingHandler();
         MinecraftForge.EVENT_BUS.addListener(EventPriority.LOW, swordBlockingHandler::onRightClickItem);
         MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onItemUseStart);
         MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onLivingHurt);
+        MinecraftForge.EVENT_BUS.addListener(swordBlockingHandler::onLivingKnockBack);
         final AttackAttributeHandler attackAttributeHandler = new AttackAttributeHandler();
         MinecraftForge.EVENT_BUS.addListener(attackAttributeHandler::onItemAttributeModifier$Damage);
         MinecraftForge.EVENT_BUS.addListener(attackAttributeHandler::onItemAttributeModifier$Reach);

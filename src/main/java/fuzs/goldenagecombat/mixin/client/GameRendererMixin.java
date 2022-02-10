@@ -1,6 +1,7 @@
 package fuzs.goldenagecombat.mixin.client;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
+import fuzs.goldenagecombat.registry.ModRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GameRenderer;
 import net.minecraft.world.entity.Entity;
@@ -28,52 +29,57 @@ public abstract class GameRendererMixin {
 
     @Inject(method = "pick", at = @At("HEAD"), cancellable = true)
     public void pick$head(float partialTicks, CallbackInfo callbackInfo) {
-        if (!GoldenAgeCombat.CONFIG.server().adjustments.swingThroughGrass) return;
+        if (!GoldenAgeCombat.CONFIG.server().adjustments.swingThroughGrass && !GoldenAgeCombat.CONFIG.server().attributes.increasedAttackReach) return;
         Entity entity = this.minecraft.getCameraEntity();
-        if (entity != null) {
-            if (this.minecraft.level != null) {
-                this.minecraft.getProfiler().push("pick");
-                this.minecraft.crosshairPickEntity = null;
-                final double maxBlockPickRange = 6.0;
-                final double maxEntityPickRange = 3.0;
-                Vec3 viewVector = entity.getViewVector(1.0F);
-                Vec3 eyePosition = entity.getEyePosition(partialTicks);
-                Vec3 pickVector = eyePosition.add(viewVector.x * maxEntityPickRange, viewVector.y * maxEntityPickRange, viewVector.z * maxEntityPickRange);
-
-                AABB aabb = entity.getBoundingBox().expandTowards(viewVector.scale(maxEntityPickRange)).inflate(1.0D, 1.0D, 1.0D);
-                EntityHitResult entityhitresult = ProjectileUtil.getEntityHitResult(entity, eyePosition, pickVector, aabb, entity1 -> {
-                    return !entity1.isSpectator() && entity1.isPickable();
-                }, maxEntityPickRange * maxEntityPickRange);
-                double pickRange = this.minecraft.gameMode.getPickRange();
-
-                double entityPickRange = getEntityPickRange(entityhitresult, eyePosition, pickVector);
-                if (entityhitresult != null && entityPickRange < pickRange) {
-                    pickRange = entityPickRange;
-                } else if (pickRange > maxBlockPickRange) {
-                    pickRange = maxBlockPickRange;
+        if (entity != null && this.minecraft.level != null) {
+            this.minecraft.getProfiler().push("pick");
+            this.minecraft.crosshairPickEntity = null;
+            double maxPickRange = this.minecraft.gameMode.getPickRange();
+            double maxEntityPickRange = 3.0;
+            if (GoldenAgeCombat.CONFIG.server().attributes.increasedAttackReach) {
+                maxEntityPickRange = this.minecraft.player.getAttribute(ModRegistry.ATTACK_REACH_ATTRIBUTE.get()).getValue();
+                if (this.minecraft.gameMode.hasFarPickRange()) {
+                    maxEntityPickRange += 0.5;
                 }
-
-                HitResult outlineHitResult = entity.pick(pickRange, partialTicks, false);
-                // when trying to pick an entity, pick a second time with collider context so we are able to avoid e.g. tall grass
-                // doing this the other way around does not work, as e.g. fences will be picked from their collision box when an entity is standing behind them
-                if (entityhitresult != null && outlineHitResult.getType() != HitResult.Type.MISS) {
-                    HitResult colliderHitResult = pick(entity, pickRange, partialTicks);
-                    if (colliderHitResult.getType() == HitResult.Type.MISS) {
-                        outlineHitResult = colliderHitResult;
-                    }
+                if (entity.isCrouching()) {
+                    maxEntityPickRange -= 0.5;
                 }
-
-                if (outlineHitResult.getType() != HitResult.Type.MISS) {
-                    this.minecraft.hitResult = outlineHitResult;
-                } else if (entityhitresult != null) {
-                    this.minecraft.hitResult = entityhitresult;
-                    this.minecraft.crosshairPickEntity = entityhitresult.getEntity();
-                } else {
-                    this.minecraft.hitResult = outlineHitResult;
-                }
-
-                this.minecraft.getProfiler().pop();
             }
+            Vec3 viewVector = entity.getViewVector(1.0F);
+            Vec3 eyePosition = entity.getEyePosition(partialTicks);
+            Vec3 pickVector = eyePosition.add(viewVector.x * maxEntityPickRange, viewVector.y * maxEntityPickRange, viewVector.z * maxEntityPickRange);
+            AABB aabb = entity.getBoundingBox().expandTowards(viewVector.scale(maxEntityPickRange)).inflate(1.0D, 1.0D, 1.0D);
+            EntityHitResult entityhitresult = ProjectileUtil.getEntityHitResult(entity, eyePosition, pickVector, aabb, entity1 -> {
+                return !entity1.isSpectator() && entity1.isPickable();
+            }, maxEntityPickRange * maxEntityPickRange);
+            double entityPickRange = getEntityPickRange(entityhitresult, eyePosition, pickVector);
+            if (entityhitresult != null && entityPickRange < maxPickRange) {
+                maxPickRange = entityPickRange;
+            }
+            if (maxPickRange > 6.0) {
+                maxPickRange = 6.0;
+            }
+
+            HitResult outlineHitResult = entity.pick(maxPickRange, partialTicks, false);
+            // when trying to pick an entity, pick a second time with collider context, so we are able to avoid e.g. tall grass
+            // doing this the other way around does not work, as e.g. fences will be picked from their collision box when an entity is standing behind them
+            if (GoldenAgeCombat.CONFIG.server().adjustments.swingThroughGrass && entityhitresult != null && outlineHitResult.getType() != HitResult.Type.MISS) {
+                HitResult colliderHitResult = pick(entity, maxPickRange, partialTicks);
+                if (colliderHitResult.getType() == HitResult.Type.MISS) {
+                    outlineHitResult = colliderHitResult;
+                }
+            }
+
+            if (outlineHitResult.getType() != HitResult.Type.MISS) {
+                this.minecraft.hitResult = outlineHitResult;
+            } else if (entityhitresult != null) {
+                this.minecraft.hitResult = entityhitresult;
+                this.minecraft.crosshairPickEntity = entityhitresult.getEntity();
+            } else {
+                this.minecraft.hitResult = outlineHitResult;
+            }
+
+            this.minecraft.getProfiler().pop();
         }
         callbackInfo.cancel();
     }

@@ -36,8 +36,10 @@ public class ClientConfig extends AbstractConfig {
     public static class TooltipConfig extends AbstractConfig {
         @Config(name = "remove_all_attributes", description = "Remove all information regarding attributes from item tooltips.")
         public boolean removeAllAttributes = false;
-        @Config(name = "old_attributes_style", description = "Use the pre-1.13 renderer for attributes on item tooltips.")
+        @Config(name = "old_attributes_style", description = "Use the pre-1.9 renderer for attributes on item tooltips.")
         public boolean oldAttributes = true;
+        @Config(name = "special_armor_attributes", description = {"Render armor attributes with green text instead of blue one and include the entity's base armor value, just like with tools and weapons.", "Does not apply when old style attributes renderer is used."})
+        public boolean specialArmorAttributes = true;
 
         public TooltipConfig() {
             super("attributes_tooltip");

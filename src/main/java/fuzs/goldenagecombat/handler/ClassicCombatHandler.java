@@ -1,30 +1,22 @@
 package fuzs.goldenagecombat.handler;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.mixin.accessor.ItemAccessor;
+import fuzs.goldenagecombat.config.ServerConfig;
 import fuzs.goldenagecombat.mixin.accessor.LivingEntityAccessor;
-import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
-import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
-import net.minecraft.world.entity.ai.attributes.Attribute;
-import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.entity.projectile.Projectile;
-import net.minecraft.world.item.*;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
-import net.minecraftforge.event.ItemAttributeModifierEvent;
 import net.minecraftforge.event.entity.ProjectileImpactEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.AttackEntityEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
-
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class ClassicCombatHandler {
     @SubscribeEvent
@@ -59,12 +51,13 @@ public class ClassicCombatHandler {
 
     @SubscribeEvent
     public void onLivingKnockBack(final LivingKnockBackEvent evt) {
+        if (GoldenAgeCombat.CONFIG.server().classic.upwardsKnockback == ServerConfig.UpwardsKnockback.NONE) return;
         final LivingEntity entity = evt.getEntityLiving();
-        if (GoldenAgeCombat.CONFIG.server().classic.upwardsKnockback && !entity.isOnGround() && !entity.isInWater()) {
-            float strength = evt.getOriginalStrength();
+        if (!entity.isOnGround() && !entity.isInWater()) {
+            float strength = evt.getStrength();
             strength *= 1.0 - entity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE);
             final Vec3 deltaMovement = entity.getDeltaMovement();
-            entity.setDeltaMovement(deltaMovement.x, Math.min(0.4, deltaMovement.y / 2.0D + strength), deltaMovement.x);
+            entity.setDeltaMovement(deltaMovement.x, Math.min(0.4, GoldenAgeCombat.CONFIG.server().classic.upwardsKnockback == ServerConfig.UpwardsKnockback.OLD_COMBAT ? deltaMovement.y / 2.0D + strength : deltaMovement.y + strength * 0.5), deltaMovement.x);
         }
     }
 

@@ -14,6 +14,7 @@ import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.UseAnim;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
+import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -22,7 +23,7 @@ public class SwordBlockingHandler {
     public void onRightClickItem(final PlayerInteractEvent.RightClickItem evt) {
         Player player = evt.getPlayer();
         if (canItemStackBlock(evt.getItemStack())) {
-            if (!GoldenAgeCombat.CONFIG.server().adjustments.prioritizeShield || evt.getHand() != InteractionHand.MAIN_HAND || player.getOffhandItem().getUseAnimation() != UseAnim.BLOCK) {
+            if (!GoldenAgeCombat.CONFIG.server().blocking.prioritizeShield || evt.getHand() != InteractionHand.MAIN_HAND || player.getOffhandItem().getUseAnimation() != UseAnim.BLOCK) {
                 player.startUsingItem(evt.getHand());
                 // cause reequip animation, but don't swing hand, not to be confused with ActionResultType#SUCCESS
                 // partial version seems to not affect game stats which is probably better since you can just spam sword blocking haha
@@ -45,6 +46,18 @@ public class SwordBlockingHandler {
         if (evt.getEntityLiving() instanceof Player player) {
             if (isDamageSourceBlockable(evt.getSource()) && isActiveItemStackBlocking(player) && evt.getAmount() > 0.0F) {
                 evt.setAmount((1.0F + evt.getAmount()) * 0.5F);
+            }
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingKnockBack(final LivingKnockBackEvent evt) {
+        if (evt.getEntityLiving() instanceof Player player && isActiveItemStackBlocking(player)) {
+            float knockBackMultiplier = 1.0F - (float) GoldenAgeCombat.CONFIG.server().blocking.knockbackReduction;
+            if (knockBackMultiplier <= 0.0F) {
+                evt.setCanceled(true);
+            } else {
+                evt.setStrength(evt.getStrength() * knockBackMultiplier);
             }
         }
     }

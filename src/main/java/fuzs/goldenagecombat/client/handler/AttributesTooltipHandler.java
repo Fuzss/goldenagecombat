@@ -29,6 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 
 public class AttributesTooltipHandler {
+    private static final UUID[] ARMOR_MODIFIER_UUID_PER_SLOT = new UUID[]{UUID.fromString("845DB27C-C624-495F-8C9F-6020A9A58B6B"), UUID.fromString("D8499B04-0E66-4726-AB29-64469D734E0D"), UUID.fromString("9F3D476D-C118-4544-8365-64846904B48E"), UUID.fromString("2AD3F246-FEE1-4E67-B886-69FD380BB150")};
     protected static final UUID BASE_ATTACK_DAMAGE_UUID = UUID.fromString("CB3F55D3-645C-4F38-A497-9C13A33DB5CF");
     protected static final UUID BASE_ATTACK_SPEED_UUID = UUID.fromString("FA233E1C-4180-4865-B01B-BCCE9785ACA3");
 
@@ -46,12 +47,12 @@ public class AttributesTooltipHandler {
             this.removeAttribute(list, Attributes.ATTACK_SPEED);
         }
         if (GoldenAgeCombat.CONFIG.server().attributes.increasedAttackReach) {
-            this.replaceOrAddDefaultAttribute(list, ModRegistry.ATTACK_REACH_ATTRIBUTE.get(), AttackAttributeHandler.BASE_ATTACK_REACH_UUID, evt.getItemStack(), evt.getPlayer());
+            this.replaceOrAddDefaultAttribute(list, AttackAttributeHandler.BASE_ATTACK_REACH_UUID, evt.getItemStack(), evt.getPlayer());
         } else {
             this.removeAttribute(list, ModRegistry.ATTACK_REACH_ATTRIBUTE.get());
         }
-        if (evt.getItemStack().getItem() instanceof ArmorItem) {
-
+        if (GoldenAgeCombat.CONFIG.client().tooltip.specialArmorAttributes && evt.getItemStack().getItem() instanceof ArmorItem item) {
+            this.replaceOrAddDefaultAttribute(list, ARMOR_MODIFIER_UUID_PER_SLOT[item.getSlot().getIndex()], evt.getItemStack(), evt.getPlayer());
         }
     }
 
@@ -89,33 +90,33 @@ public class AttributesTooltipHandler {
         return false;
     }
 
-    private void replaceOrAddDefaultAttribute(List<Component> list, Attribute attribute, UUID attributeId, ItemStack stack, @Nullable Player player) {
+    private void replaceOrAddDefaultAttribute(List<Component> list, UUID attributeId, ItemStack stack, @Nullable Player player) {
         final Map<EquipmentSlot, Multimap<Attribute, AttributeModifier>> map = this.getSlotToAttributeMap(stack);
         for (Map.Entry<EquipmentSlot, Multimap<Attribute, AttributeModifier>> slotToAttributeMap : map.entrySet()) {
-            AttributeModifier attributeModifier = null;
+            List<Map.Entry<Attribute, AttributeModifier>> attributeModifier = Lists.newArrayList();
             for (Map.Entry<Attribute, AttributeModifier> attributeToModifier : slotToAttributeMap.getValue().entries()) {
-                if (attributeToModifier.getKey().equals(attribute) && attributeToModifier.getValue().getId().equals(attributeId)) {
-                    attributeModifier = attributeToModifier.getValue();
-                    break;
+                if (attributeToModifier.getValue().getId().equals(attributeId)) {
+                    attributeModifier.add(attributeToModifier);
                 }
             }
-            if (attributeModifier != null) {
-                final double attributeBaseAmount = attributeModifier.getAmount();
+            for (Map.Entry<Attribute, AttributeModifier> entry : attributeModifier) {
+                final double attributeBaseAmount = entry.getValue().getAmount();
                 double attributeAmount = attributeBaseAmount;
                 if (player != null) {
-                    attributeAmount += player.getAttributeBaseValue(attribute);
+                    attributeAmount += player.getAttributeBaseValue(entry.getKey());
                 }
-                double scaledAmount = this.getScaledAttributeAmount(attributeAmount, attribute, attributeModifier);
+                if (attributeAmount == 0.0) continue;
+                double scaledAmount = this.getScaledAttributeAmount(attributeAmount, entry.getKey(), entry.getValue());
                 for (int i = 0; i < list.size(); i++) {
                     final Component component = list.get(i);
                     if (attributeBaseAmount != 0.0) {
-                        if (this.compareToAttributeComponent(attribute, attributeModifier, component)) {
-                            list.set(i, new TextComponent(" ").append(new TranslatableComponent("attribute.modifier.equals." + attributeModifier.getOperation().toValue(), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(scaledAmount), new TranslatableComponent(attribute.getDescriptionId()))).withStyle(ChatFormatting.DARK_GREEN));
+                        if (this.compareToAttributeComponent(entry.getKey(), entry.getValue(), component)) {
+                            list.set(i, new TextComponent(" ").append(new TranslatableComponent("attribute.modifier.equals." + entry.getValue().getOperation().toValue(), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(scaledAmount), new TranslatableComponent(entry.getKey().getDescriptionId()))).withStyle(ChatFormatting.DARK_GREEN));
                             break;
                         }
                     } else {
                         if (component instanceof TranslatableComponent translatableComponent && translatableComponent.getKey().equals("item.modifiers." + slotToAttributeMap.getKey().getName())) {
-                            list.add(++i, new TextComponent(" ").append(new TranslatableComponent("attribute.modifier.equals." + attributeModifier.getOperation().toValue(), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(scaledAmount), new TranslatableComponent(attribute.getDescriptionId()))).withStyle(ChatFormatting.DARK_GREEN));
+                            list.add(++i, new TextComponent(" ").append(new TranslatableComponent("attribute.modifier.equals." + entry.getValue().getOperation().toValue(), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(scaledAmount), new TranslatableComponent(entry.getKey().getDescriptionId()))).withStyle(ChatFormatting.DARK_GREEN));
                             break;
                         }
                     }
@@ -256,7 +257,7 @@ public class AttributesTooltipHandler {
             } else {
                 d1 = d0 * 100.0D;
             }
-            if (flag || d0 > 0.0D) {
+            if (flag && d0 != 0.0 || d0 > 0.0D) {
                 list.add((new TranslatableComponent("attribute.modifier.plus." + attributemodifier.getOperation().toValue(), ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(d1), new TranslatableComponent(entry.getKey().getDescriptionId()))).withStyle(ChatFormatting.BLUE));
             } else if (d0 < 0.0D) {
                 d1 *= -1.0D;

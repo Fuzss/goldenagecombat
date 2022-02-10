@@ -1,5 +1,6 @@
 package fuzs.goldenagecombat.handler;
 
+import fuzs.goldenagecombat.registry.ModRegistry;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -18,22 +19,21 @@ import org.jetbrains.annotations.Nullable;
 import java.util.List;
 
 public class SweepAttackHandler {
-//    public static void attackAir(Player player) {
+    public static void attackAir(Player player) {
 //        if (!player.isAttackAvailable(1.0f)) {
 //            return;
 //        }
 //        player.swing(InteractionHand.MAIN_HAND);
-//        float f = (float)player.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
-//        if (f > 0.0f && player.checkSweepAttack()) {
-//            float g = player.getCurrentAttackReach(1.0f);
-//            double d = 2.0;
-//            double e = (double)(-Mth.sin(player.getYRot() * ((float)Math.PI / 180))) * 2.0;
-//            double h = (double)Mth.cos(player.getYRot() * ((float)Math.PI / 180)) * 2.0;
-//            AABB aABB = player.getBoundingBox().inflate(1.0, 0.25, 1.0).move(e, 0.0, h);
-//            sweepAttack(player, aABB, g, f, null);
+//        float attackStrength = (float) player.getAttribute(Attributes.ATTACK_DAMAGE).getValue();
+//        if (attackStrength > 0.0f && player.checkSweepAttack()) {
+//            float attackReach = (float) getCurrentAttackReach(player);
+//            double moveX = (double)(-Mth.sin(player.getYRot() * ((float)Math.PI / 180))) * 2.0;
+//            double moveZ = (double)Mth.cos(player.getYRot() * ((float)Math.PI / 180)) * 2.0;
+//            AABB aABB = player.getBoundingBox().inflate(1.0, 0.25, 1.0).move(moveX, 0.0, moveZ);
+//            sweepAttack(player, aABB, attackReach, attackStrength, null);
 //        }
-//        player.resetAttackStrengthTicker(false);
-//    }
+//        player.resetAttackStrengthTicker();
+    }
 
     public static void sweepAttack(Player player, AABB aABB, float currentAttackReach, float baseAttackDamage, @Nullable Entity target) {
         float h = 1.0f + EnchantmentHelper.getSweepingDamageRatio(player) * baseAttackDamage;
@@ -51,5 +51,16 @@ public class SweepAttackHandler {
             double i = Mth.cos(player.getYRot() * ((float)Math.PI / 180));
             ((ServerLevel)player.level).sendParticles(ParticleTypes.SWEEP_ATTACK, player.getX() + d, player.getY() + (double)player.getBbHeight() * 0.5, player.getZ() + i, 0, d, 0.0, i, 0.0);
         }
+    }
+
+    public static double getCurrentAttackReach(Player player) {
+        double attackReach = player.getAttribute(ModRegistry.ATTACK_REACH_ATTRIBUTE.get()).getValue();
+//        if (this.minecraft.gameMode.hasFarPickRange()) {
+//            attackReach += 0.5;
+//        }
+//        if (player.isCrouching()) {
+//            attackReach -= 0.5;
+//        }
+        return attackReach;
     }
 }
