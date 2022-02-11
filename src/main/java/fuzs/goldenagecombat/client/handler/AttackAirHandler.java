@@ -30,7 +30,7 @@ public class AttackAirHandler {
     @SubscribeEvent
     public void onLeftClickEmpty$airAttack(final PlayerInteractEvent.LeftClickEmpty evt) {
         if (!GoldenAgeCombat.CONFIG.server().combatTests.airSweepAttack) return;
-        if (this.airSweepTime <= 0) {
+        if (GoldenAgeCombat.CONFIG.server().combatTests.continuousAirSweeping || this.airSweepTime <= 0) {
             final Minecraft minecraft = Minecraft.getInstance();
             ((MultiPlayerGameModeAccessor) minecraft.gameMode).callEnsureHasSentCarriedItem();
             GoldenAgeCombat.NETWORK.sendToServer(new C2SSweepAttackMessage((minecraft.player).isShiftKeyDown()));

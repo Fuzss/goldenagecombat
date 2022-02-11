@@ -3,6 +3,17 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [v3.2.0-1.18.1] - 2022-02-11
+### Added
+- Eating and drinking are now interrupted when receiving damage
+- Shields no longer have a 5 ticks activation delay
+- Snowballs and eggs stack to 64 and have a very short cooldown similar to ender pearls
+- When switching between hotbar slots the attack cooldown no longer triggers (this of course only applies when the attack cooldown is not disabled)
+- Drinking (potions, milk, bottled contents) now is much faster
+### Changed
+- Sweep attacks no longer render particles or sounds by default, just consider your weapon to deal aoe attacks
+- Turned option for disabling damage indicator particles into general option to allow for disabling any particle type
+
 ## [v3.1.0-1.18.1] - 2022-02-10
 ### Added
 - Added attack reach attribute from combat test snapshots, it is available for swords, hoes, and tridents

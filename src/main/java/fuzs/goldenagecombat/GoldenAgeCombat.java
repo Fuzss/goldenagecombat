@@ -5,6 +5,7 @@ import fuzs.goldenagecombat.config.ServerConfig;
 import fuzs.goldenagecombat.data.ModItemTagsProvider;
 import fuzs.goldenagecombat.handler.AttackAttributeHandler;
 import fuzs.goldenagecombat.handler.ClassicCombatHandler;
+import fuzs.goldenagecombat.handler.CombatTestHandler;
 import fuzs.goldenagecombat.handler.SwordBlockingHandler;
 import fuzs.goldenagecombat.network.client.C2SSweepAttackMessage;
 import fuzs.goldenagecombat.registry.ModRegistry;
@@ -20,6 +21,7 @@ import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
+import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
 import org.apache.logging.log4j.LogManager;
@@ -59,10 +61,20 @@ public class GoldenAgeCombat {
         final AttackAttributeHandler attackAttributeHandler = new AttackAttributeHandler();
         MinecraftForge.EVENT_BUS.addListener(attackAttributeHandler::onItemAttributeModifier$Damage);
         MinecraftForge.EVENT_BUS.addListener(attackAttributeHandler::onItemAttributeModifier$Reach);
+        final CombatTestHandler combatTestHandler = new CombatTestHandler();
+        MinecraftForge.EVENT_BUS.addListener(combatTestHandler::onPlayerTick);
+        MinecraftForge.EVENT_BUS.addListener(combatTestHandler::onItemUseStart);
+        MinecraftForge.EVENT_BUS.addListener(combatTestHandler::onRightClickItem);
+        MinecraftForge.EVENT_BUS.addListener(combatTestHandler::onLivingDamage);
     }
 
     private static void registerMessages() {
         NETWORK.register(C2SSweepAttackMessage.class, C2SSweepAttackMessage::new, MessageDirection.TO_SERVER);
+    }
+
+    @SubscribeEvent
+    public static void onCommonSetup(final FMLCommonSetupEvent evt) {
+        CombatTestHandler.setMaxStackSize();
     }
 
     @SubscribeEvent

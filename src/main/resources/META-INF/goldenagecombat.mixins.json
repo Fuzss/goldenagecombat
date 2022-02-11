@@ -14,7 +14,8 @@
     "ProjectileUtilMixin",
     "SweepingEdgeEnchantmentMixin",
     "accessor.ItemAccessor",
-    "accessor.LivingEntityAccessor"
+    "accessor.LivingEntityAccessor",
+    "accessor.PlayerAccessor"
   ],
   "client": [
     "client.CameraMixin",
@@ -25,6 +26,7 @@
     "client.ItemInHandRendererMixin",
     "client.LivingEntityMixin",
     "client.MinecraftMixin",
+    "client.ParticleEngineMixin",
     "client.PlayerItemInHandLayerMixin",
     "client.accessor.ItemInHandRendererAccessor",
     "client.accessor.MinecraftAccessor",

@@ -42,13 +42,6 @@ public abstract class PlayerMixin extends LivingEntity {
         }
     }
 
-    @ModifyVariable(method = "attack", at = @At("LOAD"), ordinal = 5, slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;awardStat(Lnet/minecraft/resources/ResourceLocation;I)V")))
-    public float attack$damageDealt(float damageDealt) {
-        // hide dealt damage heart particles, since they are much better suited for a slow combat system, but are just annoying with a fast-paced one
-        if (!GoldenAgeCombat.CONFIG.server().classic.noDamageIndicators) return damageDealt;
-        return 0.0F;
-    }
-
     @ModifyVariable(method = "attack", at = @At("LOAD"), ordinal = 3, slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;sweepAttack()V")))
     public boolean attack$triggerSweepAttack(boolean triggerSweepAttack, Entity target) {
         return triggerSweepAttack && SweepAttackHandler.checkSweepAttack((Player) (Object) this);

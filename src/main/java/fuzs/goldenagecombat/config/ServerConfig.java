@@ -4,6 +4,8 @@ import com.google.common.collect.Lists;
 import fuzs.puzzleslib.config.AbstractConfig;
 import fuzs.puzzleslib.config.annotation.Config;
 import fuzs.puzzleslib.config.serialization.EntryCollectionBuilder;
+import net.minecraft.core.particles.ParticleType;
+import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
 import net.minecraft.world.item.Item;
@@ -41,7 +43,7 @@ public class ServerConfig extends AbstractConfig {
     public static class ClassicConfig extends AbstractConfig {
         @Config(name = "remove_attack_cooldown", description = "Completely remove the attack cooldown as if it never even existed in the first place.")
         public boolean removeCooldown = true;
-        @Config(name = "food_mechanics", description = {"Choose the food mechanics to use:", "VANILLA will change nothing and use surplus saturation for very quick health regeneration.", "LEGACY_COMBAT will make health only regenerated every 4 seconds, while requiring 18 or more food points.", "CUSTOM will make health only regenerated every 3 seconds, which requires more than 6 food points.", "COMBAT_TEST will make health regenerated every 2 seconds, which requires more than 6 food points. Also food points will be directly consumed when healing."})
+        @Config(name = "food_mechanics", description = {"Choose the food mechanics to use:", "VANILLA will change nothing and use surplus saturation for very quick health regeneration.", "LEGACY_COMBAT will make health only regenerate every 4 seconds, while requiring 18 or more food points.", "CUSTOM will make health only regenerate every 3 seconds, which requires more than 6 food points.", "COMBAT_TEST will make health regenerate every 2 seconds, which requires more than 6 food points. Also food points will be directly consumed when healing."})
         public FoodMechanics foodMechanics = FoodMechanics.CUSTOM;
         @Config(name = "weak_attacks_knock_back_player", description = "Player is knocked back by attacks which do not cause any damage, such as when hit by snowballs, eggs, and fishing rod hooks.")
         public boolean weakPlayerKnockback = true;
@@ -65,14 +67,15 @@ public class ServerConfig extends AbstractConfig {
         public boolean quickSlowdown = false;
         @Config(name = "interact_while_using", description = "Allow using the \"Attack\" button while the \"Use Item\" button is held for mining blocks. Does not make a lot of sense, but it used to be a feature in old pvp.")
         public boolean interactWhileUsing = false;
-        @Config(name = "upwards_knockback", description = "Makes knockback stronger towards targets not on the ground.")
+        @Config(name = "upwards_knockback", description = "Makes knockback stronger towards targets not on the ground (does not apply when in water).")
         public boolean upwardsKnockback = true;
-        @Config(category = "adjustments", name = "canceled_attack_sounds", description = {"Prevent various attack sounds added for the cooldown mechanic from playing.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
-        private List<String> canceledAttackSoundsRaw = EntryCollectionBuilder.getKeyList(ForgeRegistries.SOUND_EVENTS, SoundEvents.PLAYER_ATTACK_CRIT, SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundEvents.PLAYER_ATTACK_STRONG, SoundEvents.PLAYER_ATTACK_WEAK);
-        @Config(category = "adjustments", name = "hide_damage_indicators", description = "Stop heart particles spawned when the player attacks an entity from appearing since they kinda clutter the screen since attacks can be dealt much quicker with classic combat options enabled.")
-        public boolean noDamageIndicators = true;
+        @Config(category = "adjustments", name = "canceled_attack_sounds", description = {"Prevent various attack sounds added for the cooldown mechanic from playing.", "This option can be used to prevent basically any individual sound from playing.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
+        private List<String> canceledAttackSoundsRaw = EntryCollectionBuilder.getKeyList(ForgeRegistries.SOUND_EVENTS, SoundEvents.PLAYER_ATTACK_CRIT, SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundEvents.PLAYER_ATTACK_STRONG, SoundEvents.PLAYER_ATTACK_WEAK, SoundEvents.PLAYER_ATTACK_SWEEP);
+        @Config(category = "adjustments", name = "canceled_particles", description = {"Disable rendering for certain particle types from modern combat, since they kinda clutter the screen since attacks can be dealt much quicker with classic combat options enabled.", "This option can be used to prevent basically any particle from showing.", EntryCollectionBuilder.CONFIG_DESCRIPTION})
+        private List<String> canceledParticlesRaw = EntryCollectionBuilder.getKeyList(ForgeRegistries.PARTICLE_TYPES, ParticleTypes.DAMAGE_INDICATOR, ParticleTypes.SWEEP_ATTACK);
 
         public Set<SoundEvent> canceledAttackSounds;
+        public Set<ParticleType<?>> canceledParticles;
 
         public ClassicConfig() {
             super("classic_combat");
@@ -83,6 +86,7 @@ public class ServerConfig extends AbstractConfig {
         @Override
         protected void afterConfigReload() {
             this.canceledAttackSounds = EntryCollectionBuilder.of(ForgeRegistries.SOUND_EVENTS).buildSet(this.canceledAttackSoundsRaw);
+            this.canceledParticles = EntryCollectionBuilder.of(ForgeRegistries.PARTICLE_TYPES).buildSet(this.canceledParticlesRaw);
         }
     }
 
@@ -135,6 +139,8 @@ public class ServerConfig extends AbstractConfig {
         public boolean noSneakSweeping = false;
         @Config(category = "sweeping", name = "air_sweep_attack", description = {"Allow sweep attack without hitting mobs, just by attacking air basically.", "This attack will not work when the attack button is held for continuous attacking."})
         public boolean airSweepAttack = true;
+        @Config(category = "sweeping", name = "continuous_air_sweeping", description = "Allow sweep attacks to trigger without hitting a target even when attacking continuously by holding the attack button.")
+        public boolean continuousAirSweeping = true;
         @Config(name = "sprint_attacks", description = "Attacking will no longer stop the player from sprinting. Very useful when swimming, so you can fight underwater without being stopped on every hit.")
         public boolean sprintAttacks = true;
         @Config(name = "min_hitbox_size", description = {"Force all entity hitboxes to have a cubic size of at least 0.9 blocks.", "This only affects targeting an entity, no collisions or whatsoever. Useful for hitting e.g. bats, rabbits, silverfish, fish, and most baby animals."})
@@ -145,6 +151,18 @@ public class ServerConfig extends AbstractConfig {
         public boolean swingThroughGrass = true;
         @Config(name = "shield_knockback_fix", description = "Fix shields not knocking back attackers (see MC-147694).")
         public boolean shieldKnockbackFix = true;
+        @Config(name = "increase_stack_size", description = "Increase snowball and egg stack size from 16 to 64, and potion stack size from 1 to 16.")
+        public boolean increaseStackSize = true;
+        @Config(name = "throwables_delay", description = "Add a delay of 4 ticks between throwing snowballs or eggs, just like with ender pearls.")
+        public boolean throwablesDelay = true;
+        @Config(name = "eating_interruption", description = "Eating and drinking both are interrupted if the player receives damage.")
+        public boolean eatingInterruption = true;
+        @Config(name = "remove_shield_delay", description = "Skip 5 tick warm-up delay when activating a shield.")
+        public boolean noShieldDelay = true;
+        @Config(name = "fast_switching", description = "Attack cooldown is unaffected by switching items.")
+        public boolean fastSwitching = true;
+        @Config(name = "fast_drinking", description = "It only takes 20 ticks to drink liquid foods instead of 32 or 40.")
+        public boolean fastDrinking = true;
 
         public CombatTestsConfig() {
             super("combat_tests");
