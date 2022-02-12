@@ -8,4 +8,7 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 public interface LivingEntityAccessor {
     @Accessor
     void setAttackStrengthTicker(int attackStrengthTicker);
+
+    @Accessor
+    int getAttackStrengthTicker();
 }

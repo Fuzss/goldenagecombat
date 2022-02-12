@@ -59,17 +59,17 @@ public class ClassicCombatHandler {
         }
     }
 
-    public static void disableCooldownPeriod(Player player) {
-        if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
-            ((LivingEntityAccessor) player).setAttackStrengthTicker((int) Math.ceil(player.getCurrentItemAttackStrengthDelay()));
-        }
-    }
-
     @SubscribeEvent
     public void onPlaySoundAtEntity(final PlaySoundAtEntityEvent evt) {
         // disable combat update player attack sounds
         if (GoldenAgeCombat.CONFIG.server().classic.canceledAttackSounds.contains(evt.getSound())) {
             evt.setCanceled(true);
+        }
+    }
+
+    public static void disableCooldownPeriod(Player player) {
+        if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
+            ((LivingEntityAccessor) player).setAttackStrengthTicker((int) Math.ceil(player.getCurrentItemAttackStrengthDelay()));
         }
     }
 }

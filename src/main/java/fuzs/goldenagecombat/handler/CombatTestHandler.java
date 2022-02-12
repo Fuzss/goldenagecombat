@@ -9,6 +9,7 @@ import net.minecraft.world.item.*;
 import net.minecraftforge.event.TickEvent;
 import net.minecraftforge.event.entity.living.LivingDamageEvent;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
+import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 
@@ -38,23 +39,30 @@ public class CombatTestHandler {
 
     @SubscribeEvent
     public void onRightClickItem(final PlayerInteractEvent.RightClickItem evt) {
-        if (GoldenAgeCombat.CONFIG.server().combatTests.throwablesDelay) {
-            Item item = evt.getItemStack().getItem();
-            if (evt.getEntityLiving() instanceof Player player && (item instanceof SnowballItem || item instanceof EggItem)) {
-                // add delay after using an item
-                player.getCooldowns().addCooldown(item, 4);
-            }
+        if (!GoldenAgeCombat.CONFIG.server().combatTests.throwablesDelay) return;
+        Item item = evt.getItemStack().getItem();
+        if (evt.getEntityLiving() instanceof Player player && (item instanceof SnowballItem || item instanceof EggItem)) {
+            // add delay after using an item
+            player.getCooldowns().addCooldown(item, 4);
         }
     }
 
     @SubscribeEvent
     public void onLivingDamage(final LivingDamageEvent evt) {
-        if (GoldenAgeCombat.CONFIG.server().combatTests.eatingInterruption) {
-            LivingEntity entity = evt.getEntityLiving();
-            UseAnim useAction = entity.getUseItem().getUseAnimation();
-            if (useAction == UseAnim.EAT || useAction == UseAnim.DRINK) {
-                entity.stopUsingItem();
-            }
+        if (!GoldenAgeCombat.CONFIG.server().combatTests.eatingInterruption) return;
+        LivingEntity entity = evt.getEntityLiving();
+        UseAnim useAction = entity.getUseItem().getUseAnimation();
+        if (useAction == UseAnim.EAT || useAction == UseAnim.DRINK) {
+            entity.stopUsingItem();
+        }
+    }
+
+    @SubscribeEvent
+    public void onLivingHurt(final LivingHurtEvent evt) {
+        if (!GoldenAgeCombat.CONFIG.server().combatTests.noProjectileImmunity) return;
+        if (evt.getSource().isProjectile()) {
+            // immediately reset damage immunity after being hit by any projectile, fixes multishot
+            evt.getEntity().invulnerableTime = 0;
         }
     }
 

@@ -3,16 +3,23 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
-## [v3.2.0-1.18.1] - 2022-02-11
+## [v3.2.0-1.18.1] - 2022-02-12
 ### Added
 - Eating and drinking are now interrupted when receiving damage
 - Shields no longer have a 5 ticks activation delay
 - Snowballs and eggs stack to 64 and have a very short cooldown similar to ender pearls
-- When switching between hotbar slots the attack cooldown no longer triggers (this of course only applies when the attack cooldown is not disabled)
 - Drinking (potions, milk, bottled contents) now is much faster
+- The attack cooldown no longer triggers when: (only applies when the attack cooldown is not disabled)
+    - Switching between hotbar slots 
+    - Missing an attack
+- Added an option to disable attacking when the attack cooldown is below a certain level (only applies when the attack cooldown is not disabled)
+- Disabled damage immunity from projectiles to make multishot enchantment work properly
 ### Changed
-- Sweep attacks no longer render particles or sounds by default, just consider your weapon to deal aoe attacks
+- Holding the attack button is now disabled by default, so 1.8 spam clicking is once again the standard
+- Sweep attacks no longer render particles or plays sounds by default, just consider your weapon to deal aoe attacks
 - Turned option for disabling damage indicator particles into general option to allow for disabling any particle type
+### Fixed
+- Fixed an issue where attacking was possible a lot quicker than it should be when holding the attack button
 
 ## [v3.1.0-1.18.1] - 2022-02-10
 ### Added

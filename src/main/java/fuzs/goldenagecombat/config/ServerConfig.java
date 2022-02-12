@@ -124,6 +124,9 @@ public class ServerConfig extends AbstractConfig {
         @Config(name = "knockback_reduction", description = "Percentage to reduce knockback by while sword blocking.")
         @Config.DoubleRange(min = 0.0, max = 1.0)
         public double knockbackReduction = 0.2;
+        @Config(name = "protection_arc", description = "Arc of available protection depending on what angle the attack is coming from and where the player is looking (means the lower this angle the closer you need to be facing your attacker).")
+        @Config.DoubleRange(min = 0.0, max = 360.0)
+        public double protectionArc = 360.0;
 
         public BlockingConfig() {
             super("sword_blocking");
@@ -143,26 +146,41 @@ public class ServerConfig extends AbstractConfig {
         public boolean continuousAirSweeping = true;
         @Config(name = "sprint_attacks", description = "Attacking will no longer stop the player from sprinting. Very useful when swimming, so you can fight underwater without being stopped on every hit.")
         public boolean sprintAttacks = true;
-        @Config(name = "min_hitbox_size", description = {"Force all entity hitboxes to have a cubic size of at least 0.9 blocks.", "This only affects targeting an entity, no collisions or whatsoever. Useful for hitting e.g. bats, rabbits, silverfish, fish, and most baby animals."})
+        @Config(name = "min_hitbox_size", description = {"Force all entity hitboxes to have a cubic size of at least 0.9 blocks, making them easier to hit and shoot.", "This only affects targeting an entity, no collisions or whatsoever. Useful for hitting e.g. bats, rabbits, silverfish, fish, and most baby animals."})
         public boolean minHitboxSize = true;
         @Config(name = "hold_attack_button", description = "Holding down the attack button keeps attacking continuously. No more spam clicking required.")
-        public boolean holdAttackButton = true;
+        public boolean holdAttackButton = false;
+        @Config(name = "hold_attack_button_delay", description = {"Delay in ticks between attacks when holding the attack button is enabled.", "This basically also puts a cap on the max spam clicking speed."})
+        @Config.IntRange(min = 0)
+        public int holdAttackButtonDelay = 5;
         @Config(name = "swing_through_grass", description = "Hit mobs through blocks without a collision shape such as tall grass without having to break the block first.")
         public boolean swingThroughGrass = true;
         @Config(name = "shield_knockback_fix", description = "Fix shields not knocking back attackers (see MC-147694).")
         public boolean shieldKnockbackFix = true;
-        @Config(name = "increase_stack_size", description = "Increase snowball and egg stack size from 16 to 64, and potion stack size from 1 to 16.")
+        @Config(name = "increase_stack_size", description = "Increase snowball and egg stack size from 16 to 64, and potion stack size from 1 to 16 (only for potions of the same type of course).")
         public boolean increaseStackSize = true;
         @Config(name = "throwables_delay", description = "Add a delay of 4 ticks between throwing snowballs or eggs, just like with ender pearls.")
         public boolean throwablesDelay = true;
-        @Config(name = "eating_interruption", description = "Eating and drinking both are interrupted if the player receives damage.")
+        @Config(name = "eating_interruption", description = "Eating and drinking both are interrupted if the player is damaged.")
         public boolean eatingInterruption = true;
-        @Config(name = "remove_shield_delay", description = "Skip 5 tick warm-up delay when activating a shield.")
+        @Config(name = "remove_shield_delay", description = "Skip 5 tick warm-up delay when activating a shield, so they become effective instantly.")
         public boolean noShieldDelay = true;
-        @Config(name = "fast_switching", description = "Attack cooldown is unaffected by switching items.")
+        @Config(name = "fast_switching", description = "Attack cooldown is unaffected by switching hotbar items.")
         public boolean fastSwitching = true;
-        @Config(name = "fast_drinking", description = "It only takes 20 ticks to drink liquid foods instead of 32 or 40.")
+        @Config(name = "fast_drinking", description = "It only takes 20 ticks to drink liquid foods (such as potions, milk, and bottled liquids) instead of 32 or 40.")
         public boolean fastDrinking = true;
+        @Config(name = "no_axe_attack_penalty", description = "Only damages axes by 1 durability instead of 2 when attacking so they properly be used as weapons.")
+        public boolean noAxeAttackPenalty = true;
+        @Config(name = "retain_energy_on_miss", description = "Melee attacks that don't hit a target won't trigger the attack cooldown.")
+        public boolean retainEnergy = true;
+        @Config(name = "min_attack_strength", description = {"Disable attacking when attack cooldown is below a certain percentage.", "Setting this to 0.0 means attacking is possible with any strength as in vanilla."})
+        @Config.DoubleRange(min = 0.0, max = 1.0)
+        public double minAttackStrength = 0.0;
+        @Config(name = "no_projectile_immunity", description = "Disables damage immunity when hit by a projectile. Makes it possible for entities to be hit by multiple projectiles at once (useful for the multishot enchantment).")
+        public boolean noProjectileImmunity = true;
+        @Config(name = "shield_protection_arc", description = {"Arc of available protection depending on what angle the attack is coming from and where the player is looking (means the lower this angle the closer you need to be facing your attacker).", "Vanilla protection arc is 180 degrees, which has been reduced to around 100 in combat tests.", "This does not change the protection arc for projectiles which remains at 180 degress."})
+        @Config.DoubleRange(min = 0.0, max = 360.0)
+        public double shieldProtectionArc = 100.0;
 
         public CombatTestsConfig() {
             super("combat_tests");

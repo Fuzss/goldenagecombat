@@ -12,6 +12,7 @@ import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.item.UseAnim;
+import net.minecraft.world.phys.Vec3;
 import net.minecraftforge.event.entity.living.LivingEntityUseItemEvent;
 import net.minecraftforge.event.entity.living.LivingHurtEvent;
 import net.minecraftforge.event.entity.living.LivingKnockBackEvent;
@@ -44,7 +45,7 @@ public class SwordBlockingHandler {
     @SubscribeEvent
     public void onLivingHurt(final LivingHurtEvent evt) {
         if (evt.getEntityLiving() instanceof Player player) {
-            if (isDamageSourceBlockable(evt.getSource()) && isActiveItemStackBlocking(player) && evt.getAmount() > 0.0F) {
+            if (isDamageSourceBlockable(evt.getSource(), player) && evt.getAmount() > 0.0F) {
                 evt.setAmount((1.0F + evt.getAmount()) * 0.5F);
             }
         }
@@ -62,14 +63,23 @@ public class SwordBlockingHandler {
         }
     }
 
-    private static boolean isDamageSourceBlockable(DamageSource damageSourceIn) {
-        Entity entity = damageSourceIn.getDirectEntity();
+    private static boolean isDamageSourceBlockable(DamageSource source, Player player) {
+        Entity entity = source.getDirectEntity();
         if (entity instanceof AbstractArrow arrow) {
             if (arrow.getPierceLevel() > 0) {
                 return false;
             }
         }
-        return !damageSourceIn.isBypassArmor();
+        if (!source.isBypassArmor() && isActiveItemStackBlocking(player)) {
+            Vec3 vec32 = source.getSourcePosition();
+            if (vec32 != null) {
+                Vec3 vec3 = player.getViewVector(1.0F);
+                Vec3 vec31 = vec32.vectorTo(player.position()).normalize();
+                vec31 = new Vec3(vec31.x, 0.0, vec31.z);
+                return vec31.dot(vec3) < -Math.cos(GoldenAgeCombat.CONFIG.server().blocking.protectionArc * Math.PI * 0.5 / 180.0);
+            }
+        }
+        return false;
     }
 
     public static boolean isActiveItemStackBlocking(Player player) {

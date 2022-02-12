@@ -5,6 +5,7 @@
   "package": "fuzs.goldenagecombat.mixin",
   "refmap": "META-INF/goldenagecombat.refmap.json",
   "mixins": [
+    "AxeItemMixin",
     "DamageEnchantmentMixin",
     "EntityMixin",
     "FishingHookMixin",

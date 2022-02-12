@@ -32,7 +32,11 @@ public class GoldenAgeCombatClient {
         MinecraftForge.EVENT_BUS.addListener(attackIndicatorOptionHandler::onDrawScreen);
         final AttackAirHandler attackAirHandler = new AttackAirHandler();
         MinecraftForge.EVENT_BUS.addListener(attackAirHandler::onClientTick);
+        MinecraftForge.EVENT_BUS.addListener(attackAirHandler::onClickInput$holdAttack);
         MinecraftForge.EVENT_BUS.addListener(attackAirHandler::onLeftClickEmpty$holdAttack);
         MinecraftForge.EVENT_BUS.addListener(attackAirHandler::onLeftClickEmpty$airAttack);
+        MinecraftForge.EVENT_BUS.addListener(attackAirHandler::onClickInput$minAttackStrength);
+        MinecraftForge.EVENT_BUS.addListener(attackAirHandler::onClickInput$retainEnergy);
+        MinecraftForge.EVENT_BUS.addListener(attackAirHandler::onLeftClickEmpty$retainEnergy);
     }
 }

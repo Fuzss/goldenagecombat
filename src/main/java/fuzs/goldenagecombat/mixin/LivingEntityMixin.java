@@ -1,6 +1,7 @@
 package fuzs.goldenagecombat.mixin;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
+import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.EntityType;
 import net.minecraft.world.entity.LivingEntity;
@@ -32,4 +33,10 @@ public abstract class LivingEntityMixin extends Entity {
 
     @Shadow
     public abstract void knockback(double p_147241_, double p_147242_, double p_147243_);
+
+    @ModifyConstant(method = "isDamageSourceBlocked", constant = @Constant(doubleValue = 0.0), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/phys/Vec3;dot(Lnet/minecraft/world/phys/Vec3;)D")))
+    public double isDamageSourceBlocked$protectionArc(double oldProtectionArc, DamageSource source) {
+        if (source.isProjectile()) return oldProtectionArc;
+        return -Math.cos(GoldenAgeCombat.CONFIG.server().combatTests.shieldProtectionArc * Math.PI * 0.5 / 180.0);
+    }
 }

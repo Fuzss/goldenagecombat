@@ -8,6 +8,7 @@ import fuzs.goldenagecombat.handler.ClassicCombatHandler;
 import fuzs.goldenagecombat.handler.CombatTestHandler;
 import fuzs.goldenagecombat.handler.SwordBlockingHandler;
 import fuzs.goldenagecombat.network.client.C2SSweepAttackMessage;
+import fuzs.goldenagecombat.network.client.C2SSwingArmMessage;
 import fuzs.goldenagecombat.registry.ModRegistry;
 import fuzs.puzzleslib.config.ConfigHolder;
 import fuzs.puzzleslib.config.ConfigHolderImpl;
@@ -66,10 +67,12 @@ public class GoldenAgeCombat {
         MinecraftForge.EVENT_BUS.addListener(combatTestHandler::onItemUseStart);
         MinecraftForge.EVENT_BUS.addListener(combatTestHandler::onRightClickItem);
         MinecraftForge.EVENT_BUS.addListener(combatTestHandler::onLivingDamage);
+        MinecraftForge.EVENT_BUS.addListener(combatTestHandler::onLivingHurt);
     }
 
     private static void registerMessages() {
         NETWORK.register(C2SSweepAttackMessage.class, C2SSweepAttackMessage::new, MessageDirection.TO_SERVER);
+        NETWORK.register(C2SSwingArmMessage.class, C2SSwingArmMessage::new, MessageDirection.TO_SERVER);
     }
 
     @SubscribeEvent
