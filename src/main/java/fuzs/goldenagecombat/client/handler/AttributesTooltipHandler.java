@@ -35,6 +35,7 @@ public class AttributesTooltipHandler {
 
     @SubscribeEvent
     public void onItemTooltip(final ItemTooltipEvent evt) {
+        if (!GoldenAgeCombat.CONFIG.isServerAvailable()) return;
         final List<Component> list = evt.getToolTip();
         if (GoldenAgeCombat.CONFIG.client().tooltip.removeAllAttributes || GoldenAgeCombat.CONFIG.client().tooltip.oldAttributes) {
             final int startIndex = this.removeAllAttributes(list);

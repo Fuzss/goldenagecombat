@@ -22,18 +22,17 @@ import net.minecraftforge.event.entity.EntityAttributeModificationEvent;
 import net.minecraftforge.eventbus.api.EventPriority;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
-import net.minecraftforge.fml.event.lifecycle.FMLCommonSetupEvent;
 import net.minecraftforge.fml.event.lifecycle.FMLConstructModEvent;
 import net.minecraftforge.forge.event.lifecycle.GatherDataEvent;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Mod(GoldenAgeCombat.MOD_ID)
 @Mod.EventBusSubscriber(bus = Mod.EventBusSubscriber.Bus.MOD)
 public class GoldenAgeCombat {
     public static final String MOD_ID = "goldenagecombat";
     public static final String MOD_NAME = "Golden Age Combat";
-    public static final Logger LOGGER = LogManager.getLogger(GoldenAgeCombat.MOD_NAME);
+    public static final Logger LOGGER = LoggerFactory.getLogger(GoldenAgeCombat.MOD_NAME);
 
     public static final NetworkHandler NETWORK = NetworkHandler.of(MOD_ID);
     @SuppressWarnings("Convert2MethodRef")
@@ -45,6 +44,7 @@ public class GoldenAgeCombat {
         ModRegistry.touch();
         registerMessages();
         registerHandlers();
+        CONFIG.addServerCallback(CombatTestHandler::setMaxStackSize);
     }
 
     private static void registerHandlers() {
@@ -73,11 +73,6 @@ public class GoldenAgeCombat {
     private static void registerMessages() {
         NETWORK.register(C2SSweepAttackMessage.class, C2SSweepAttackMessage::new, MessageDirection.TO_SERVER);
         NETWORK.register(C2SSwingArmMessage.class, C2SSwingArmMessage::new, MessageDirection.TO_SERVER);
-    }
-
-    @SubscribeEvent
-    public static void onCommonSetup(final FMLCommonSetupEvent evt) {
-        CombatTestHandler.setMaxStackSize();
     }
 
     @SubscribeEvent

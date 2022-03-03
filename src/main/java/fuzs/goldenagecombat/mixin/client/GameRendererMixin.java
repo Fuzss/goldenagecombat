@@ -30,7 +30,7 @@ public abstract class GameRendererMixin {
 
     @Inject(method = "pick", at = @At("HEAD"), cancellable = true)
     public void pick$head(float partialTicks, CallbackInfo callbackInfo) {
-        if (!GoldenAgeCombat.CONFIG.server().combatTests.swingThroughGrass && !GoldenAgeCombat.CONFIG.server().attributes.attackReach) return;
+        if (!GoldenAgeCombat.CONFIG.isServerAvailable() || !GoldenAgeCombat.CONFIG.server().combatTests.swingThroughGrass && !GoldenAgeCombat.CONFIG.server().attributes.attackReach) return;
         Entity entity = this.minecraft.getCameraEntity();
         if (entity != null && this.minecraft.level != null) {
             this.minecraft.getProfiler().push("pick");

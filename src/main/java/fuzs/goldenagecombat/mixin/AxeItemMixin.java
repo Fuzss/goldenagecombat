@@ -1,7 +1,7 @@
 package fuzs.goldenagecombat.mixin;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import net.minecraft.tags.Tag;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.AxeItem;
@@ -13,7 +13,7 @@ import org.spongepowered.asm.mixin.Mixin;
 
 @Mixin(AxeItem.class)
 public abstract class AxeItemMixin extends DiggerItem {
-    public AxeItemMixin(float p_150810_, float p_150811_, Tier p_150812_, Tag<Block> p_150813_, Properties p_150814_) {
+    public AxeItemMixin(float p_150810_, float p_150811_, Tier p_150812_, TagKey<Block> p_150813_, Properties p_150814_) {
         super(p_150810_, p_150811_, p_150812_, p_150813_, p_150814_);
     }
 

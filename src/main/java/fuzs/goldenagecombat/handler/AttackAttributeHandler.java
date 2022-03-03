@@ -21,7 +21,7 @@ public class AttackAttributeHandler {
 
     @SubscribeEvent
     public void onItemAttributeModifier$Damage(final ItemAttributeModifierEvent evt) {
-        if (!GoldenAgeCombat.CONFIG.server().attributes.oldAttackDamage) return;
+        if (!GoldenAgeCombat.CONFIG.isServerAvailable() || !GoldenAgeCombat.CONFIG.server().attributes.oldAttackDamage) return;
         if (evt.getSlotType() != EquipmentSlot.MAINHAND) return;
         ItemStack stack = evt.getItemStack();
         // don't change items whose attributes have already been changed via the nbt tag
@@ -53,7 +53,7 @@ public class AttackAttributeHandler {
 
     @SubscribeEvent
     public void onItemAttributeModifier$Reach(final ItemAttributeModifierEvent evt) {
-        if (!GoldenAgeCombat.CONFIG.server().attributes.attackReach) return;
+        if (!GoldenAgeCombat.CONFIG.isServerAvailable() || !GoldenAgeCombat.CONFIG.server().attributes.attackReach) return;
         if (evt.getSlotType() != EquipmentSlot.MAINHAND) return;
         ItemStack stack = evt.getItemStack();
         // don't change items whose attributes have already been changed via the nbt tag

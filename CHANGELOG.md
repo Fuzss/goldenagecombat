@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [v3.3.0-1.18.2] - 2022-03-04
+- Updated for Minecraft 1.18.2
+### Fixed
+- Fixed an issue where the mod would throw a bunch of errors when reloading resources
+
 ## [v3.2.0-1.18.1] - 2022-02-12
 ### Added
 - Eating and drinking are now interrupted when receiving damage

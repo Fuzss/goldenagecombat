@@ -27,7 +27,7 @@ public class AttackIndicatorOptionHandler {
 
     @SubscribeEvent
     public void onScreenInit(final ScreenEvent.InitScreenEvent.Post evt) {
-        if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown && evt.getScreen() instanceof VideoSettingsScreen) {
+        if (evt.getScreen() instanceof VideoSettingsScreen && GoldenAgeCombat.CONFIG.isServerAvailable() && GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
             // disable attack indicator button in video settings screen
             getOptionsList(evt.getScreen())
                     .flatMap(optionsList -> ((List<?>) optionsList.children()).stream()
@@ -40,7 +40,7 @@ public class AttackIndicatorOptionHandler {
 
     @SubscribeEvent
     public void onDrawScreen(final ScreenEvent.DrawScreenEvent.Post evt) {
-        if (GoldenAgeCombat.CONFIG.server().classic.removeCooldown && evt.getScreen() instanceof VideoSettingsScreen) {
+        if (evt.getScreen() instanceof VideoSettingsScreen && GoldenAgeCombat.CONFIG.isServerAvailable() && GoldenAgeCombat.CONFIG.server().classic.removeCooldown) {
             // render tooltip explaining why the button is disabled
             getOptionsList(evt.getScreen()).flatMap(list -> getMouseOverList(list, evt.getMouseX(), evt.getMouseY())).ifPresent(widget -> {
                 if (isAttackIndicatorOption(widget)) {
