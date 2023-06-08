@@ -41,17 +41,17 @@ abstract class PlayerItemInHandLayerMixin<T extends Player, M extends EntityMode
     }
 
     @Inject(method = "renderArmWithItem", at = @At("HEAD"), cancellable = true)
-    protected void renderArmWithItem(LivingEntity entity, ItemStack stack, ItemDisplayContext transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource multiBufferSource, int combinedLight, CallbackInfo callbackInfo) {
+    protected void renderArmWithItem(LivingEntity entity, ItemStack stack, ItemDisplayContext transform, HumanoidArm arm, PoseStack poseStack, MultiBufferSource multiBufferSource, int combinedLight, CallbackInfo callback) {
         if (stack.isEmpty()) return;
-        if (entity.getUseItem() == stack && SwordBlockingHandler.isActiveItemStackBlocking((T) entity) && !GoldenAgeCombat.CONFIG.get(ClientConfig.class).animations.simpleBlockingPose) {
+        if (entity.getUseItem() == stack && SwordBlockingHandler.isActiveItemStackBlocking((Player) entity) && !GoldenAgeCombat.CONFIG.get(ClientConfig.class).animations.simpleBlockingPose) {
             this.renderBlockingWithSword(entity, stack, transform, arm, poseStack, multiBufferSource, combinedLight);
-            callbackInfo.cancel();
+            callback.cancel();
         } else if (GoldenAgeCombat.CONFIG.get(ClientConfig.class).animations.swordBlockingWithShield) {
             if (entity.getOffhandItem() == stack && stack.getUseAnimation() == UseAnim.BLOCK) {
-                callbackInfo.cancel();
+                callback.cancel();
             } else if (entity.getOffhandItem() == entity.getUseItem() && entity.getUseItem() != stack && entity.getOffhandItem().getUseAnimation() == UseAnim.BLOCK && SwordBlockingHandler.canItemStackBlock(stack)) {
                 this.renderBlockingWithSword(entity, stack, transform, arm, poseStack, multiBufferSource, combinedLight);
-                callbackInfo.cancel();
+                callback.cancel();
             }
         }
     }
@@ -111,7 +111,6 @@ abstract class PlayerItemInHandLayerMixin<T extends Player, M extends EntityMode
             float angleZ = leftHand ? -vec.rotation.z() : vec.rotation.z();
             Quaternionf quaternion = new Quaternionf().rotationXYZ(angleX * 0.017453292F, angleY * 0.017453292F, angleZ * 0.017453292F);
             quaternion.conjugate();
-
             matrixStackIn.scale(1.0F / vec.scale.x(), 1.0F / vec.scale.y(), 1.0F / vec.scale.z());
             matrixStackIn.mulPose(quaternion);
             matrixStackIn.translate((leftHand ? -1.0F : 1.0F) * -vec.translation.x(), -vec.translation.y(), -vec.translation.z());

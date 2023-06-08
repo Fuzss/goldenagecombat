@@ -26,15 +26,14 @@ abstract class HumanoidModelMixin<T extends LivingEntity> extends AgeableListMod
     public void setupAnim(T entityIn, float limbSwing, float limbSwingAmount, float ageInTicks, float netHeadYaw, float headPitch, CallbackInfo callback) {
         if (entityIn instanceof Player player) {
             if (SwordBlockingHandler.isActiveItemStackBlocking(player)) {
-                final boolean simpleBlockingPose = GoldenAgeCombat.CONFIG.get(ClientConfig.class).animations.simpleBlockingPose;
                 if (entityIn.getUsedItemHand() == InteractionHand.OFF_HAND) {
                     this.leftArm.xRot = this.leftArm.xRot - ((float) Math.PI * 2.0F) / 10.0F;
-                    if (simpleBlockingPose) {
+                    if (GoldenAgeCombat.CONFIG.get(ClientConfig.class).animations.simpleBlockingPose) {
                         this.leftArm.yRot = ((float) Math.PI / 6.0F);
                     }
                 } else {
                     this.rightArm.xRot = this.rightArm.xRot - ((float) Math.PI * 2.0F) / 10.0F;
-                    if (simpleBlockingPose) {
+                    if (GoldenAgeCombat.CONFIG.get(ClientConfig.class).animations.simpleBlockingPose) {
                         this.rightArm.yRot = ((float) -Math.PI / 6.0F);
                     }
                 }

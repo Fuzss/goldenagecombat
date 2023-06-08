@@ -76,7 +76,7 @@ public class ServerConfig implements ConfigCore {
         @Config(name = "attack_damage_overrides", description = {"Overrides for setting and balancing attack damage values of items.", "Takes precedence over any changes made by \"legacy_attack_damage\" option, but requires it to be enabled.", "As with all items, this value is added ON TOP of the default attack strength of the player (which is 1.0 by default).", "Format for every entry is \"<namespace>:<path>,<amount>\". Tags are supported, must be in the format of \"#<namespace>:<path>\". Namespace may be omitted to use \"minecraft\" by default. May use asterisk as wildcard parameter via pattern matching, e.g. \"minecraft:*_shulker_box\" to match all shulker boxes no matter of color."})
         List<String> attackDamageOverridesRaw = ConfigDataSet.toString(Registries.ITEM);
         @Config(name = "attack_reach", description = "Makes it so that swords, hoes, and tridents have an increased reach when attacking.")
-        public boolean attackReach = true;
+        public boolean attackRange = true;
         @Config(name = "attack_reach_overrides", description = {"Overrides for setting and balancing attack reach values of items.", "Takes precedence over any changes made by \"attack_reach\" option, but requires it to be enabled.", "As with all items, this value is added ON TOP of the default attack reach of the player (which is 3.0 by default, and has a hard cap at 6.0).", "Format for every entry is \"<namespace>:<path>,<amount>\". Tags are supported, must be in the format of \"#<namespace>:<path>\". Namespace may be omitted to use \"minecraft\" by default. May use asterisk as wildcard parameter via pattern matching, e.g. \"minecraft:*_shulker_box\" to match all shulker boxes no matter of color."})
         List<String> attackReachOverridesRaw = ConfigDataSet.toString(Registries.ITEM);
 
@@ -93,14 +93,27 @@ public class ServerConfig implements ConfigCore {
     public static class BlockingConfig implements ConfigCore {
         @Config(name = "allow_blocking", description = "Allow blocking with swords, which will reduce most incoming attacks by 50% and render a parry animation.")
         public boolean allowBlocking = true;
-        @Config(name = "prioritize_shield", description = "Prioritize shield blocking over sword blocking in case both items are held at the same time.")
-        public boolean prioritizeShield = true;
+        @Config(description = "Prioritize usable off-hand items over sword blocking from the main hand. Items not recognized by default can be included in a dedicated item tag.")
+        public boolean prioritizeOffHand = true;
+        @Config(description = "Percentage an incoming attack will be reduced by when blocking.")
+        public double blockedDamage = 0.5;
+        @Config(description = "Damage sword when blocking an attack depending on the amount of damage blocked. Sword is only damaged when at least three damage points have been blocked, just like a shield.")
+        public boolean damageSword = false;
         @Config(name = "knockback_reduction", description = "Percentage to reduce knockback by while sword blocking.")
         @Config.DoubleRange(min = 0.0, max = 1.0)
         public double knockbackReduction = 0.2;
         @Config(name = "protection_arc", description = "Arc of available protection depending on what angle the attack is coming from and where the player is looking (means the lower this angle the closer you need to be facing your attacker).")
         @Config.DoubleRange(min = 0.0, max = 360.0)
         public double protectionArc = 360.0;
+        @Config(description = "Amount of ticks after starting to block in which an attack will be completely nullified like when blocking with a shield.")
+        @Config.IntRange(min = 0, max = 72_000)
+        public int parryWindow = 10;
+        @Config(description = "Damage sword when successfully parrying depending on the amount of damage blocked. Sword is only damaged when at least three damage points have been parried, just like a shield.")
+        public boolean damageSwordOnParry = false;
+        @Config(description = "Blocking requires both hands, meaning the hand not holding the sword must be empty.")
+        public boolean requireBothHands = false;
+        @Config(description = "Incoming projectiles such as arrows or tridents will ricochet while blocking.")
+        public boolean deflectProjectiles = false;
     }
 
     public static class CombatTestsConfig implements ConfigCore {

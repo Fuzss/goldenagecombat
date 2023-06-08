@@ -19,6 +19,7 @@ public class AttackIndicatorOptionHandler {
     public static void onAfterInit(Minecraft minecraft, Screen screen, int screenWidth, int screenHeight, List<AbstractWidget> widgets, Consumer<AbstractWidget> addWidget, Consumer<AbstractWidget> removeWidget) {
         if (!(screen instanceof VideoSettingsScreen)) return;
         if (!GoldenAgeCombat.CONFIG.getHolder(ServerConfig.class).isAvailable() || !GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.removeCooldown) return;
+        // disables the attack indicator option button in the video settings screen
         screen.children().stream()
                 .filter(OptionsList.class::isInstance)
                 .findAny()

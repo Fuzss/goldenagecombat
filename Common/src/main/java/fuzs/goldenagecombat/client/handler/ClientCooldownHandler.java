@@ -26,8 +26,7 @@ public class ClientCooldownHandler {
 
     public static void onAfterRenderGuiElement(Minecraft minecraft, PoseStack poseStack, float tickDelta, int screenWidth, int screenHeight) {
         if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.removeCooldown) return;
-        // reset to old value
-        // we don't just leave this disabled as it'll change the vanilla setting permanently, which no mod should do imo
+        // reset to old value; don't just leave this disabled as it'll change the vanilla setting permanently, which no mod should do imo
         if (attackIndicator != null) {
             minecraft.options.attackIndicator().set(attackIndicator);
             attackIndicator = null;

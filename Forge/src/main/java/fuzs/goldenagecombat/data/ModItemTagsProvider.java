@@ -16,7 +16,8 @@ public class ModItemTagsProvider extends AbstractTagProvider.Items{
 
     @Override
     protected void addTags(HolderLookup.Provider provider) {
-        this.tag(ModRegistry.SWORD_BLOCKING_EXCLUSIONS_TAG);
-        this.tag(ModRegistry.SWORD_BLOCKING_INCLUSIONS_TAG);
+        this.tag(ModRegistry.EXCLUDED_FROM_SWORD_BLOCKING_ITEM_TAG);
+        this.tag(ModRegistry.INCLUDED_FOR_SWORD_BLOCKING_ITEM_TAG);
+        this.tag(ModRegistry.OVERRIDES_SWORD_BLOCKING_ITEM_TAG);
     }
 }

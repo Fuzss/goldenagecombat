@@ -15,6 +15,11 @@ public interface ItemAccessor {
         throw new RuntimeException();
     }
 
+    @Accessor("BASE_ATTACK_SPEED_UUID")
+    static UUID goldenagecombat$getBaseAttackSpeedUUID() {
+        throw new RuntimeException();
+    }
+
     @Accessor("maxStackSize")
     @Mutable
     void goldenagecombat$setMaxStackSize(int maxStackSize);

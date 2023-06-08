@@ -8,6 +8,8 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.AABB;
 import net.minecraftforge.common.ForgeMod;
 import net.minecraftforge.common.ToolActions;
+import net.minecraftforge.event.ForgeEventFactory;
+import org.jetbrains.annotations.Nullable;
 
 public class ForgeAbstractions implements CommonAbstractions {
 
@@ -29,5 +31,10 @@ public class ForgeAbstractions implements CommonAbstractions {
     @Override
     public AABB getSweepHitBox(Player player, Entity target) {
         return player.getItemInHand(InteractionHand.MAIN_HAND).getSweepHitBox(player, target);
+    }
+
+    @Override
+    public void onPlayerDestroyItem(Player player, ItemStack stack, @Nullable InteractionHand hand) {
+        ForgeEventFactory.onPlayerDestroyItem(player, stack, hand);
     }
 }

@@ -48,8 +48,8 @@ public class AttributesTooltipHandler {
         if (GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.removeCooldown) {
             removeAttribute(lines, Attributes.ATTACK_SPEED);
         }
-        if (GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackReach) {
-            replaceOrAddDefaultAttribute(lines, AttackAttributeHandler.BASE_ATTACK_REACH_UUID, stack, player);
+        if (GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackRange) {
+            replaceOrAddDefaultAttribute(lines, AttackAttributeHandler.BASE_ATTACK_RANGE_UUID, stack, player);
         } else {
             removeAttribute(lines, CommonAbstractions.INSTANCE.getAttackRangeAttribute());
         }
@@ -190,19 +190,19 @@ public class AttributesTooltipHandler {
         }
     }
 
-    private static int findAttributesStart(List<Component> list) {
-        for (int i = 0; i < list.size(); i++) {
-            if (list.get(i).getContents() instanceof TranslatableContents contents && contents.getKey().startsWith("item.modifiers.")) {
+    private static int findAttributesStart(List<Component> lines) {
+        for (int i = 0; i < lines.size(); i++) {
+            if (lines.get(i).getContents() instanceof TranslatableContents contents && contents.getKey().startsWith("item.modifiers.")) {
                 return i;
             }
         }
         return -1;
     }
 
-    private static int findAttributesEnd(List<Component> list) {
+    private static int findAttributesEnd(List<Component> lines) {
         int index = -1;
-        for (int i = 0; i < list.size(); i++) {
-            final Component component = list.get(i);
+        for (int i = 0; i < lines.size(); i++) {
+            final Component component = lines.get(i);
             TranslatableContents translatableComponent = null;
             if (component.getContents() instanceof TranslatableContents translatableComponent1) {
                 translatableComponent = translatableComponent1;
@@ -219,12 +219,10 @@ public class AttributesTooltipHandler {
     }
 
     private static Map<EquipmentSlot, Multimap<Attribute, AttributeModifier>> getSlotToAttributeMap(ItemStack stack) {
-        final Map<EquipmentSlot, Multimap<Attribute, AttributeModifier>> map = Maps.newHashMap();
-        for (EquipmentSlot equipmentslot : EquipmentSlot.values()) {
-            Multimap<Attribute, AttributeModifier> multimap = stack.getAttributeModifiers(equipmentslot);
-            if (!multimap.isEmpty()) {
-                map.put(equipmentslot, multimap);
-            }
+        final Map<EquipmentSlot, Multimap<Attribute, AttributeModifier>> map = Maps.newLinkedHashMap();
+        for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
+            Multimap<Attribute, AttributeModifier> multimap = stack.getAttributeModifiers(equipmentSlot);
+            if (!multimap.isEmpty()) map.put(equipmentSlot, multimap);
         }
         return map;
     }
@@ -232,7 +230,7 @@ public class AttributesTooltipHandler {
     private static void addAttributesToTooltip(List<Component> list, @Nullable Player player, ItemStack stack, Multimap<Attribute, AttributeModifier> multimap) {
         for (Map.Entry<Attribute, AttributeModifier> entry : multimap.entries()) {
             if (GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.removeCooldown && entry.getKey().equals(Attributes.ATTACK_SPEED)) continue;
-            if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackReach && entry.getKey().equals(CommonAbstractions.INSTANCE.getAttackRangeAttribute())) continue;
+            if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackRange && entry.getKey().equals(CommonAbstractions.INSTANCE.getAttackRangeAttribute())) continue;
             AttributeModifier attributemodifier = entry.getValue();
             double d0 = attributemodifier.getAmount();
             boolean flag = false;
@@ -244,7 +242,7 @@ public class AttributesTooltipHandler {
                 } else if (attributemodifier.getId().equals(BASE_ATTACK_SPEED_UUID)) {
                     d0 += player.getAttributeBaseValue(Attributes.ATTACK_SPEED);
                     flag = true;
-                } else if (attributemodifier.getId().equals(AttackAttributeHandler.BASE_ATTACK_REACH_UUID)) {
+                } else if (attributemodifier.getId().equals(AttackAttributeHandler.BASE_ATTACK_RANGE_UUID)) {
                     d0 += player.getAttributeBaseValue(CommonAbstractions.INSTANCE.getAttackRangeAttribute());
                     if (!ModLoaderEnvironment.INSTANCE.isForge()) d0 += 3.0;
                     flag = true;

@@ -16,7 +16,7 @@ import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemDisplayContext;
 import net.minecraft.world.item.ItemStack;
 
-public class SwordBlockingRenderer {
+public class FirstPersonRenderingHandler {
 
     public static EventResult onRenderHand(Player player, InteractionHand hand, ItemStack stack, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, float partialTick, float interpolatedPitch, float swingProgress, float equipProgress) {
         if (player.getUsedItemHand() == hand && SwordBlockingHandler.isActiveItemStackBlocking(player)) {

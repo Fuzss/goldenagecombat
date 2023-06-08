@@ -29,6 +29,8 @@ public class ItemInHandHandler {
             HumanoidArm humanoidArm = mainHand ? player.getMainArm() : player.getMainArm().getOpposite();
             boolean rightArm = (mainHand ? player.getMainArm() : player.getMainArm().getOpposite()) == HumanoidArm.RIGHT;
             poseStack.pushPose();
+            // all this does is call ItemInHandRenderer::applyItemArmTransform and ItemInHandRenderer::applyItemArmAttackTransform for all use animations,
+            // to allow the main animation to still respect arm swings / attacks and not abruptly cancel them out
             switch (stack.getUseAnimation()) {
                 case NONE, BLOCK -> {
                     ((ItemInHandRendererAccessor) itemRenderer).goldenagecombat$callApplyItemArmTransform(poseStack, humanoidArm, equipProgress);

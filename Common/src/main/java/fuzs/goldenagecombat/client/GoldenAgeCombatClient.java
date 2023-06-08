@@ -12,7 +12,7 @@ public class GoldenAgeCombatClient implements ClientModConstructor {
     }
 
     private static void registerHandlers() {
-        RenderHandCallback.EVENT.register(SwordBlockingRenderer::onRenderHand);
+        RenderHandCallback.EVENT.register(FirstPersonRenderingHandler::onRenderHand);
         ScreenEvents.AFTER_INIT.register(AttackIndicatorOptionHandler::onAfterInit);
         RenderHandCallback.EVENT.register(ItemInHandHandler::onRenderHand);
         RenderGuiElementEvents.before(RenderGuiElementEvents.CROSSHAIR).register(ClientCooldownHandler::onBeforeRenderGuiElement);

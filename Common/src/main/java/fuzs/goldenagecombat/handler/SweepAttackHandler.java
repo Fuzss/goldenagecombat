@@ -3,6 +3,7 @@ package fuzs.goldenagecombat.handler;
 import fuzs.goldenagecombat.GoldenAgeCombat;
 import fuzs.goldenagecombat.config.ServerConfig;
 import fuzs.goldenagecombat.core.CommonAbstractions;
+import fuzs.puzzleslib.api.core.v1.ModLoaderEnvironment;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.sounds.SoundEvents;
@@ -65,8 +66,9 @@ public class SweepAttackHandler {
     }
 
     public static double getCurrentAttackReach(Player player) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackReach) return 3.0;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackRange) return 3.0;
         double attackReach = player.getAttribute(CommonAbstractions.INSTANCE.getAttackRangeAttribute()).getValue();
+        if (!ModLoaderEnvironment.INSTANCE.isForge()) attackReach += 3.0;
         if (player.isCreative()) {
             attackReach += 0.5;
         }

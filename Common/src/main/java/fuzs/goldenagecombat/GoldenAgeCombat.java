@@ -12,10 +12,7 @@ import fuzs.goldenagecombat.network.client.ServerboundSwingArmMessage;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.api.event.v1.entity.ProjectileImpactCallback;
-import fuzs.puzzleslib.api.event.v1.entity.living.ItemAttributeModifiersCallback;
-import fuzs.puzzleslib.api.event.v1.entity.living.LivingHurtCallback;
-import fuzs.puzzleslib.api.event.v1.entity.living.LivingKnockBackCallback;
-import fuzs.puzzleslib.api.event.v1.entity.living.UseItemEvents;
+import fuzs.puzzleslib.api.event.v1.entity.living.*;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerInteractEvents;
 import fuzs.puzzleslib.api.event.v1.entity.player.PlayerTickEvents;
 import fuzs.puzzleslib.api.event.v1.level.PlayLevelSoundEvents;
@@ -42,6 +39,7 @@ public class GoldenAgeCombat implements ModConstructor {
     private static void registerHandlers() {
         UseItemEvents.START.register(SwordBlockingHandler::onUseItemStart);
         PlayerInteractEvents.USE_ITEM.register(SwordBlockingHandler::onUseItem);
+        LivingAttackCallback.EVENT.register(SwordBlockingHandler::onLivingAttack);
         LivingHurtCallback.EVENT.register(SwordBlockingHandler::onLivingHurt);
         PlayerInteractEvents.USE_ITEM.register(CombatTestHandler::onUseItem);
         UseItemEvents.START.register(CombatTestHandler::onUseItemStart);

@@ -1,12 +1,14 @@
 package fuzs.goldenagecombat.core;
 
 import com.jamieswhiteshirt.reachentityattributes.ReachEntityAttributes;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.entity.Entity;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.SwordItem;
 import net.minecraft.world.phys.AABB;
+import org.jetbrains.annotations.Nullable;
 
 public class FabricAbstractions implements CommonAbstractions {
 
@@ -28,5 +30,10 @@ public class FabricAbstractions implements CommonAbstractions {
     @Override
     public AABB getSweepHitBox(Player player, Entity target) {
         return target.getBoundingBox().inflate(1.0, 0.25, 1.0);
+    }
+
+    @Override
+    public void onPlayerDestroyItem(Player player, ItemStack stack, @Nullable InteractionHand hand) {
+
     }
 }

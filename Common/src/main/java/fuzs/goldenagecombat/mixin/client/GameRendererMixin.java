@@ -26,7 +26,7 @@ abstract class GameRendererMixin {
 
     @Inject(method = "pick", at = @At("HEAD"), cancellable = true)
     public void pick(float partialTicks, CallbackInfo callback) {
-        if (!GoldenAgeCombat.CONFIG.getHolder(ServerConfig.class).isAvailable() || !GoldenAgeCombat.CONFIG.get(ServerConfig.class).combatTests.swingThroughGrass && !GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackReach) return;
+        if (!GoldenAgeCombat.CONFIG.getHolder(ServerConfig.class).isAvailable() || !GoldenAgeCombat.CONFIG.get(ServerConfig.class).combatTests.swingThroughGrass && !GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackRange) return;
         Entity entity = this.minecraft.getCameraEntity();
         if (entity != null && this.minecraft.level != null) {
 
@@ -34,7 +34,7 @@ abstract class GameRendererMixin {
             this.minecraft.crosshairPickEntity = null;
 
             double maxPickRange = this.minecraft.gameMode.getPickRange();
-            double maxEntityPickRange = entity == this.minecraft.player && GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackReach ? GameRendererPickHelper.getCurrentAttackReach(this.minecraft.gameMode, this.minecraft.player) : 3.0;
+            double maxEntityPickRange = entity == this.minecraft.player && GoldenAgeCombat.CONFIG.get(ServerConfig.class).attributes.attackRange ? GameRendererPickHelper.getCurrentAttackReach(this.minecraft.gameMode, this.minecraft.player) : 3.0;
             Vec3 viewVector = entity.getViewVector(1.0F);
             Vec3 eyePosition = entity.getEyePosition(partialTicks);
             Vec3 pickVector = eyePosition.add(viewVector.x * maxEntityPickRange, viewVector.y * maxEntityPickRange, viewVector.z * maxEntityPickRange);
