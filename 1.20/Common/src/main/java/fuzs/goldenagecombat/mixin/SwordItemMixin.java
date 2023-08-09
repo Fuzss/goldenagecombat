@@ -25,7 +25,7 @@ abstract class SwordItemMixin extends TieredItem {
 
     @Inject(method = "mineBlock", at = @At("HEAD"), cancellable = true)
     public void mineBlock(ItemStack stack, Level level, BlockState state, BlockPos pos, LivingEntity miningEntity, CallbackInfoReturnable<Boolean> callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).combatTests.noItemDurabilityPenalty) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).noItemDurabilityPenalty) return;
         if (state.getDestroySpeed(level, pos) != 0.0F) {
             stack.hurtAndBreak(1, miningEntity, (livingEntity) -> {
                 livingEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND);

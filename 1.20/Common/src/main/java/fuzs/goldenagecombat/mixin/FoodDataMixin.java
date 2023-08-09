@@ -27,7 +27,7 @@ abstract class FoodDataMixin {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(Player player, CallbackInfo callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.legacyFoodMechanics) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).legacyFoodMechanics) return;
         Difficulty difficulty = player.level().getDifficulty();
         this.lastFoodLevel = this.foodLevel;
         if (this.exhaustionLevel > 4.0F) {

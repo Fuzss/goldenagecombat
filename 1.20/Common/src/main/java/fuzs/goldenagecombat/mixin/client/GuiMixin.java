@@ -12,7 +12,7 @@ abstract class GuiMixin {
 
     @ModifyVariable(method = "renderHearts", at = @At("HEAD"), ordinal = 5)
     public int renderHearts(int lastHealth) {
-        if (!GoldenAgeCombat.CONFIG.get(ClientConfig.class).animations.noFlashingHearts) return lastHealth;
+        if (!GoldenAgeCombat.CONFIG.get(ClientConfig.class).noFlashingHearts) return lastHealth;
         return 0;
     }
 }

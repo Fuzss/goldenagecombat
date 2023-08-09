@@ -19,9 +19,6 @@ dependencies {
     // Extensible Enums
 //    modApi(include(libs.extensibleenums.fabric.get()))
 
-    // Reach Entity Attributes
-    modApi(include(libs.reachentityattributes.fabric.get()))
-
     // Quality of Life Mods
     versionCatalog.findLibrary("modmenu.fabric").ifPresent {
         modLocalRuntime(it)

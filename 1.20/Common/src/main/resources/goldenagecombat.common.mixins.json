@@ -6,32 +6,22 @@
   "refmap": "goldenagecombat.refmap.json",
   "plugin": "fuzs.goldenagecombat.mixin.ModMixinConfigPlugin",
   "mixins": [
-    "AxeItemMixin",
     "DamageEnchantmentMixin",
+    "DiggerItemMixin",
     "EntityMixin",
     "FishingHookMixin",
     "FoodDataMixin",
-    "LivingEntityMixin",
     "PlayerMixin",
-    "ProjectileUtilMixin",
-    "SweepingEdgeEnchantmentMixin",
-    "accessor.ItemAccessor",
-    "accessor.PlayerAccessor"
+    "SwordItemMixin",
+    "accessor.ItemAccessor"
   ],
   "client": [
     "client.CameraMixin",
-    "client.GameRendererMixin",
     "client.GuiMixin",
-    "client.HumanoidModelMixin",
-    "client.InputMixin",
     "client.ItemInHandRendererMixin",
-    "client.LivingEntityMixin",
     "client.MinecraftMixin",
     "client.ParticleEngineMixin",
-    "client.PlayerItemInHandLayerMixin",
-    "client.accessor.ItemInHandRendererAccessor",
-    "client.accessor.MinecraftAccessor",
-    "client.accessor.MultiPlayerGameModeAccessor"
+    "client.accessor.ItemInHandRendererAccessor"
   ],
   "injectors": {
     "defaultRequire": 1

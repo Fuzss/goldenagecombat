@@ -21,7 +21,7 @@ import net.minecraft.world.item.Items;
 public class ItemInHandHandler {
     
     public static EventResult onRenderHand(Player player, InteractionHand hand, ItemStack stack, PoseStack poseStack, MultiBufferSource multiBufferSource, int packedLight, float partialTick, float interpolatedPitch, float swingProgress, float equipProgress) {
-        if (!GoldenAgeCombat.CONFIG.get(ClientConfig.class).animations.interactAnimations || stack.isEmpty() || stack.is(Items.FILLED_MAP)) return EventResult.PASS;
+        if (!GoldenAgeCombat.CONFIG.get(ClientConfig.class).interactAnimations || stack.isEmpty() || stack.is(Items.FILLED_MAP)) return EventResult.PASS;
         if (player.isUsingItem() && player.getUseItemRemainingTicks() > 0 && player.getUsedItemHand() == hand) {
             Minecraft minecraft = Minecraft.getInstance();
             ItemInHandRenderer itemRenderer = minecraft.gameRenderer.itemInHandRenderer;

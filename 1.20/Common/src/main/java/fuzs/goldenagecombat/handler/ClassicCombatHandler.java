@@ -23,7 +23,7 @@ import net.minecraft.world.phys.Vec3;
 public class ClassicCombatHandler {
 
     public static EventResult onProjectileImpact(Projectile projectile, HitResult hitResult) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.weakAttacksKnockBackPlayers) return EventResult.PASS;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).weakAttacksKnockBackPlayers) return EventResult.PASS;
         if (hitResult.getType() == HitResult.Type.ENTITY && projectile.getOwner() == null) {
             // enable knockback for item projectiles fired from dispensers by making shooter not be null
             // something similar is already done in AbstractArrowEntity::onEntityHit to account for arrows fired from dispensers
@@ -33,7 +33,7 @@ public class ClassicCombatHandler {
     }
 
     public static void onUseItemFinish(LivingEntity entity, MutableValue<ItemStack> stack, int remainingUseDuration, ItemStack originalUseItem) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.goldenAppleEffects) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).goldenAppleEffects) return;
         if (stack.get().getItem() == Items.ENCHANTED_GOLDEN_APPLE) {
             entity.removeEffect(MobEffects.ABSORPTION);
             entity.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0));
@@ -42,7 +42,7 @@ public class ClassicCombatHandler {
     }
 
     public static EventResult onLivingKnockBack(LivingEntity entity, DefaultedDouble strength, DefaultedDouble ratioX, DefaultedDouble ratioZ) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.upwardsKnockback) return EventResult.PASS;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).upwardsKnockback) return EventResult.PASS;
         if (!entity.onGround() && !entity.isInWater()) {
             strength.mapDouble(s -> s * (1.0 - entity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)));
             final Vec3 deltaMovement = entity.getDeltaMovement();
@@ -53,7 +53,7 @@ public class ClassicCombatHandler {
 
     public static EventResult onPlaySoundAtPosition(Level level, Vec3 position, MutableValue<Holder<SoundEvent>> sound, MutableValue<SoundSource> source, DefaultedFloat volume, DefaultedFloat pitch) {
         // disable combat update player attack sounds
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.canceledAttackSounds.contains(sound.get().value())) {
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).canceledAttackSounds.contains(sound.get().value())) {
             return EventResult.PASS;
         }
         return EventResult.INTERRUPT;

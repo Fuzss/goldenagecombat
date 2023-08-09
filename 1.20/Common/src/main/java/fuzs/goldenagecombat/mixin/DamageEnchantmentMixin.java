@@ -26,7 +26,7 @@ abstract class DamageEnchantmentMixin extends Enchantment {
 
     @Inject(method = "getDamageBonus", at = @At("HEAD"), cancellable = true)
     public void getDamageBonus(int level, MobType creatureType, CallbackInfoReturnable<Float> callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.boostSharpness) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).boostSharpness) return;
         if (this.type == 0) callback.setReturnValue(level * 1.25F);
     }
 }

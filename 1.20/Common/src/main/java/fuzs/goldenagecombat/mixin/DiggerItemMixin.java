@@ -22,7 +22,7 @@ abstract class DiggerItemMixin extends TieredItem {
 
     @Inject(method = "hurtEnemy", at = @At("HEAD"), cancellable = true)
     public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker, CallbackInfoReturnable<Boolean> callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).combatTests.noItemDurabilityPenalty) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).noItemDurabilityPenalty) return;
         stack.hurtAndBreak(1, attacker, (livingEntity) -> {
             livingEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
         });

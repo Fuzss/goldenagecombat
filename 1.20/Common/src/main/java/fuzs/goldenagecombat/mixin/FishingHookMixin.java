@@ -27,7 +27,7 @@ abstract class FishingHookMixin extends Projectile {
 
     @Inject(method = "onHitEntity", at = @At("TAIL"))
     protected void onHitEntity(EntityHitResult hitResult, CallbackInfo callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.fishingRodKnockback) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).fishingRodKnockback) return;
         // won't really do anything for players as attacks with an amount of 0 are ignored, this is patched elsewhere
         hitResult.getEntity().hurt(this.damageSources().thrown(this, this.getPlayerOwner()), 0.0F);
     }
@@ -37,7 +37,7 @@ abstract class FishingHookMixin extends Projectile {
 
     @Inject(method = "pullEntity", at = @At("HEAD"), cancellable = true)
     protected void pullEntity(Entity entity, CallbackInfo callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.fishingRodLaunch) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).fishingRodLaunch) return;
         Entity owner = this.getOwner();
         if (owner != null) {
             Vec3 vec3 = new Vec3(owner.getX() - this.getX(), owner.getY() - this.getY(), owner.getZ() - this.getZ()).scale(0.1);
@@ -52,7 +52,7 @@ abstract class FishingHookMixin extends Projectile {
 
     @Inject(method = "retrieve", at = @At("RETURN"), cancellable = true)
     public void retrieve(ItemStack stack, CallbackInfoReturnable<Integer> callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).classic.fishingRodSlowerBreaking) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).fishingRodSlowerBreaking) return;
         if (callback.getReturnValueI() == 5) callback.setReturnValue(3);
     }
 }
