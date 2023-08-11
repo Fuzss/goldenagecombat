@@ -1,6 +1,6 @@
-package fuzs.examplemod.mixin;
+package fuzs.goldenagecombat.mixin;
 
-import net.fabricmc.loader.api.FabricLoader;
+import net.minecraftforge.fml.loading.FMLLoader;
 import org.objectweb.asm.tree.ClassNode;
 import org.spongepowered.asm.mixin.extensibility.IMixinConfigPlugin;
 import org.spongepowered.asm.mixin.extensibility.IMixinInfo;
@@ -22,7 +22,7 @@ public class ModMixinConfigPlugin implements IMixinConfigPlugin {
 
     @Override
     public boolean shouldApplyMixin(String targetClassName, String mixinClassName) {
-        return FabricLoader.getInstance().isModLoaded("puzzleslib");
+        return FMLLoader.getLoadingModList().getModFileById("puzzleslib") != null;
     }
 
     @Override
