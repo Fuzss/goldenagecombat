@@ -1,8 +1,13 @@
 package fuzs.goldenagecombat.client;
 
-import fuzs.goldenagecombat.client.handler.*;
+import fuzs.goldenagecombat.client.handler.AttributesTooltipHandler;
+import fuzs.goldenagecombat.client.handler.ClientCooldownHandler;
+import fuzs.goldenagecombat.client.handler.ItemInHandHandler;
 import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
-import fuzs.puzzleslib.api.client.event.v1.*;
+import fuzs.puzzleslib.api.client.event.v1.ItemTooltipCallback;
+import fuzs.puzzleslib.api.client.event.v1.RenderGuiElementEvents;
+import fuzs.puzzleslib.api.client.event.v1.RenderHandCallback;
+import fuzs.puzzleslib.api.client.event.v1.ScreenEvents;
 
 public class GoldenAgeCombatClient implements ClientModConstructor {
 
