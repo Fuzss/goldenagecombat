@@ -3,6 +3,7 @@ package fuzs.goldenagecombat.client;
 import fuzs.goldenagecombat.client.handler.*;
 import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
 import fuzs.puzzleslib.api.client.event.v1.*;
+import fuzs.puzzleslib.api.event.v1.core.EventPhase;
 
 public class GoldenAgeCombatClient implements ClientModConstructor {
 
@@ -12,7 +13,7 @@ public class GoldenAgeCombatClient implements ClientModConstructor {
     }
 
     private static void registerHandlers() {
-        RenderHandCallback.EVENT.register(ItemInHandHandler::onRenderHand);
+        RenderHandCallback.EVENT.register(EventPhase.LAST, ItemInHandHandler::onRenderHand);
         RenderGuiElementEvents.before(RenderGuiElementEvents.CROSSHAIR).register(ClientCooldownHandler::onBeforeRenderGuiElement);
         RenderGuiElementEvents.after(RenderGuiElementEvents.CROSSHAIR).register(ClientCooldownHandler::onAfterRenderGuiElement);
         RenderGuiElementEvents.before(RenderGuiElementEvents.HOTBAR).register(ClientCooldownHandler::onBeforeRenderGuiElement);

@@ -8,6 +8,7 @@ import fuzs.puzzleslib.api.client.event.v1.ItemTooltipCallback;
 import fuzs.puzzleslib.api.client.event.v1.RenderGuiElementEvents;
 import fuzs.puzzleslib.api.client.event.v1.RenderHandCallback;
 import fuzs.puzzleslib.api.client.event.v1.ScreenEvents;
+import fuzs.puzzleslib.api.event.v1.core.EventPhase;
 
 public class GoldenAgeCombatClient implements ClientModConstructor {
 
@@ -17,7 +18,7 @@ public class GoldenAgeCombatClient implements ClientModConstructor {
     }
 
     private static void registerHandlers() {
-        RenderHandCallback.EVENT.register(ItemInHandHandler::onRenderHand);
+        RenderHandCallback.EVENT.register(EventPhase.LAST, ItemInHandHandler::onRenderHand);
         RenderGuiElementEvents.before(RenderGuiElementEvents.CROSSHAIR).register(ClientCooldownHandler::onBeforeRenderGuiElement);
         RenderGuiElementEvents.after(RenderGuiElementEvents.CROSSHAIR).register(ClientCooldownHandler::onAfterRenderGuiElement);
         RenderGuiElementEvents.before(RenderGuiElementEvents.HOTBAR).register(ClientCooldownHandler::onBeforeRenderGuiElement);
