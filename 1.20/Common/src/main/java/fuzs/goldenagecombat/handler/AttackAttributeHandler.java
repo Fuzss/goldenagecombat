@@ -21,7 +21,7 @@ public class AttackAttributeHandler {
     private static final String ATTACK_DAMAGE_MODIFIER_NAME = GoldenAgeCombat.id("attack_damage_modifier").toString();
     private static final Map<Class<? extends TieredItem>, Double> ATTACK_DAMAGE_BONUS_OVERRIDES = ImmutableMap.of(SwordItem.class, 4.0, AxeItem.class, 3.0, PickaxeItem.class, 2.0, ShovelItem.class, 1.0, HoeItem.class, 0.0);
 
-    public static void onItemAttributeModifiers(ItemStack stack, EquipmentSlot equipmentSlot, Multimap<Attribute, AttributeModifier> attributeModifiers, Multimap<Attribute, AttributeModifier> originalAttributeModifiers) {
+    public static void onItemAttributeModifiers(ItemStack stack, EquipmentSlot equipmentSlot, Multimap<Attribute, AttributeModifier> attributeModifiers) {
         if (!GoldenAgeCombat.CONFIG.getHolder(ServerConfig.class).isAvailable()) return;
         // don't change items whose attributes have already been changed via the nbt tag
         if (equipmentSlot == EquipmentSlot.MAINHAND && (!stack.hasTag() || !stack.getTag().contains("AttributeModifiers", Tag.TAG_LIST))) {
