@@ -60,6 +60,6 @@ public class ServerConfig implements ConfigCore {
     public void afterConfigReload() {
         this.canceledAttackSounds = ConfigDataSet.from(Registry.SOUND_EVENT_REGISTRY, this.canceledAttackSoundsRaw);
         this.canceledParticles = ConfigDataSet.from(Registry.PARTICLE_TYPE_REGISTRY, this.canceledParticlesRaw);
-        this.attackDamageOverrides = ConfigDataSet.from(Registry.ITEM_REGISTRY, this.attackDamageOverridesRaw, (i, o) -> ((double) o) >= 0.0, double.class);
+        this.attackDamageOverrides = ConfigDataSet.from(Registry.ITEM_REGISTRY, this.attackDamageOverridesRaw, (i, o) -> i != 1 || ((double) o) >= 0.0, double.class);
     }
 }
