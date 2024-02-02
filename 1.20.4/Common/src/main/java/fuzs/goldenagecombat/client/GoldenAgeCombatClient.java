@@ -3,9 +3,9 @@ package fuzs.goldenagecombat.client;
 import fuzs.goldenagecombat.client.handler.AttributesTooltipHandler;
 import fuzs.goldenagecombat.client.handler.ClientCooldownHandler;
 import fuzs.puzzleslib.api.client.core.v1.ClientModConstructor;
-import fuzs.puzzleslib.api.client.event.v1.ItemTooltipCallback;
-import fuzs.puzzleslib.api.client.event.v1.RenderGuiElementEvents;
-import fuzs.puzzleslib.api.client.event.v1.ScreenEvents;
+import fuzs.puzzleslib.api.client.event.v1.gui.ItemTooltipCallback;
+import fuzs.puzzleslib.api.client.event.v1.gui.ScreenEvents;
+import fuzs.puzzleslib.api.client.event.v1.renderer.RenderGuiElementEvents;
 import net.minecraft.client.gui.screens.VideoSettingsScreen;
 
 public class GoldenAgeCombatClient implements ClientModConstructor {

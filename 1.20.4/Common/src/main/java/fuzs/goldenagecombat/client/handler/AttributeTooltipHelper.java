@@ -3,9 +3,8 @@ package fuzs.goldenagecombat.client.handler;
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
 import net.minecraft.network.chat.Component;
-import net.minecraft.network.chat.ComponentContents;
 import net.minecraft.network.chat.MutableComponent;
-import net.minecraft.network.chat.contents.LiteralContents;
+import net.minecraft.network.chat.contents.PlainTextContents;
 import net.minecraft.network.chat.contents.TranslatableContents;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
@@ -137,7 +136,7 @@ public final class AttributeTooltipHelper {
         for (int i = 0; i < lines.size(); i++) {
             if (lines.get(i).getContents() instanceof TranslatableContents contents && contents.getKey().startsWith("item.modifiers.")) {
                 // attributes have a blank line above, we try to include that
-                if (--i >= 0 && lines.get(i).getContents() == ComponentContents.EMPTY) {
+                if (--i >= 0 && lines.get(i).getContents() == PlainTextContents.EMPTY) {
                     return i;
                 } else {
                     return ++i;
@@ -160,7 +159,7 @@ public final class AttributeTooltipHelper {
             TranslatableContents translatableComponent = null;
             if (component.getContents() instanceof TranslatableContents translatableComponent1) {
                 translatableComponent = translatableComponent1;
-            } else if (component.getContents() instanceof LiteralContents textComponent && textComponent.text().equals(" ")) {
+            } else if (component.getContents() instanceof PlainTextContents.LiteralContents textComponent && textComponent.text().equals(" ")) {
                 if (!component.getSiblings().isEmpty() && component.getSiblings().get(0).getContents() instanceof TranslatableContents translatableComponent1) {
                     translatableComponent = translatableComponent1;
                 }

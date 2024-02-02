@@ -1,5 +1,6 @@
-package fuzs.goldenagecombat;
+package fuzs.goldenagecombat.fabric;
 
+import fuzs.goldenagecombat.GoldenAgeCombat;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import net.fabricmc.api.ModInitializer;
 

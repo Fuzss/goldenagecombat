@@ -2,7 +2,7 @@ package fuzs.goldenagecombat.client.handler;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
 import fuzs.goldenagecombat.config.ServerConfig;
-import fuzs.puzzleslib.api.client.event.v1.ScreenEvents;
+import fuzs.puzzleslib.api.client.event.v1.gui.ScreenEvents;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
 import net.minecraft.client.AttackIndicatorStatus;
 import net.minecraft.client.Minecraft;

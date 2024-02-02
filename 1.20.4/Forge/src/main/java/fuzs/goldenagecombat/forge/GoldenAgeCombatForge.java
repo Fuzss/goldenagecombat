@@ -1,5 +1,6 @@
-package fuzs.goldenagecombat;
+package fuzs.goldenagecombat.forge;
 
+import fuzs.goldenagecombat.GoldenAgeCombat;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;

@@ -3,6 +3,7 @@ package fuzs.goldenagecombat.config;
 import fuzs.puzzleslib.api.config.v3.Config;
 import fuzs.puzzleslib.api.config.v3.ConfigCore;
 import fuzs.puzzleslib.api.config.v3.serialization.ConfigDataSet;
+import fuzs.puzzleslib.api.config.v3.serialization.KeyedValueProvider;
 import net.minecraft.core.particles.ParticleType;
 import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
@@ -38,9 +39,9 @@ public class ServerConfig implements ConfigCore {
     @Config(description = "Makes knockback stronger towards targets not on the ground (does not apply when in water).")
     public boolean upwardsKnockback = true;
     @Config(category = "adjustments", name = "canceled_attack_sounds", description = {"Prevent various attack sounds added for the cooldown mechanic from playing.", "This option can be used to prevent basically any individual sound from playing.", ConfigDataSet.CONFIG_DESCRIPTION})
-    List<String> canceledAttackSoundsRaw = ConfigDataSet.toString(Registries.SOUND_EVENT, SoundEvents.PLAYER_ATTACK_CRIT, SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundEvents.PLAYER_ATTACK_STRONG, SoundEvents.PLAYER_ATTACK_WEAK, SoundEvents.PLAYER_ATTACK_SWEEP);
+    List<String> canceledAttackSoundsRaw = KeyedValueProvider.toString(Registries.SOUND_EVENT, SoundEvents.PLAYER_ATTACK_CRIT, SoundEvents.PLAYER_ATTACK_KNOCKBACK, SoundEvents.PLAYER_ATTACK_NODAMAGE, SoundEvents.PLAYER_ATTACK_STRONG, SoundEvents.PLAYER_ATTACK_WEAK, SoundEvents.PLAYER_ATTACK_SWEEP);
     @Config(category = "adjustments", name = "canceled_particles", description = {"Disable rendering for certain particle types from modern combat, since they kinda clutter the screen since attacks can be dealt much quicker with classic combat options enabled.", "This option can be used to prevent basically any particle from showing.", ConfigDataSet.CONFIG_DESCRIPTION})
-    List<String> canceledParticlesRaw = ConfigDataSet.toString(Registries.PARTICLE_TYPE, ParticleTypes.DAMAGE_INDICATOR, ParticleTypes.SWEEP_ATTACK);
+    List<String> canceledParticlesRaw = KeyedValueProvider.toString(Registries.PARTICLE_TYPE, ParticleTypes.DAMAGE_INDICATOR, ParticleTypes.SWEEP_ATTACK);
     @Config(description = "Is the sweeping edge enchantment required to perform a sweep attack.")
     public boolean requireSweepingEdge = true;
     @Config(description = "Attacking will no longer stop the player from sprinting. Very useful when swimming, so you can fight underwater without being stopped on every hit.")
@@ -50,7 +51,7 @@ public class ServerConfig implements ConfigCore {
     @Config(category = "attributes", name = "legacy_attack_damage_values", description = "Revert weapon and tool attack damage to legacy values.")
     public boolean oldAttackDamage = true;
     @Config(category = "attributes", name = "custom_attack_damage_overrides", description = {"Overrides for setting and balancing attack damage values of items.", "Takes precedence over any changes made by \"legacy_attack_damage\" option, but requires it to be enabled.", "As with all items, this value is added ON TOP of the default attack strength of the player (which is 1.0 by default).", "Format for every entry is \"<namespace>:<path>,<amount>\". Tags are supported, must be in the format of \"#<namespace>:<path>\". Namespace may be omitted to use \"minecraft\" by default. May use asterisk as wildcard parameter via pattern matching, e.g. \"minecraft:*_shulker_box\" to match all shulker boxes no matter of color."})
-    List<String> attackDamageOverridesRaw = ConfigDataSet.toString(Registries.ITEM);
+    List<String> attackDamageOverridesRaw = KeyedValueProvider.toString(Registries.ITEM);
 
     public ConfigDataSet<SoundEvent> canceledAttackSounds;
     public ConfigDataSet<ParticleType<?>> canceledParticles;
