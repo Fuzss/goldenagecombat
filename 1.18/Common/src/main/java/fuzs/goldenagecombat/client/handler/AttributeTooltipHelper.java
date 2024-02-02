@@ -2,7 +2,10 @@ package fuzs.goldenagecombat.client.handler;
 
 import com.google.common.collect.Maps;
 import com.google.common.collect.Multimap;
-import net.minecraft.network.chat.*;
+import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.MutableComponent;
+import net.minecraft.network.chat.TextComponent;
+import net.minecraft.network.chat.TranslatableComponent;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeInstance;
@@ -179,7 +182,7 @@ public final class AttributeTooltipHelper {
      */
     public static double calculateAttributeValue(@Nullable Player player, Attribute attribute, Collection<AttributeModifier> modifiers) {
 
-        double baseValue = player != null ? player.getAttributeBaseValue(attribute) : 0.0;
+        double baseValue = player != null && player.getAttributes().hasAttribute(attribute) ? player.getAttributeBaseValue(attribute) : 0.0;
         Map<AttributeModifier.Operation, List<AttributeModifier>> modifiersByOperation = modifiers.stream().collect(Collectors.groupingBy(AttributeModifier::getOperation));
 
         for (AttributeModifier attributeModifier : modifiersByOperation.getOrDefault(AttributeModifier.Operation.ADDITION, List.of())) {

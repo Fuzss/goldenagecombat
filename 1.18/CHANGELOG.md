@@ -3,6 +3,11 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [v3.4.2-1.18.2] - 2024-02-02
+### Fixed
+- Fix crash when rendering certain attributes on tooltips
+- Fix broken item animations
+
 ## [v3.4.1-1.18.2] - 2023-12-06
 ### Fixed
 - Fixed attributes config option crashing

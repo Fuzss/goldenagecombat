@@ -183,7 +183,7 @@ public final class AttributeTooltipHelper {
      */
     public static double calculateAttributeValue(@Nullable Player player, Attribute attribute, Collection<AttributeModifier> modifiers) {
 
-        double baseValue = player != null ? player.getAttributeBaseValue(attribute) : 0.0;
+        double baseValue = player != null && player.getAttributes().hasAttribute(attribute) ? player.getAttributeBaseValue(attribute) : 0.0;
         Map<AttributeModifier.Operation, List<AttributeModifier>> modifiersByOperation = modifiers.stream().collect(Collectors.groupingBy(AttributeModifier::getOperation));
 
         for (AttributeModifier attributeModifier : modifiersByOperation.getOrDefault(AttributeModifier.Operation.ADDITION, List.of())) {
