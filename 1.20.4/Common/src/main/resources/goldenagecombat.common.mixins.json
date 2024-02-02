@@ -1,0 +1,29 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_17",
+  "package": "fuzs.goldenagecombat.mixin",
+  "refmap": "goldenagecombat.refmap.json",
+  "plugin": "fuzs.goldenagecombat.mixin.ModMixinConfigPlugin",
+  "mixins": [
+    "DamageEnchantmentMixin",
+    "DiggerItemMixin",
+    "EntityMixin",
+    "FishingHookMixin",
+    "FoodDataMixin",
+    "PlayerMixin",
+    "SwordItemMixin",
+    "accessor.ItemAccessor"
+  ],
+  "client": [
+    "client.CameraMixin",
+    "client.GuiMixin",
+    "client.ItemInHandRendererMixin",
+    "client.MinecraftMixin",
+    "client.ParticleEngineMixin",
+    "client.accessor.ItemInHandRendererAccessor"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
