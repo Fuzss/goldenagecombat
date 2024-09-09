@@ -3,6 +3,10 @@ All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog].
 
+## [v3.4.3-1.18.2] - 2024-09-09
+### Fixed
+- Fix unable to open chests behind item frames
+
 ## [v3.4.2-1.18.2] - 2024-02-02
 ### Fixed
 - Fix crash when rendering certain attributes on tooltips
