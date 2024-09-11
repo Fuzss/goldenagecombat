@@ -1,54 +1,90 @@
 package fuzs.goldenagecombat.handler;
 
 import com.google.common.collect.ImmutableMap;
-import com.google.common.collect.Multimap;
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.config.ServerConfig;
-import fuzs.goldenagecombat.mixin.accessor.ItemAccessor;
+import fuzs.goldenagecombat.config.CommonConfig;
 import fuzs.puzzleslib.api.config.v3.serialization.ConfigDataSet;
-import net.minecraft.nbt.Tag;
-import net.minecraft.world.entity.EquipmentSlot;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponentMap;
+import net.minecraft.core.component.DataComponentPatch;
+import net.minecraft.core.component.DataComponents;
+import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.entity.EquipmentSlotGroup;
 import net.minecraft.world.entity.ai.attributes.Attribute;
 import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.item.*;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
+import net.minecraft.world.item.component.Tool;
 
+import java.util.List;
+import java.util.ListIterator;
 import java.util.Map;
-import java.util.UUID;
+import java.util.function.Consumer;
+import java.util.function.Function;
 
 public class AttackAttributeHandler {
-    public static final UUID BASE_ATTACK_DAMAGE_UUID = ItemAccessor.goldenagecombat$getBaseAttackDamageUUID();
-    private static final String ATTACK_DAMAGE_MODIFIER_NAME = GoldenAgeCombat.id("attack_damage_modifier").toString();
-    private static final Map<Class<? extends TieredItem>, Double> ATTACK_DAMAGE_BONUS_OVERRIDES = ImmutableMap.of(SwordItem.class, 4.0, AxeItem.class, 3.0, PickaxeItem.class, 2.0, ShovelItem.class, 1.0, HoeItem.class, 0.0);
+    private static final Map<Class<? extends TieredItem>, Double> ATTACK_DAMAGE_BONUS_OVERRIDES = ImmutableMap.of(
+            SwordItem.class, 4.0, AxeItem.class, 3.0, PickaxeItem.class, 2.0, ShovelItem.class, 1.0, HoeItem.class,
+            0.0
+    );
 
-    public static void onItemAttributeModifiers(ItemStack stack, EquipmentSlot equipmentSlot, Multimap<Attribute, AttributeModifier> attributeModifiers) {
-        if (!GoldenAgeCombat.CONFIG.getHolder(ServerConfig.class).isAvailable()) return;
-        // don't change items whose attributes have already been changed via the nbt tag
-        if (equipmentSlot == EquipmentSlot.MAINHAND && (!stack.hasTag() || !stack.getTag().contains("AttributeModifiers", Tag.TAG_LIST))) {
-            if (!trySetNewAttributeValue(stack, attributeModifiers, Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE_UUID, ATTACK_DAMAGE_MODIFIER_NAME, GoldenAgeCombat.CONFIG.get(ServerConfig.class).attackDamageOverrides)) {
-                if (GoldenAgeCombat.CONFIG.get(ServerConfig.class).oldAttackDamage) {
-                    for (Map.Entry<Class<? extends TieredItem>, Double> entry : ATTACK_DAMAGE_BONUS_OVERRIDES.entrySet()) {
-                        if (entry.getKey().isInstance(stack.getItem())) {
-                            setNewAttributeValue(attributeModifiers, Attributes.ATTACK_DAMAGE, BASE_ATTACK_DAMAGE_UUID, ATTACK_DAMAGE_MODIFIER_NAME, ((TieredItem) stack.getItem()).getTier().getAttackDamageBonus() + entry.getValue());
-                            break;
-                        }
+    public static void onFinalizeItemComponents(Item item, Consumer<Function<DataComponentMap, DataComponentPatch>> consumer) {
+        if (!GoldenAgeCombat.CONFIG.get(CommonConfig.class).noItemDurabilityPenalty) return;
+        if (item instanceof SwordItem) {
+            consumer.accept((DataComponentMap dataComponents) -> {
+                if (dataComponents.has(DataComponents.TOOL)) {
+                    Tool tool = dataComponents.get(DataComponents.TOOL);
+                    if (tool.damagePerBlock() == 2) {
+
+                        Tool newTool = new Tool(tool.rules(), tool.defaultMiningSpeed(), 1);
+                        return DataComponentPatch.builder().set(DataComponents.TOOL, newTool).build();
+                    }
+                }
+
+                return DataComponentPatch.EMPTY;
+            });
+        }
+    }
+
+    public static void onComputeItemAttributeModifiers(Item item, List<ItemAttributeModifiers.Entry> itemAttributeModifiers) {
+        if (!setAttributeValue(item, itemAttributeModifiers, Attributes.ATTACK_DAMAGE, Item.BASE_ATTACK_DAMAGE_ID,
+                GoldenAgeCombat.CONFIG.get(CommonConfig.class).attackDamageOverrides
+        )) {
+            if (GoldenAgeCombat.CONFIG.get(CommonConfig.class).oldAttackDamage) {
+                for (Map.Entry<Class<? extends TieredItem>, Double> entry : ATTACK_DAMAGE_BONUS_OVERRIDES.entrySet()) {
+                    if (entry.getKey().isInstance(item)) {
+                        setAttributeValue(itemAttributeModifiers, Attributes.ATTACK_DAMAGE, Item.BASE_ATTACK_DAMAGE_ID,
+                                ((TieredItem) item).getTier().getAttackDamageBonus() + entry.getValue()
+                        );
+                        break;
                     }
                 }
             }
         }
     }
 
-    private static boolean trySetNewAttributeValue(ItemStack itemStack, Multimap<Attribute, AttributeModifier> attributeModifiers, Attribute attribute, UUID modifierUUID, String modifierName, ConfigDataSet<Item> attackDamageOverrides) {
-        if (attackDamageOverrides.contains(itemStack.getItem())) {
-            double newValue = attackDamageOverrides.<Double>getOptional(itemStack.getItem(), 0).orElseThrow();
-            setNewAttributeValue(attributeModifiers, attribute, modifierUUID, modifierName, newValue);
+    private static boolean setAttributeValue(Item item, List<ItemAttributeModifiers.Entry> itemAttributeModifiers, Holder<Attribute> attribute, ResourceLocation id, ConfigDataSet<Item> attackDamageOverrides) {
+        if (attackDamageOverrides.contains(item)) {
+            double newValue = attackDamageOverrides.<Double>getOptional(item, 0).orElseThrow();
+            setAttributeValue(itemAttributeModifiers, attribute, id, newValue);
             return true;
+        } else {
+            return false;
         }
-        return false;
     }
 
-    private static void setNewAttributeValue(Multimap<Attribute, AttributeModifier> attributeModifiers, Attribute attribute, UUID modifierUUID, String modifierName, double newValue) {
-        attributeModifiers.removeAll(attribute);
-        attributeModifiers.put(attribute, new AttributeModifier(modifierUUID, modifierName, newValue, AttributeModifier.Operation.ADDITION));
+    private static void setAttributeValue(List<ItemAttributeModifiers.Entry> itemAttributeModifiers, Holder<Attribute> attribute, ResourceLocation id, double newValue) {
+        ListIterator<ItemAttributeModifiers.Entry> iterator = itemAttributeModifiers.listIterator();
+        while (iterator.hasNext()) {
+            ItemAttributeModifiers.Entry entry = iterator.next();
+            if (entry.slot() == EquipmentSlotGroup.MAINHAND && entry.matches(attribute, id)) {
+                AttributeModifier attributeModifier = new AttributeModifier(id, newValue,
+                        AttributeModifier.Operation.ADD_VALUE
+                );
+                iterator.set(new ItemAttributeModifiers.Entry(attribute, attributeModifier, entry.slot()));
+                break;
+            }
+        }
     }
 }

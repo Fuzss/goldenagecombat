@@ -1,7 +1,8 @@
 package fuzs.goldenagecombat.mixin;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.config.ServerConfig;
+import fuzs.goldenagecombat.config.CommonConfig;
+import fuzs.puzzleslib.api.item.v2.ItemHelper;
 import net.minecraft.world.entity.EquipmentSlot;
 import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.item.DiggerItem;
@@ -21,11 +22,9 @@ abstract class DiggerItemMixin extends TieredItem {
     }
 
     @Inject(method = "hurtEnemy", at = @At("HEAD"), cancellable = true)
-    public void hurtEnemy(ItemStack stack, LivingEntity target, LivingEntity attacker, CallbackInfoReturnable<Boolean> callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).noItemDurabilityPenalty) return;
-        stack.hurtAndBreak(1, attacker, (livingEntity) -> {
-            livingEntity.broadcastBreakEvent(EquipmentSlot.MAINHAND);
-        });
+    public void hurtEnemy(ItemStack itemStack, LivingEntity target, LivingEntity attacker, CallbackInfoReturnable<Boolean> callback) {
+        if (!GoldenAgeCombat.CONFIG.get(CommonConfig.class).noItemDurabilityPenalty) return;
+        ItemHelper.hurtAndBreak(itemStack, 1, attacker, EquipmentSlot.MAINHAND);
         callback.setReturnValue(true);
     }
 }

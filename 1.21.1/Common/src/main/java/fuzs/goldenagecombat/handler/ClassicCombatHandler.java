@@ -55,7 +55,8 @@ public class ClassicCombatHandler {
         // disable combat update player attack sounds
         if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).canceledAttackSounds.contains(sound.get().value())) {
             return EventResult.PASS;
+        } else {
+            return EventResult.INTERRUPT;
         }
-        return EventResult.INTERRUPT;
     }
 }

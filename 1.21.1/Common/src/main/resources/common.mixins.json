@@ -4,22 +4,19 @@
   "compatibilityLevel": "JAVA_17",
   "package": "${modGroup}.mixin",
   "mixins": [
-    "DamageEnchantmentMixin",
     "DiggerItemMixin",
     "EntityMixin",
     "FishingHookMixin",
     "FoodDataMixin",
-    "PlayerMixin",
-    "SwordItemMixin",
-    "accessor.ItemAccessor"
+    "ItemStackMixin",
+    "PlayerMixin"
   ],
   "client": [
     "client.CameraMixin",
     "client.GuiMixin",
     "client.ItemInHandRendererMixin",
     "client.MinecraftMixin",
-    "client.ParticleEngineMixin",
-    "client.accessor.ItemInHandRendererAccessor"
+    "client.ParticleEngineMixin"
   ],
   "injectors": {
     "defaultRequire": 1

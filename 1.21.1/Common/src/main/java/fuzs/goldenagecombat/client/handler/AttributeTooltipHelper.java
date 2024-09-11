@@ -1,7 +1,9 @@
 package fuzs.goldenagecombat.client.handler;
 
-import com.google.common.collect.Maps;
+import com.google.common.collect.HashMultimap;
 import com.google.common.collect.Multimap;
+import net.minecraft.core.Holder;
+import net.minecraft.core.component.DataComponents;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.MutableComponent;
 import net.minecraft.network.chat.contents.PlainTextContents;
@@ -13,9 +15,11 @@ import net.minecraft.world.entity.ai.attributes.AttributeModifier;
 import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.component.ItemAttributeModifiers;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.Collection;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -26,20 +30,24 @@ import java.util.stream.Collectors;
 public final class AttributeTooltipHelper {
 
     private AttributeTooltipHelper() {
-
+        // NO-OP
     }
 
     /**
      * Collect all {@link AttributeModifier}s on an {@link ItemStack} into a map separated by {@link EquipmentSlot}.
      *
-     * @param stack the item stack
+     * @param itemStack the item stack
      * @return the map
      */
-    public static Map<EquipmentSlot, Multimap<Attribute, AttributeModifier>> getAttributesBySlot(ItemStack stack) {
-        Map<EquipmentSlot, Multimap<Attribute, AttributeModifier>> map = Maps.newLinkedHashMap();
+    public static Map<EquipmentSlot, Multimap<Holder<Attribute>, AttributeModifier>> getAttributesBySlot(ItemStack itemStack) {
+        Map<EquipmentSlot, Multimap<Holder<Attribute>, AttributeModifier>> map = new LinkedHashMap<>();
         for (EquipmentSlot equipmentSlot : EquipmentSlot.values()) {
-            Multimap<Attribute, AttributeModifier> multimap = stack.getAttributeModifiers(equipmentSlot);
-            if (!multimap.isEmpty()) map.put(equipmentSlot, multimap);
+            ItemAttributeModifiers itemAttributeModifiers = itemStack.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS,
+                    ItemAttributeModifiers.EMPTY
+            );
+            itemAttributeModifiers.forEach(equipmentSlot, (holder, attributeModifier) -> {
+                map.computeIfAbsent(equipmentSlot, $ -> HashMultimap.create()).put(holder, attributeModifier);
+            });
         }
         return map;
     }
@@ -52,7 +60,7 @@ public final class AttributeTooltipHelper {
      * @param attributeModifier a potential attribute modifier in case checking for a specific modifier is desired
      * @return does the component describe the given attribute and potential modifier
      */
-    public static boolean matchesAttributeComponent(Component component, Attribute attribute, @Nullable AttributeModifier attributeModifier) {
+    public static boolean matchesAttributeComponent(Component component, Holder<Attribute> attribute, @Nullable AttributeModifier attributeModifier) {
         TranslatableContents translatableContents = null;
         if (component.getContents() instanceof TranslatableContents translatableContents1) {
             translatableContents = translatableContents1;
@@ -64,18 +72,18 @@ public final class AttributeTooltipHelper {
             String translationKey = null;
             if (attributeModifier != null) {
                 scaledAmount = getScaledAttributeAmount(attribute, attributeModifier);
-                if (attributeModifier.getAmount() > 0.0D) {
-                    translationKey = "attribute.modifier.plus." + attributeModifier.getOperation().toValue();
-                } else if (attributeModifier.getAmount() < 0.0D) {
+                if (attributeModifier.amount() > 0.0D) {
+                    translationKey = "attribute.modifier.plus." + attributeModifier.operation().id();
+                } else if (attributeModifier.amount() < 0.0D) {
                     scaledAmount *= -1.0D;
-                    translationKey = "attribute.modifier.take." + attributeModifier.getOperation().toValue();
+                    translationKey = "attribute.modifier.take." + attributeModifier.operation().id();
                 }
             }
             Object[] args = translatableContents.getArgs();
             if ((attributeModifier == null || translationKey != null && translatableContents.getKey().equals(translationKey)) && args.length >= 2) {
-                if (attributeModifier == null || args[0].equals(ItemStack.ATTRIBUTE_MODIFIER_FORMAT.format(scaledAmount))) {
+                if (attributeModifier == null || args[0].equals(ItemAttributeModifiers.ATTRIBUTE_MODIFIER_FORMAT.format(scaledAmount))) {
                     if (args[1] instanceof Component component1 && component1.getContents() instanceof TranslatableContents translatableComponent1) {
-                        return translatableComponent1.getKey().equals(attribute.getDescriptionId());
+                        return translatableComponent1.getKey().equals(attribute.value().getDescriptionId());
                     }
                 }
             }
@@ -90,10 +98,10 @@ public final class AttributeTooltipHelper {
      * @param attributeModifier the modifier where the value comes from
      * @return the adjusted value, potentially still the original input
      */
-    private static double getScaledAttributeAmount(Attribute attribute, AttributeModifier attributeModifier) {
+    private static double getScaledAttributeAmount(Holder<Attribute> attribute, AttributeModifier attributeModifier) {
         // apply same scaling to attribute value as is done by vanilla for the tooltip
-        double attributeAmount = attributeModifier.getAmount();
-        if (attributeModifier.getOperation() != AttributeModifier.Operation.MULTIPLY_BASE && attributeModifier.getOperation() != AttributeModifier.Operation.MULTIPLY_TOTAL) {
+        double attributeAmount = attributeModifier.amount();
+        if (attributeModifier.operation() != AttributeModifier.Operation.ADD_MULTIPLIED_BASE && attributeModifier.operation() != AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL) {
             if (attribute.equals(Attributes.KNOCKBACK_RESISTANCE)) {
                 return attributeAmount * 10.0D;
             } else {
@@ -180,25 +188,25 @@ public final class AttributeTooltipHelper {
      * @param modifiers all modifiers for that attribute
      * @return the total attribute value
      */
-    public static double calculateAttributeValue(@Nullable Player player, Attribute attribute, Collection<AttributeModifier> modifiers) {
+    public static double calculateAttributeValue(@Nullable Player player, Holder<Attribute> attribute, Collection<AttributeModifier> modifiers) {
 
         double baseValue = player != null && player.getAttributes().hasAttribute(attribute) ? player.getAttributeBaseValue(attribute) : 0.0;
-        Map<AttributeModifier.Operation, List<AttributeModifier>> modifiersByOperation = modifiers.stream().collect(Collectors.groupingBy(AttributeModifier::getOperation));
+        Map<AttributeModifier.Operation, List<AttributeModifier>> modifiersByOperation = modifiers.stream().collect(Collectors.groupingBy(AttributeModifier::operation));
 
-        for (AttributeModifier attributeModifier : modifiersByOperation.getOrDefault(AttributeModifier.Operation.ADDITION, List.of())) {
-            baseValue += attributeModifier.getAmount();
+        for (AttributeModifier attributeModifier : modifiersByOperation.getOrDefault(AttributeModifier.Operation.ADD_VALUE, List.of())) {
+            baseValue += attributeModifier.amount();
         }
 
         double multipliedValue = baseValue;
 
-        for (AttributeModifier attributeModifier : modifiersByOperation.getOrDefault(AttributeModifier.Operation.MULTIPLY_BASE, List.of())) {
-            multipliedValue += baseValue * attributeModifier.getAmount();
+        for (AttributeModifier attributeModifier : modifiersByOperation.getOrDefault(AttributeModifier.Operation.ADD_MULTIPLIED_BASE, List.of())) {
+            multipliedValue += baseValue * attributeModifier.amount();
         }
 
-        for (AttributeModifier attributeModifier : modifiersByOperation.getOrDefault(AttributeModifier.Operation.MULTIPLY_TOTAL, List.of())) {
-            multipliedValue *= 1.0D + attributeModifier.getAmount();
+        for (AttributeModifier attributeModifier : modifiersByOperation.getOrDefault(AttributeModifier.Operation.ADD_MULTIPLIED_TOTAL, List.of())) {
+            multipliedValue *= 1.0D + attributeModifier.amount();
         }
 
-        return attribute.sanitizeValue(multipliedValue);
+        return attribute.value().sanitizeValue(multipliedValue);
     }
 }

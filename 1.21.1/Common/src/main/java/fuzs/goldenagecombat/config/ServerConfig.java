@@ -9,7 +9,6 @@ import net.minecraft.core.particles.ParticleTypes;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
-import net.minecraft.world.item.Item;
 
 import java.util.List;
 
@@ -28,8 +27,6 @@ public class ServerConfig implements ConfigCore {
     public boolean fishingRodLaunch = true;
     @Config(category = "fishing_rods", name = "slower_breaking", description = "Hooking entities with a fishing rod causes only 3 damage points to the rod instead of 5.")
     public boolean fishingRodSlowerBreaking = true;
-    @Config(description = "Boost sharpness enchantment to 1.25 damage points per level instead of just 0.5.")
-    public boolean boostSharpness = false;
     @Config(name = "notch_apple_effects", description = "Give Regeneration V and Absorption I instead of Regeneration II and Absorption IV after consuming a notch apple.")
     public boolean goldenAppleEffects = true;
     @Config(description = "Expand all entity hitboxes by 10%, making hitting a target possible from a slightly greater range and with much increased accuracy.")
@@ -46,21 +43,13 @@ public class ServerConfig implements ConfigCore {
     public boolean requireSweepingEdge = true;
     @Config(description = "Attacking will no longer stop the player from sprinting. Very useful when swimming, so you can fight underwater without being stopped on every hit.")
     public boolean sprintAttacks = true;
-    @Config(description = "Only damage tools by 1 durability instead of 2 when attacking. Apply the same logic to swords when harvesting blocks.")
-    public boolean noItemDurabilityPenalty = true;
-    @Config(category = "attributes", name = "legacy_attack_damage_values", description = "Revert weapon and tool attack damage to legacy values.")
-    public boolean oldAttackDamage = true;
-    @Config(category = "attributes", name = "custom_attack_damage_overrides", description = {"Overrides for setting and balancing attack damage values of items.", "Takes precedence over any changes made by \"legacy_attack_damage\" option, but requires it to be enabled.", "As with all items, this value is added ON TOP of the default attack strength of the player (which is 1.0 by default).", "Format for every entry is \"<namespace>:<path>,<amount>\". Tags are supported, must be in the format of \"#<namespace>:<path>\". Namespace may be omitted to use \"minecraft\" by default. May use asterisk as wildcard parameter via pattern matching, e.g. \"minecraft:*_shulker_box\" to match all shulker boxes no matter of color."})
-    List<String> attackDamageOverridesRaw = KeyedValueProvider.toString(Registries.ITEM);
 
     public ConfigDataSet<SoundEvent> canceledAttackSounds;
     public ConfigDataSet<ParticleType<?>> canceledParticles;
-    public ConfigDataSet<Item> attackDamageOverrides;
 
     @Override
     public void afterConfigReload() {
         this.canceledAttackSounds = ConfigDataSet.from(Registries.SOUND_EVENT, this.canceledAttackSoundsRaw);
         this.canceledParticles = ConfigDataSet.from(Registries.PARTICLE_TYPE, this.canceledParticlesRaw);
-        this.attackDamageOverrides = ConfigDataSet.from(Registries.ITEM, this.attackDamageOverridesRaw, double.class);
     }
 }
