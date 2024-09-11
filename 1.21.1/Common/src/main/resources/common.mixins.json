@@ -8,13 +8,13 @@
     "EntityMixin",
     "FishingHookMixin",
     "FoodDataMixin",
-    "ItemStackMixin",
     "PlayerMixin"
   ],
   "client": [
     "client.CameraMixin",
     "client.GuiMixin",
     "client.ItemInHandRendererMixin",
+    "client.ItemStackMixin",
     "client.MinecraftMixin",
     "client.ParticleEngineMixin"
   ],

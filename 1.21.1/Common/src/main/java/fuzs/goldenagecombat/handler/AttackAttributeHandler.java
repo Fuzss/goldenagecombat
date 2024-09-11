@@ -30,6 +30,7 @@ public class AttackAttributeHandler {
     );
 
     public static void onFinalizeItemComponents(Item item, Consumer<Function<DataComponentMap, DataComponentPatch>> consumer) {
+        if (!GoldenAgeCombat.CONFIG.getHolder(CommonConfig.class).isAvailable()) return;
         if (!GoldenAgeCombat.CONFIG.get(CommonConfig.class).noItemDurabilityPenalty) return;
         if (item instanceof SwordItem) {
             consumer.accept((DataComponentMap dataComponents) -> {
@@ -48,6 +49,7 @@ public class AttackAttributeHandler {
     }
 
     public static void onComputeItemAttributeModifiers(Item item, List<ItemAttributeModifiers.Entry> itemAttributeModifiers) {
+        if (!GoldenAgeCombat.CONFIG.getHolder(CommonConfig.class).isAvailable()) return;
         if (!setAttributeValue(item, itemAttributeModifiers, Attributes.ATTACK_DAMAGE, Item.BASE_ATTACK_DAMAGE_ID,
                 GoldenAgeCombat.CONFIG.get(CommonConfig.class).attackDamageOverrides
         )) {
@@ -75,16 +77,20 @@ public class AttackAttributeHandler {
     }
 
     private static void setAttributeValue(List<ItemAttributeModifiers.Entry> itemAttributeModifiers, Holder<Attribute> attribute, ResourceLocation id, double newValue) {
+        AttributeModifier attributeModifier = new AttributeModifier(id, newValue,
+                AttributeModifier.Operation.ADD_VALUE
+        );
+        ItemAttributeModifiers.Entry newEntry = new ItemAttributeModifiers.Entry(attribute, attributeModifier,
+                EquipmentSlotGroup.MAINHAND
+        );
         ListIterator<ItemAttributeModifiers.Entry> iterator = itemAttributeModifiers.listIterator();
         while (iterator.hasNext()) {
             ItemAttributeModifiers.Entry entry = iterator.next();
             if (entry.slot() == EquipmentSlotGroup.MAINHAND && entry.matches(attribute, id)) {
-                AttributeModifier attributeModifier = new AttributeModifier(id, newValue,
-                        AttributeModifier.Operation.ADD_VALUE
-                );
-                iterator.set(new ItemAttributeModifiers.Entry(attribute, attributeModifier, entry.slot()));
-                break;
+                iterator.set(newEntry);
+                return;
             }
         }
+        itemAttributeModifiers.add(newEntry);
     }
 }

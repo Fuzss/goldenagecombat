@@ -1,8 +1,5 @@
 package fuzs.goldenagecombat.data;
 
-import fuzs.goldenagecombat.GoldenAgeCombat;
-import fuzs.goldenagecombat.config.CommonConfig;
-import fuzs.puzzleslib.api.core.v1.ModLoaderEnvironment;
 import fuzs.puzzleslib.api.data.v2.AbstractRegistriesDatapackGenerator;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import net.minecraft.core.HolderGetter;
@@ -25,11 +22,6 @@ public class DynamicEnchantmentRegistryProvider extends AbstractRegistriesDatapa
 
     @Override
     protected void addBootstrap(BootstrapContext<Enchantment> context) {
-        // need this here to work across world restarts on Fabric
-        if (ModLoaderEnvironment.INSTANCE.getModLoader().isFabricLike() && !GoldenAgeCombat.CONFIG.get(
-                CommonConfig.class).boostSharpness) {
-            return;
-        }
         HolderGetter<Item> items = context.lookup(Registries.ITEM);
         HolderGetter<Enchantment> enchantments = context.lookup(Registries.ENCHANTMENT);
         this.add(net.minecraft.world.item.enchantment.Enchantments.SHARPNESS, Enchantment.enchantment(
