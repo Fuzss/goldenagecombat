@@ -24,10 +24,16 @@ import java.util.function.Consumer;
 import java.util.function.Function;
 
 public class AttackAttributeHandler {
-    private static final Map<Class<? extends TieredItem>, Double> ATTACK_DAMAGE_BONUS_OVERRIDES = ImmutableMap.of(
-            SwordItem.class, 4.0, AxeItem.class, 3.0, PickaxeItem.class, 2.0, ShovelItem.class, 1.0, HoeItem.class,
-            0.0
-    );
+    private static final Map<Class<? extends Item>, Double> ATTACK_DAMAGE_BONUS_OVERRIDES = ImmutableMap.of(SwordItem.class,
+            4.0,
+            AxeItem.class,
+            3.0,
+            PickaxeItem.class,
+            2.0,
+            ShovelItem.class,
+            1.0,
+            HoeItem.class,
+            0.0);
 
     public static void onFinalizeItemComponents(Item item, Consumer<Function<DataComponentMap, DataComponentPatch>> consumer) {
         if (!GoldenAgeCombat.CONFIG.getHolder(CommonConfig.class).isAvailable()) return;
@@ -50,15 +56,20 @@ public class AttackAttributeHandler {
 
     public static void onComputeItemAttributeModifiers(Item item, List<ItemAttributeModifiers.Entry> itemAttributeModifiers) {
         if (!GoldenAgeCombat.CONFIG.getHolder(CommonConfig.class).isAvailable()) return;
-        if (!setAttributeValue(item, itemAttributeModifiers, Attributes.ATTACK_DAMAGE, Item.BASE_ATTACK_DAMAGE_ID,
-                GoldenAgeCombat.CONFIG.get(CommonConfig.class).attackDamageOverrides
-        )) {
+        if (!setAttributeValue(item,
+                itemAttributeModifiers,
+                Attributes.ATTACK_DAMAGE,
+                Item.BASE_ATTACK_DAMAGE_ID,
+                GoldenAgeCombat.CONFIG.get(CommonConfig.class).attackDamageOverrides)) {
             if (GoldenAgeCombat.CONFIG.get(CommonConfig.class).oldAttackDamage) {
-                for (Map.Entry<Class<? extends TieredItem>, Double> entry : ATTACK_DAMAGE_BONUS_OVERRIDES.entrySet()) {
-                    if (entry.getKey().isInstance(item)) {
-                        setAttributeValue(itemAttributeModifiers, Attributes.ATTACK_DAMAGE, Item.BASE_ATTACK_DAMAGE_ID,
-                                ((TieredItem) item).getTier().getAttackDamageBonus() + entry.getValue()
-                        );
+                for (Map.Entry<Class<? extends Item>, Double> entry : ATTACK_DAMAGE_BONUS_OVERRIDES.entrySet()) {
+                    if (entry.getKey().isInstance(item) &&
+                            item instanceof AttackDamageBonusProvider attackDamageBonusProvider) {
+                        float attackDamageBonus = attackDamageBonusProvider.goldenagecombat$getAttackDamageBonus();
+                        setAttributeValue(itemAttributeModifiers,
+                                Attributes.ATTACK_DAMAGE,
+                                Item.BASE_ATTACK_DAMAGE_ID,
+                                attackDamageBonus + entry.getValue());
                         break;
                     }
                 }
@@ -77,12 +88,12 @@ public class AttackAttributeHandler {
     }
 
     private static void setAttributeValue(List<ItemAttributeModifiers.Entry> itemAttributeModifiers, Holder<Attribute> attribute, ResourceLocation id, double newValue) {
-        AttributeModifier attributeModifier = new AttributeModifier(id, newValue,
-                AttributeModifier.Operation.ADD_VALUE
-        );
-        ItemAttributeModifiers.Entry newEntry = new ItemAttributeModifiers.Entry(attribute, attributeModifier,
-                EquipmentSlotGroup.MAINHAND
-        );
+        AttributeModifier attributeModifier = new AttributeModifier(id,
+                newValue,
+                AttributeModifier.Operation.ADD_VALUE);
+        ItemAttributeModifiers.Entry newEntry = new ItemAttributeModifiers.Entry(attribute,
+                attributeModifier,
+                EquipmentSlotGroup.MAINHAND);
         ListIterator<ItemAttributeModifiers.Entry> iterator = itemAttributeModifiers.listIterator();
         while (iterator.hasNext()) {
             ItemAttributeModifiers.Entry entry = iterator.next();

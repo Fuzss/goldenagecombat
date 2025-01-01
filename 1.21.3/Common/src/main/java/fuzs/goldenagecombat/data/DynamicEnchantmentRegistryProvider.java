@@ -21,11 +21,20 @@ public class DynamicEnchantmentRegistryProvider extends AbstractRegistriesDatapa
     }
 
     @Override
-    protected void addBootstrap(BootstrapContext<Enchantment> context) {
+    public void addBootstrap(BootstrapContext<Enchantment> context) {
         HolderGetter<Item> items = context.lookup(Registries.ITEM);
         HolderGetter<Enchantment> enchantments = context.lookup(Registries.ENCHANTMENT);
-        registerEnchantment(context, net.minecraft.world.item.enchantment.Enchantments.SHARPNESS, Enchantment.enchantment(Enchantment.definition(items.getOrThrow(ItemTags.SHARP_WEAPON_ENCHANTABLE), items.getOrThrow(ItemTags.SWORD_ENCHANTABLE), 10, 5, Enchantment.dynamicCost(1, 11), Enchantment.dynamicCost(21, 11), 1, EquipmentSlotGroup.MAINHAND))
-                .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
-                .withEffect(EnchantmentEffectComponents.DAMAGE, new AddValue(LevelBasedValue.perLevel(1.25F))));
+        registerEnchantment(context,
+                net.minecraft.world.item.enchantment.Enchantments.SHARPNESS,
+                Enchantment.enchantment(Enchantment.definition(items.getOrThrow(ItemTags.SHARP_WEAPON_ENCHANTABLE),
+                                items.getOrThrow(ItemTags.SWORD_ENCHANTABLE),
+                                10,
+                                5,
+                                Enchantment.dynamicCost(1, 11),
+                                Enchantment.dynamicCost(21, 11),
+                                1,
+                                EquipmentSlotGroup.MAINHAND))
+                        .exclusiveWith(enchantments.getOrThrow(EnchantmentTags.DAMAGE_EXCLUSIVE))
+                        .withEffect(EnchantmentEffectComponents.DAMAGE, new AddValue(LevelBasedValue.perLevel(1.25F))));
     }
 }

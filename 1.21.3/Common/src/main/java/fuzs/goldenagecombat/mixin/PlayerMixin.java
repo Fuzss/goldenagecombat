@@ -1,9 +1,11 @@
 package fuzs.goldenagecombat.mixin;
 
+import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import fuzs.goldenagecombat.GoldenAgeCombat;
 import fuzs.goldenagecombat.config.ServerConfig;
+import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.damagesource.DamageSource;
 import net.minecraft.world.entity.Entity;
@@ -27,11 +29,20 @@ abstract class PlayerMixin extends LivingEntity {
         super(entityType, level);
     }
 
-    @Inject(method = "hurt", at = @At(value = "RETURN", ordinal = 0), slice = @Slice(from = @At(value = "INVOKE", target = "Lnet/minecraft/world/damagesource/DamageSource;scalesWithDifficulty()Z")), cancellable = true)
-    public void hurt(DamageSource source, float amount, CallbackInfoReturnable<Boolean> callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).weakAttacksKnockBackPlayers) return;
-        if (amount == 0.0F && this.level().getDifficulty() != Difficulty.PEACEFUL) {
-            callback.setReturnValue(super.hurt(source, amount));
+    @ModifyReturnValue(
+            method = "hurtServer", at = @At("RETURN"), slice = @Slice(
+            from = @At(
+                    value = "INVOKE",
+                    target = "Lnet/minecraft/world/entity/player/Player;removeEntitiesOnShoulder()V"
+            )
+    )
+    )
+    public boolean hurtServer(boolean hurtServer, ServerLevel serverLevel, DamageSource damageSource, float damageAmount) {
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).weakAttacksKnockBackPlayers) return hurtServer;
+        if (!hurtServer && damageAmount == 0.0F && this.level().getDifficulty() != Difficulty.PEACEFUL) {
+            return super.hurtServer(serverLevel, damageSource, damageAmount);
+        } else {
+            return hurtServer;
         }
     }
 
@@ -40,7 +51,14 @@ abstract class PlayerMixin extends LivingEntity {
         sprintsDuringAttack.set(this.isSprinting());
     }
 
-    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V", ordinal = 0, shift = At.Shift.AFTER))
+    @Inject(
+            method = "attack", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V",
+            ordinal = 0,
+            shift = At.Shift.AFTER
+    )
+    )
     public void attack$1(Entity target, CallbackInfo callback) {
         // allow landing critical hits when sprint jumping like before 1.9 and in combat test snapshots
         // the injection point is fine despite being inside a few conditions as the same conditions must apply for critical hits
@@ -50,7 +68,12 @@ abstract class PlayerMixin extends LivingEntity {
         }
     }
 
-    @Inject(method = "attack", at = @At(value = "FIELD", target = "Lnet/minecraft/world/entity/player/Player;walkDist:F"))
+    @Inject(
+            method = "attack", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/Entity;hurtOrSimulate(Lnet/minecraft/world/damagesource/DamageSource;F)Z"
+    )
+    )
     public void attack$2(Entity target, CallbackInfo callback, @Share("sprints_during_attack") LocalBooleanRef sprintsDuringAttack) {
         // reset to original sprinting value for rest of attack method
         if (sprintsDuringAttack.get()) {
@@ -58,7 +81,13 @@ abstract class PlayerMixin extends LivingEntity {
         }
     }
 
-    @Inject(method = "attack", at = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;setSprinting(Z)V", shift = At.Shift.AFTER))
+    @Inject(
+            method = "attack", at = @At(
+            value = "INVOKE",
+            target = "Lnet/minecraft/world/entity/player/Player;setSprinting(Z)V",
+            shift = At.Shift.AFTER
+    )
+    )
     public void attack$3(Entity target, CallbackInfo callback, @Share("sprints_during_attack") LocalBooleanRef sprintsDuringAttack) {
         // don't disable sprinting when attacking a target
         // this is mainly nice to have since you always stop to swim when attacking creatures underwater
@@ -67,7 +96,13 @@ abstract class PlayerMixin extends LivingEntity {
         }
     }
 
-    @ModifyVariable(method = "attack", at = @At("LOAD"), ordinal = 3, slice = @Slice(to = @At(value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;sweepAttack()V")))
+    @ModifyVariable(
+            method = "attack", at = @At("LOAD"), ordinal = 3, slice = @Slice(
+            to = @At(
+                    value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;sweepAttack()V"
+            )
+    )
+    )
     public boolean attack$4(boolean triggerSweepAttack, Entity target) {
         if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).requireSweepingEdge) return triggerSweepAttack;
         return triggerSweepAttack && this.getAttributeValue(Attributes.SWEEPING_DAMAGE_RATIO) > 0.0F;

@@ -60,7 +60,7 @@ abstract class ItemStackMixin implements DataComponentHolder {
                 }
             }
             tooltipLines.forEach(tooltipAdder);
-        } else if (GoldenAgeCombat.CONFIG.get(ClientConfig.class).attributesStyle == ClientConfig.AttributesStyle.MODERN) {
+        } else if (GoldenAgeCombat.CONFIG.get(ClientConfig.class).attributesStyle == ClientConfig.AttributesStyle.VANILLA) {
             operation.call(tooltipAdder, player);
         }
     }
