@@ -3,7 +3,7 @@ package fuzs.goldenagecombat;
 import fuzs.goldenagecombat.config.ClientConfig;
 import fuzs.goldenagecombat.config.CommonConfig;
 import fuzs.goldenagecombat.config.ServerConfig;
-import fuzs.goldenagecombat.data.DynamicEnchantmentRegistryProvider;
+import fuzs.goldenagecombat.data.DynamicDatapackRegistriesProvider;
 import fuzs.goldenagecombat.handler.AttackAttributeHandler;
 import fuzs.goldenagecombat.handler.ClassicCombatHandler;
 import fuzs.puzzleslib.api.config.v3.ConfigHolder;
@@ -49,7 +49,7 @@ public class GoldenAgeCombat implements ModConstructor {
         // need this here so the game does not complain about experimental settings when the config option is disabled
         if (!CONFIG.get(CommonConfig.class).boostSharpness) return;
         context.addRepositorySource(PackResourcesHelper.buildServerPack(id("boosted_sharpness"),
-                DynamicPackResources.create(DynamicEnchantmentRegistryProvider::new), true
+                DynamicPackResources.create(DynamicDatapackRegistriesProvider::new), true
         ));
     }
 

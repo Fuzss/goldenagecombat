@@ -1,6 +1,6 @@
 package fuzs.goldenagecombat.data;
 
-import fuzs.puzzleslib.api.data.v2.AbstractRegistriesDatapackGenerator;
+import fuzs.puzzleslib.api.data.v2.AbstractDatapackRegistriesProvider;
 import fuzs.puzzleslib.api.data.v2.core.DataProviderContext;
 import net.minecraft.core.HolderGetter;
 import net.minecraft.core.registries.Registries;
@@ -14,14 +14,18 @@ import net.minecraft.world.item.enchantment.EnchantmentEffectComponents;
 import net.minecraft.world.item.enchantment.LevelBasedValue;
 import net.minecraft.world.item.enchantment.effects.AddValue;
 
-public class DynamicEnchantmentRegistryProvider extends AbstractRegistriesDatapackGenerator<Enchantment> {
+public class DynamicDatapackRegistriesProvider extends AbstractDatapackRegistriesProvider {
 
-    public DynamicEnchantmentRegistryProvider(DataProviderContext context) {
-        super(Registries.ENCHANTMENT, context);
+    public DynamicDatapackRegistriesProvider(DataProviderContext context) {
+        super(context);
     }
 
     @Override
-    public void addBootstrap(BootstrapContext<Enchantment> context) {
+    public void addBootstrap(RegistryBoostrapConsumer consumer) {
+        consumer.add(Registries.ENCHANTMENT, DynamicDatapackRegistriesProvider::bootstrapEnchantments);
+    }
+
+    static void bootstrapEnchantments(BootstrapContext<Enchantment> context) {
         HolderGetter<Item> items = context.lookup(Registries.ITEM);
         HolderGetter<Enchantment> enchantments = context.lookup(Registries.ENCHANTMENT);
         registerEnchantment(context,

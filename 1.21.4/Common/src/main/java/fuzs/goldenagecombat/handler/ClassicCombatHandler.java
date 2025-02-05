@@ -32,12 +32,12 @@ public class ClassicCombatHandler {
         return EventResult.PASS;
     }
 
-    public static void onUseItemFinish(LivingEntity entity, MutableValue<ItemStack> stack, int remainingUseDuration, ItemStack originalUseItem) {
+    public static void onUseItemFinish(LivingEntity livingEntity, MutableValue<ItemStack> itemStack, ItemStack originalItemStack) {
         if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).goldenAppleEffects) return;
-        if (stack.get().getItem() == Items.ENCHANTED_GOLDEN_APPLE) {
-            entity.removeEffect(MobEffects.ABSORPTION);
-            entity.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0));
-            entity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600, 4));
+        if (itemStack.get().getItem() == Items.ENCHANTED_GOLDEN_APPLE) {
+            livingEntity.removeEffect(MobEffects.ABSORPTION);
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0));
+            livingEntity.addEffect(new MobEffectInstance(MobEffects.REGENERATION, 600, 4));
         }
     }
 
@@ -46,7 +46,9 @@ public class ClassicCombatHandler {
         if (!entity.onGround() && !entity.isInWater()) {
             strength.mapDouble(s -> s * (1.0 - entity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)));
             final Vec3 deltaMovement = entity.getDeltaMovement();
-            entity.setDeltaMovement(deltaMovement.x, Math.min(0.4, deltaMovement.y / 2.0D + strength.getAsDouble()), deltaMovement.x);
+            entity.setDeltaMovement(deltaMovement.x,
+                    Math.min(0.4, deltaMovement.y / 2.0 + strength.getAsDouble()),
+                    deltaMovement.x);
         }
         return EventResult.PASS;
     }
