@@ -54,7 +54,7 @@ abstract class PlayerMixin extends LivingEntity {
     @Inject(
             method = "attack", at = @At(
             value = "INVOKE",
-            target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/player/Player;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V",
+            target = "Lnet/minecraft/world/level/Level;playSound(Lnet/minecraft/world/entity/Entity;DDDLnet/minecraft/sounds/SoundEvent;Lnet/minecraft/sounds/SoundSource;FF)V",
             ordinal = 0,
             shift = At.Shift.AFTER
     )

@@ -3,8 +3,8 @@ package fuzs.goldenagecombat.handler;
 import fuzs.goldenagecombat.GoldenAgeCombat;
 import fuzs.goldenagecombat.config.ServerConfig;
 import fuzs.puzzleslib.api.event.v1.core.EventResult;
-import fuzs.puzzleslib.api.event.v1.data.DefaultedDouble;
-import fuzs.puzzleslib.api.event.v1.data.DefaultedFloat;
+import fuzs.puzzleslib.api.event.v1.data.MutableDouble;
+import fuzs.puzzleslib.api.event.v1.data.MutableFloat;
 import fuzs.puzzleslib.api.event.v1.data.MutableValue;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
@@ -41,21 +41,22 @@ public class ClassicCombatHandler {
         }
     }
 
-    public static EventResult onLivingKnockBack(LivingEntity entity, DefaultedDouble strength, DefaultedDouble ratioX, DefaultedDouble ratioZ) {
+    public static EventResult onLivingKnockBack(LivingEntity livingEntity, MutableDouble knockbackStrength, MutableDouble ratioX, MutableDouble ratioZ) {
         if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).upwardsKnockback) return EventResult.PASS;
-        if (!entity.onGround() && !entity.isInWater()) {
-            strength.mapDouble(s -> s * (1.0 - entity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)));
-            final Vec3 deltaMovement = entity.getDeltaMovement();
-            entity.setDeltaMovement(deltaMovement.x,
-                    Math.min(0.4, deltaMovement.y / 2.0 + strength.getAsDouble()),
+        if (!livingEntity.onGround() && !livingEntity.isInWater()) {
+            knockbackStrength.mapDouble((double v) -> v *
+                    (1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)));
+            final Vec3 deltaMovement = livingEntity.getDeltaMovement();
+            livingEntity.setDeltaMovement(deltaMovement.x,
+                    Math.min(0.4, deltaMovement.y / 2.0 + knockbackStrength.getAsDouble()),
                     deltaMovement.x);
         }
         return EventResult.PASS;
     }
 
-    public static EventResult onPlaySoundAtPosition(Level level, Vec3 position, MutableValue<Holder<SoundEvent>> sound, MutableValue<SoundSource> source, DefaultedFloat volume, DefaultedFloat pitch) {
+    public static EventResult onPlaySoundAtPosition(Level level, Vec3 position, MutableValue<Holder<SoundEvent>> soundEvent, MutableValue<SoundSource> soundSource, MutableFloat soundVolume, MutableFloat soundPitch) {
         // disable combat update player attack sounds
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).canceledAttackSounds.contains(sound.get().value())) {
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).canceledAttackSounds.contains(soundEvent.get().value())) {
             return EventResult.PASS;
         } else {
             return EventResult.INTERRUPT;

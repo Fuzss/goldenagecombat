@@ -10,7 +10,6 @@ import fuzs.puzzleslib.api.config.v3.ConfigHolder;
 import fuzs.puzzleslib.api.core.v1.ModConstructor;
 import fuzs.puzzleslib.api.core.v1.context.PackRepositorySourcesContext;
 import fuzs.puzzleslib.api.core.v1.utility.ResourceLocationHelper;
-import fuzs.puzzleslib.api.event.v1.ComputeItemAttributeModifiersCallback;
 import fuzs.puzzleslib.api.event.v1.FinalizeItemComponentsCallback;
 import fuzs.puzzleslib.api.event.v1.entity.ProjectileImpactCallback;
 import fuzs.puzzleslib.api.event.v1.entity.living.LivingKnockBackCallback;
@@ -27,8 +26,10 @@ public class GoldenAgeCombat implements ModConstructor {
     public static final String MOD_NAME = "Golden Age Combat";
     public static final Logger LOGGER = LoggerFactory.getLogger(MOD_NAME);
 
-    public static final ConfigHolder CONFIG = ConfigHolder.builder(MOD_ID).client(ClientConfig.class).common(
-            CommonConfig.class).server(ServerConfig.class);
+    public static final ConfigHolder CONFIG = ConfigHolder.builder(MOD_ID)
+            .client(ClientConfig.class)
+            .common(CommonConfig.class)
+            .server(ServerConfig.class);
 
     @Override
     public void onConstructMod() {
@@ -40,7 +41,6 @@ public class GoldenAgeCombat implements ModConstructor {
         UseItemEvents.FINISH.register(ClassicCombatHandler::onUseItemFinish);
         LivingKnockBackCallback.EVENT.register(ClassicCombatHandler::onLivingKnockBack);
         ProjectileImpactCallback.EVENT.register(ClassicCombatHandler::onProjectileImpact);
-        ComputeItemAttributeModifiersCallback.EVENT.register(AttackAttributeHandler::onComputeItemAttributeModifiers);
         FinalizeItemComponentsCallback.EVENT.register(AttackAttributeHandler::onFinalizeItemComponents);
     }
 
@@ -49,8 +49,8 @@ public class GoldenAgeCombat implements ModConstructor {
         // need this here so the game does not complain about experimental settings when the config option is disabled
         if (!CONFIG.get(CommonConfig.class).boostSharpness) return;
         context.addRepositorySource(PackResourcesHelper.buildServerPack(id("boosted_sharpness"),
-                DynamicPackResources.create(DynamicDatapackRegistriesProvider::new), true
-        ));
+                DynamicPackResources.create(DynamicDatapackRegistriesProvider::new),
+                true));
     }
 
     public static ResourceLocation id(String path) {
