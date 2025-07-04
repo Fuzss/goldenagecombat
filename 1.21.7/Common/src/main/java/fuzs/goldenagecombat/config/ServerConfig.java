@@ -14,9 +14,7 @@ import java.util.List;
 
 public class ServerConfig implements ConfigCore {
     static final String FISHING_RODS_CATEGORY = "fishing_rods";
-    
-    @Config(description = "Completely remove the attack cooldown as if it never even existed in the first place.")
-    public boolean removeAttackCooldown = true;
+
     @Config(description = "Health only regenerates every 4 seconds, while requiring 18 or more food points. Surplus saturation does not yield quick health regeneration.")
     public boolean legacyFoodMechanics = false;
     @Config(description = "Player is knocked back by attacks which do not cause any damage, such as when hit by snowballs, eggs, and fishing rod hooks.")

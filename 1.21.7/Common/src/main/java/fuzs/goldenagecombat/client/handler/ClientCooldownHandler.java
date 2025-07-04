@@ -1,6 +1,7 @@
 package fuzs.goldenagecombat.client.handler;
 
 import fuzs.goldenagecombat.GoldenAgeCombat;
+import fuzs.goldenagecombat.config.CommonConfig;
 import fuzs.goldenagecombat.config.ServerConfig;
 import net.minecraft.client.AttackIndicatorStatus;
 import net.minecraft.client.DeltaTracker;
@@ -27,7 +28,7 @@ public class ClientCooldownHandler {
     private static AttackIndicatorStatus attackIndicator;
 
     public static void onBeforeRenderGui(Gui gui, GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).removeAttackCooldown) return;
+        if (!GoldenAgeCombat.CONFIG.get(CommonConfig.class).removeAttackCooldown) return;
         // this will mostly just remove the attack indicator, except for one niche case when looking at an entity
         // just for that reason the whole indicator is also disabled later on
         // indicator would otherwise render when looking at an entity, even when there is no cooldown
@@ -38,7 +39,7 @@ public class ClientCooldownHandler {
     }
 
     public static void onAfterRenderGui(Gui gui, GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).removeAttackCooldown) return;
+        if (!GoldenAgeCombat.CONFIG.get(CommonConfig.class).removeAttackCooldown) return;
         // reset to old value; don't just leave this disabled as it'll change the vanilla setting permanently in options.txt, which no mod should do imo
         if (attackIndicator != null) {
             gui.minecraft.options.attackIndicator().set(attackIndicator);
@@ -47,8 +48,8 @@ public class ClientCooldownHandler {
     }
 
     public static void onAfterInit(Minecraft minecraft, VideoSettingsScreen screen, int screenWidth, int screenHeight, List<AbstractWidget> widgets, UnaryOperator<AbstractWidget> addWidget, Consumer<AbstractWidget> removeWidget) {
-        if (!GoldenAgeCombat.CONFIG.getHolder(ServerConfig.class).isAvailable() ||
-                !GoldenAgeCombat.CONFIG.get(ServerConfig.class).removeAttackCooldown) {
+        if (!GoldenAgeCombat.CONFIG.getHolder(ServerConfig.class).isAvailable() || !GoldenAgeCombat.CONFIG.get(
+                CommonConfig.class).removeAttackCooldown) {
             return;
         }
         // disables the attack indicator option button in the video settings screen

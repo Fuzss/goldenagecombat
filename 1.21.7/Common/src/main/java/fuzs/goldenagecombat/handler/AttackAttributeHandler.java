@@ -83,6 +83,46 @@ public class AttackAttributeHandler {
                 return DataComponentPatch.EMPTY;
             }
         });
+        if (GoldenAgeCombat.CONFIG.get(CommonConfig.class).removeAttackCooldown) {
+            consumer.accept((DataComponentMap dataComponents) -> {
+                List<ItemAttributeModifiers.Entry> itemAttributeModifiers = dataComponents.getOrDefault(DataComponents.ATTRIBUTE_MODIFIERS,
+                        ItemAttributeModifiers.EMPTY).modifiers();
+                List<ItemAttributeModifiers.Entry> itemAttributeModifiers2 = hideAttribute(itemAttributeModifiers,
+                        Attributes.ATTACK_SPEED);
+                if (itemAttributeModifiers != itemAttributeModifiers2) {
+                    return DataComponentPatch.builder()
+                            .set(DataComponents.ATTRIBUTE_MODIFIERS,
+                                    new ItemAttributeModifiers(ImmutableList.copyOf(itemAttributeModifiers2)))
+                            .build();
+                } else {
+                    return DataComponentPatch.EMPTY;
+                }
+            });
+        }
+    }
+
+    private static List<ItemAttributeModifiers.Entry> hideAttribute(List<ItemAttributeModifiers.Entry> itemAttributeModifiers, Holder<Attribute> holder) {
+        for (ItemAttributeModifiers.Entry entry : itemAttributeModifiers) {
+            if (entry.attribute().is(holder)) {
+                List<ItemAttributeModifiers.Entry> newItemAttributeModifiers = new ArrayList<>(itemAttributeModifiers);
+                ListIterator<ItemAttributeModifiers.Entry> iterator = newItemAttributeModifiers.listIterator();
+
+                while (iterator.hasNext()) {
+                    ItemAttributeModifiers.Entry newEntry = iterator.next();
+
+                    if (newEntry.attribute().is(holder)) {
+                        iterator.set(new ItemAttributeModifiers.Entry(newEntry.attribute(),
+                                newEntry.modifier(),
+                                newEntry.slot(),
+                                ItemAttributeModifiers.Display.hidden()));
+                    }
+                }
+
+                return newItemAttributeModifiers;
+            }
+        }
+
+        return itemAttributeModifiers;
     }
 
     private static OptionalDouble getBaseAttackDamage(DataComponentMap dataComponents) {

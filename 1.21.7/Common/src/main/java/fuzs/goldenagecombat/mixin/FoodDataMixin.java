@@ -26,7 +26,7 @@ abstract class FoodDataMixin {
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(ServerPlayer serverPlayer, CallbackInfo callback) {
         if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).legacyFoodMechanics) return;
-        Difficulty difficulty = serverPlayer.serverLevel().getDifficulty();
+        Difficulty difficulty = serverPlayer.level().getDifficulty();
         if (this.exhaustionLevel > 4.0F) {
             this.exhaustionLevel -= 4.0F;
             if (this.saturationLevel > 0.0F) {
@@ -35,7 +35,7 @@ abstract class FoodDataMixin {
                 this.foodLevel = Math.max(this.foodLevel - 1, 0);
             }
         }
-        boolean flag = serverPlayer.serverLevel().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
+        boolean flag = serverPlayer.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
         if (flag && this.foodLevel >= 18 && serverPlayer.isHurt()) {
             ++this.tickTimer;
             if (this.tickTimer >= 80) {
@@ -46,7 +46,8 @@ abstract class FoodDataMixin {
         } else if (this.foodLevel <= 0) {
             ++this.tickTimer;
             if (this.tickTimer >= 80) {
-                if (serverPlayer.getHealth() > 10.0F || difficulty == Difficulty.HARD || serverPlayer.getHealth() > 1.0F && difficulty == Difficulty.NORMAL) {
+                if (serverPlayer.getHealth() > 10.0F || difficulty == Difficulty.HARD
+                        || serverPlayer.getHealth() > 1.0F && difficulty == Difficulty.NORMAL) {
                     serverPlayer.hurt(serverPlayer.damageSources().starve(), 1.0F);
                 }
                 this.tickTimer = 0;

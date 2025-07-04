@@ -4,6 +4,7 @@ import com.llamalad7.mixinextras.injector.ModifyReturnValue;
 import com.llamalad7.mixinextras.sugar.Share;
 import com.llamalad7.mixinextras.sugar.ref.LocalBooleanRef;
 import fuzs.goldenagecombat.GoldenAgeCombat;
+import fuzs.goldenagecombat.config.CommonConfig;
 import fuzs.goldenagecombat.config.ServerConfig;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.Difficulty;
@@ -32,8 +33,7 @@ abstract class PlayerMixin extends LivingEntity {
     @ModifyReturnValue(
             method = "hurtServer", at = @At("RETURN"), slice = @Slice(
             from = @At(
-                    value = "INVOKE",
-                    target = "Lnet/minecraft/world/entity/player/Player;removeEntitiesOnShoulder()V"
+                    value = "INVOKE", target = "Lnet/minecraft/world/entity/player/Player;removeEntitiesOnShoulder()V"
             )
     )
     )
@@ -110,7 +110,7 @@ abstract class PlayerMixin extends LivingEntity {
 
     @Inject(method = "getAttackStrengthScale", at = @At("HEAD"), cancellable = true)
     public void getAttackStrengthScale(float adjustTicks, CallbackInfoReturnable<Float> callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).removeAttackCooldown) return;
+        if (!GoldenAgeCombat.CONFIG.get(CommonConfig.class).removeAttackCooldown) return;
         callback.setReturnValue(1.0F);
     }
 }

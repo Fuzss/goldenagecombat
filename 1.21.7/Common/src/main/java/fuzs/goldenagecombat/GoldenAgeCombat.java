@@ -14,7 +14,7 @@ import fuzs.puzzleslib.api.event.v1.FinalizeItemComponentsCallback;
 import fuzs.puzzleslib.api.event.v1.entity.ProjectileImpactCallback;
 import fuzs.puzzleslib.api.event.v1.entity.living.LivingKnockBackCallback;
 import fuzs.puzzleslib.api.event.v1.entity.living.UseItemEvents;
-import fuzs.puzzleslib.api.event.v1.level.PlayLevelSoundEvents;
+import fuzs.puzzleslib.api.event.v1.level.PlaySoundEvents;
 import fuzs.puzzleslib.api.resources.v1.DynamicPackResources;
 import fuzs.puzzleslib.api.resources.v1.PackResourcesHelper;
 import net.minecraft.resources.ResourceLocation;
@@ -37,7 +37,7 @@ public class GoldenAgeCombat implements ModConstructor {
     }
 
     private static void registerEventHandlers() {
-        PlayLevelSoundEvents.POSITION.register(ClassicCombatHandler::onPlaySoundAtPosition);
+        PlaySoundEvents.AT_POSITION.register(ClassicCombatHandler::onPlaySoundAtPosition);
         UseItemEvents.FINISH.register(ClassicCombatHandler::onUseItemFinish);
         LivingKnockBackCallback.EVENT.register(ClassicCombatHandler::onLivingKnockBack);
         ProjectileImpactCallback.EVENT.register(ClassicCombatHandler::onProjectileImpact);
