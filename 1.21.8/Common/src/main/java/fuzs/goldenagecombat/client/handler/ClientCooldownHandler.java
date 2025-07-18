@@ -6,7 +6,7 @@ import fuzs.goldenagecombat.config.ServerConfig;
 import net.minecraft.client.AttackIndicatorStatus;
 import net.minecraft.client.DeltaTracker;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.Options;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.components.OptionsList;
@@ -27,22 +27,23 @@ public class ClientCooldownHandler {
     @Nullable
     private static AttackIndicatorStatus attackIndicator;
 
-    public static void onBeforeRenderGui(Gui gui, GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static void onBeforeRenderGui(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         if (!GoldenAgeCombat.CONFIG.get(CommonConfig.class).removeAttackCooldown) return;
         // this will mostly just remove the attack indicator, except for one niche case when looking at an entity
         // just for that reason the whole indicator is also disabled later on
         // indicator would otherwise render when looking at an entity, even when there is no cooldown
         if (attackIndicator == null) {
-            attackIndicator = gui.minecraft.options.attackIndicator().get();
-            gui.minecraft.options.attackIndicator().set(AttackIndicatorStatus.OFF);
+            Options options = Minecraft.getInstance().options;
+            attackIndicator = options.attackIndicator().get();
+            options.attackIndicator().set(AttackIndicatorStatus.OFF);
         }
     }
 
-    public static void onAfterRenderGui(Gui gui, GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
+    public static void onAfterRenderGui(GuiGraphics guiGraphics, DeltaTracker deltaTracker) {
         if (!GoldenAgeCombat.CONFIG.get(CommonConfig.class).removeAttackCooldown) return;
         // reset to old value; don't just leave this disabled as it'll change the vanilla setting permanently in options.txt, which no mod should do imo
         if (attackIndicator != null) {
-            gui.minecraft.options.attackIndicator().set(attackIndicator);
+            Minecraft.getInstance().options.attackIndicator().set(attackIndicator);
             attackIndicator = null;
         }
     }
