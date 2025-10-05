@@ -47,8 +47,11 @@ public class GoldenAgeCombat implements ModConstructor {
     @Override
     public void onAddDataPackFinders(PackRepositorySourcesContext context) {
         // need this here so the game does not complain about experimental settings when the config option is disabled
-        if (!CONFIG.get(CommonConfig.class).boostSharpness) return;
-        context.addRepositorySource(PackResourcesHelper.buildServerPack(id("boosted_sharpness"),
+        if (!CONFIG.get(CommonConfig.class).boostSharpness) {
+            return;
+        }
+
+        context.registerRepositorySource(PackResourcesHelper.buildServerPack(id("boosted_sharpness"),
                 DynamicPackResources.create(DynamicDatapackRegistriesProvider::new),
                 true));
     }
