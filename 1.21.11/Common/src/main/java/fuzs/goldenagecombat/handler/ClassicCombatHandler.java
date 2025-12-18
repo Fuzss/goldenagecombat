@@ -9,6 +9,7 @@ import fuzs.puzzleslib.api.event.v1.data.MutableValue;
 import net.minecraft.core.Holder;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundSource;
+import net.minecraft.world.InteractionHand;
 import net.minecraft.world.effect.MobEffectInstance;
 import net.minecraft.world.effect.MobEffects;
 import net.minecraft.world.entity.LivingEntity;
@@ -23,17 +24,24 @@ import net.minecraft.world.phys.Vec3;
 public class ClassicCombatHandler {
 
     public static EventResult onProjectileImpact(Projectile projectile, HitResult hitResult) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).weakAttacksKnockBackPlayers) return EventResult.PASS;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).weakAttackKnockBack) {
+            return EventResult.PASS;
+        }
+
         if (hitResult.getType() == HitResult.Type.ENTITY && projectile.getOwner() == null) {
             // enable knockback for item projectiles fired from dispensers by making shooter not be null
             // something similar is already done in AbstractArrowEntity::onEntityHit to account for arrows fired from dispensers
             projectile.setOwner(projectile);
         }
+
         return EventResult.PASS;
     }
 
-    public static void onUseItemFinish(LivingEntity livingEntity, MutableValue<ItemStack> itemStack, ItemStack originalItemStack) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).goldenAppleEffects) return;
+    public static void onUseItemFinish(LivingEntity livingEntity, MutableValue<ItemStack> itemStack, ItemStack originalItemStack, InteractionHand interactionHand) {
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).goldenAppleEffects) {
+            return;
+        }
+
         if (itemStack.get().getItem() == Items.ENCHANTED_GOLDEN_APPLE) {
             livingEntity.removeEffect(MobEffects.ABSORPTION);
             livingEntity.addEffect(new MobEffectInstance(MobEffects.ABSORPTION, 2400, 0));
@@ -42,15 +50,19 @@ public class ClassicCombatHandler {
     }
 
     public static EventResult onLivingKnockBack(LivingEntity livingEntity, MutableDouble knockbackStrength, MutableDouble ratioX, MutableDouble ratioZ) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).upwardsKnockback) return EventResult.PASS;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).upwardsKnockback) {
+            return EventResult.PASS;
+        }
+
         if (!livingEntity.onGround() && !livingEntity.isInWater()) {
-            knockbackStrength.mapDouble((double v) -> v *
-                    (1.0 - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)));
+            knockbackStrength.mapAsDouble((double value) -> value * (1.0
+                    - livingEntity.getAttributeValue(Attributes.KNOCKBACK_RESISTANCE)));
             final Vec3 deltaMovement = livingEntity.getDeltaMovement();
             livingEntity.setDeltaMovement(deltaMovement.x,
                     Math.min(0.4, deltaMovement.y / 2.0 + knockbackStrength.getAsDouble()),
                     deltaMovement.x);
         }
+
         return EventResult.PASS;
     }
 

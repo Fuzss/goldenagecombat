@@ -1,5 +1,6 @@
 package fuzs.goldenagecombat.mixin.client;
 
+import com.llamalad7.mixinextras.injector.ModifyExpressionValue;
 import fuzs.goldenagecombat.GoldenAgeCombat;
 import fuzs.goldenagecombat.config.ServerConfig;
 import net.minecraft.client.Minecraft;
@@ -9,7 +10,6 @@ import net.minecraft.client.multiplayer.MultiPlayerGameMode;
 import net.minecraft.client.player.LocalPlayer;
 import net.minecraft.core.BlockPos;
 import net.minecraft.world.InteractionHand;
-import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.HitResult;
 import org.slf4j.Logger;
@@ -19,7 +19,6 @@ import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.Unique;
 import org.spongepowered.asm.mixin.injection.At;
 import org.spongepowered.asm.mixin.injection.Inject;
-import org.spongepowered.asm.mixin.injection.Redirect;
 import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(Minecraft.class)
@@ -37,15 +36,19 @@ abstract class MinecraftMixin {
     @Shadow
     public LocalPlayer player;
     @Shadow
-    protected int missTime;
+    public int missTime;
     @Shadow
     public HitResult hitResult;
 
-    @Inject(method = "handleKeybinds", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0))
+    @Inject(method = "handleKeybinds",
+            at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z", ordinal = 0))
     public void handleKeybinds(CallbackInfo callback) {
         // required for enabling block breaking while e.g. sword blocking
-        // it is actually enabled by a different patch below, this just makes sure breaking particles show correctly (which only works sometimes otherwise)
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).interactWhileUsing || !this.player.isUsingItem()) return;
+        // it is actually enabled by a different patch below; this just makes sure breaking particles show correctly (which only works sometimes otherwise)
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).interactWhileUsing || !this.player.isUsingItem()) {
+            return;
+        }
+
         while (this.options.keyAttack.consumeClick()) {
             this.goldenagecombat$startBlockAttack();
         }
@@ -59,7 +62,8 @@ abstract class MinecraftMixin {
                 if (this.gameMode.hasMissTime()) {
                     this.missTime = 10;
                 }
-            } else if (this.player.getItemInHand(InteractionHand.MAIN_HAND).isItemEnabled(this.level.enabledFeatures()) && !this.player.isHandsBusy()) {
+            } else if (this.player.getItemInHand(InteractionHand.MAIN_HAND).isItemEnabled(this.level.enabledFeatures())
+                    && !this.player.isHandsBusy()) {
                 if (this.hitResult.getType() == HitResult.Type.BLOCK) {
                     BlockHitResult blockhitresult = (BlockHitResult) this.hitResult;
                     BlockPos blockpos = blockhitresult.getBlockPos();
@@ -67,21 +71,32 @@ abstract class MinecraftMixin {
                         this.gameMode.startDestroyBlock(blockpos, blockhitresult.getDirection());
                         return;
                     }
+
                     this.player.swing(InteractionHand.MAIN_HAND);
                 }
             }
         }
     }
 
-    @Redirect(method = "continueAttack", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z"))
-    public boolean continueAttack(LocalPlayer player) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).interactWhileUsing) return player.isUsingItem();
-        return false;
+    @ModifyExpressionValue(method = "continueAttack",
+                           at = @At(value = "INVOKE",
+                                    target = "Lnet/minecraft/client/player/LocalPlayer;isUsingItem()Z"))
+    public boolean continueAttack(boolean isUsingItem) {
+        if (GoldenAgeCombat.CONFIG.get(ServerConfig.class).interactWhileUsing) {
+            return false;
+        } else {
+            return isUsingItem;
+        }
     }
 
-    @Redirect(method = "startUseItem", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isDestroying()Z"))
-    public boolean startUseItem(MultiPlayerGameMode gameMode) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).interactWhileUsing) return gameMode.isDestroying();
-        return false;
+    @ModifyExpressionValue(method = "startUseItem",
+                           at = @At(value = "INVOKE",
+                                    target = "Lnet/minecraft/client/multiplayer/MultiPlayerGameMode;isDestroying()Z"))
+    public boolean startUseItem(boolean isDestroying) {
+        if (GoldenAgeCombat.CONFIG.get(ServerConfig.class).interactWhileUsing) {
+            return false;
+        } else {
+            return isDestroying;
+        }
     }
 }

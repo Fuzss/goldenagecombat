@@ -6,7 +6,7 @@ import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.component.Tool;
 import net.minecraft.world.item.component.Weapon;
 import net.minecraft.world.level.block.Block;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Predicate;
 
@@ -34,7 +34,7 @@ public class ToolComponentsHelper {
         return false;
     }
 
-    public static boolean isComponentsForBlocks(DataComponentMap dataComponents, TagKey<Block> tagKey) {
+    public static boolean hasComponentsForBlocks(DataComponentMap dataComponents, TagKey<Block> tagKey) {
         return getToolForBlocks(dataComponents, tagKey) != null;
     }
 

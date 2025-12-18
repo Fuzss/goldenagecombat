@@ -1,0 +1,61 @@
+{
+    "mod": {
+        "id": "goldenagecombat",
+        "group": "fuzs.goldenagecombat",
+        "name": "Golden Age Combat",
+        "version": "21.11.0",
+        "authors": [
+            "Fuzs"
+        ],
+        "description": "Classic combat has returned! Get ready for some fast-paced combat action and lots of fun!",
+        "license": "MPL-2.0"
+    },
+    "dependencies": [
+        {
+            "name": "fabricapi",
+            "type": "required",
+            "platforms": [
+                "fabric"
+            ]
+        },
+        {
+            "name": "forgeconfigapiport",
+            "type": "required",
+            "platforms": [
+                "fabric"
+            ]
+        },
+        {
+            "name": "puzzleslib",
+            "type": "required",
+            "platforms": [
+                "fabric",
+                "neoforge"
+            ]
+        }
+    ],
+    "links": [
+        {
+            "name": "github",
+            "slug": "goldenagecombat"
+        },
+        {
+            "name": "curseforge",
+            "slug": "golden-age-combat",
+            "id": "352074"
+        },
+        {
+            "name": "modrinth",
+            "slug": "golden-age-combat",
+            "id": "U5I04KQ6"
+        }
+    ],
+    "environments": {
+        "client": "required",
+        "server": "required"
+    },
+    "platforms": [
+        "fabric",
+        "neoforge"
+    ]
+}

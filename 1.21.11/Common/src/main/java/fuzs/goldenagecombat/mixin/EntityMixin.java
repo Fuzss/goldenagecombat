@@ -14,7 +14,10 @@ abstract class EntityMixin {
 
     @Inject(method = "getPickRadius", at = @At("HEAD"), cancellable = true)
     public void getPickRadius(CallbackInfoReturnable<Float> callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).inflateHitboxes) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).inflateHitboxes) {
+            return;
+        }
+
         if (LivingEntity.class.isInstance(this)) {
             callback.setReturnValue(0.1F);
         }

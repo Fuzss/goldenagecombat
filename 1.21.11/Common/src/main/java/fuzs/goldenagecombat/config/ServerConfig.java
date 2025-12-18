@@ -18,7 +18,7 @@ public class ServerConfig implements ConfigCore {
     @Config(description = "Health only regenerates every 4 seconds, while requiring 18 or more food points. Surplus saturation does not yield quick health regeneration.")
     public boolean legacyFoodMechanics = false;
     @Config(description = "Player is knocked back by attacks which do not cause any damage, such as when hit by snowballs, eggs, and fishing rod hooks.")
-    public boolean weakAttacksKnockBackPlayers = true;
+    public boolean weakAttackKnockBack = true;
     @Config(description = "Sprinting and attacking no longer interfere with each other, making critical hits possible at all times.")
     public boolean criticalHitsWhileSprinting = true;
     @Config(category = FISHING_RODS_CATEGORY,
@@ -42,12 +42,11 @@ public class ServerConfig implements ConfigCore {
     public boolean interactWhileUsing = false;
     @Config(description = "Makes knockback stronger towards targets not on the ground (does not apply when in water).")
     public boolean upwardsKnockback = true;
-    @Config(name = "canceled_attack_sounds",
-            description = {
-                    "Prevent various attack sounds added for the cooldown mechanic from playing.",
-                    "This option can be used to prevent basically any individual sound from playing.",
-                    ConfigDataSet.CONFIG_DESCRIPTION
-            })
+    @Config(name = "canceled_attack_sounds", description = {
+            "Prevent various attack sounds added for the cooldown mechanic from playing.",
+            "This option can be used to prevent basically any individual sound from playing.",
+            ConfigDataSet.CONFIG_DESCRIPTION
+    })
     List<String> canceledAttackSoundsRaw = KeyedValueProvider.asString(Registries.SOUND_EVENT,
             SoundEvents.PLAYER_ATTACK_CRIT,
             SoundEvents.PLAYER_ATTACK_KNOCKBACK,
@@ -55,12 +54,11 @@ public class ServerConfig implements ConfigCore {
             SoundEvents.PLAYER_ATTACK_STRONG,
             SoundEvents.PLAYER_ATTACK_WEAK,
             SoundEvents.PLAYER_ATTACK_SWEEP);
-    @Config(name = "canceled_particles",
-            description = {
-                    "Disable rendering for certain particle types from modern combat, since they kinda clutter the screen since attacks can be dealt much quicker with classic combat options enabled.",
-                    "This option can be used to prevent basically any particle from showing.",
-                    ConfigDataSet.CONFIG_DESCRIPTION
-            })
+    @Config(name = "canceled_particles", description = {
+            "Disable rendering for certain particle types from modern combat, since they kinda clutter the screen since attacks can be dealt much quicker with classic combat options enabled.",
+            "This option can be used to prevent basically any particle from showing.",
+            ConfigDataSet.CONFIG_DESCRIPTION
+    })
     List<String> canceledParticlesRaw = KeyedValueProvider.asString(Registries.PARTICLE_TYPE,
             ParticleTypes.DAMAGE_INDICATOR,
             ParticleTypes.SWEEP_ATTACK);

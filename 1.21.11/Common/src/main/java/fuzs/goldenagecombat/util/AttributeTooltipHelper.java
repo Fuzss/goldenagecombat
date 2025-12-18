@@ -14,7 +14,7 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
 import net.minecraft.world.item.component.TooltipDisplay;
 import org.apache.commons.lang3.mutable.MutableBoolean;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -60,6 +60,7 @@ public class AttributeTooltipHelper {
                 shownEquipmentSlotGroups++;
             }
         }
+
         return shownEquipmentSlotGroups;
     }
 }

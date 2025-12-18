@@ -8,7 +8,7 @@ import net.minecraft.world.entity.ai.attributes.Attributes;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.component.ItemAttributeModifiers;
-import org.jetbrains.annotations.Nullable;
+import org.jspecify.annotations.Nullable;
 
 import java.util.function.Consumer;
 
@@ -18,7 +18,7 @@ import java.util.function.Consumer;
  * @see ItemAttributeModifiers.Display.Default
  */
 public class LegacyItemAttributeModifiersDisplay implements ItemAttributeModifiers.Display {
-    static final LegacyItemAttributeModifiersDisplay INSTANCE = new LegacyItemAttributeModifiersDisplay();
+    private static final LegacyItemAttributeModifiersDisplay INSTANCE = new LegacyItemAttributeModifiersDisplay();
 
     public static ItemAttributeModifiers.Display pick(ItemAttributeModifiers.Display display) {
         return display == ItemAttributeModifiers.Display.attributeModifiers() ? INSTANCE : display;

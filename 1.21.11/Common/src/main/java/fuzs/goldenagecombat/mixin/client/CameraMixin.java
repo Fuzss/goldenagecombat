@@ -21,7 +21,12 @@ abstract class CameraMixin {
 
     @Inject(method = "tick", at = @At("TAIL"))
     public void tick(CallbackInfo callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ClientConfig.class).instantEyeHeight) return;
-        if (this.entity != null) this.eyeHeightOld = this.eyeHeight = this.entity.getEyeHeight();
+        if (!GoldenAgeCombat.CONFIG.get(ClientConfig.class).instantEyeHeight) {
+            return;
+        }
+
+        if (this.entity != null) {
+            this.eyeHeightOld = this.eyeHeight = this.entity.getEyeHeight();
+        }
     }
 }

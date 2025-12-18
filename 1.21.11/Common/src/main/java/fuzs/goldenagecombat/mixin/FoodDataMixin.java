@@ -5,7 +5,7 @@ import fuzs.goldenagecombat.config.ServerConfig;
 import net.minecraft.server.level.ServerPlayer;
 import net.minecraft.world.Difficulty;
 import net.minecraft.world.food.FoodData;
-import net.minecraft.world.level.GameRules;
+import net.minecraft.world.level.gamerules.GameRules;
 import org.spongepowered.asm.mixin.Mixin;
 import org.spongepowered.asm.mixin.Shadow;
 import org.spongepowered.asm.mixin.injection.At;
@@ -25,7 +25,10 @@ abstract class FoodDataMixin {
 
     @Inject(method = "tick", at = @At("HEAD"), cancellable = true)
     public void tick(ServerPlayer serverPlayer, CallbackInfo callback) {
-        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).legacyFoodMechanics) return;
+        if (!GoldenAgeCombat.CONFIG.get(ServerConfig.class).legacyFoodMechanics) {
+            return;
+        }
+
         Difficulty difficulty = serverPlayer.level().getDifficulty();
         if (this.exhaustionLevel > 4.0F) {
             this.exhaustionLevel -= 4.0F;
@@ -35,7 +38,8 @@ abstract class FoodDataMixin {
                 this.foodLevel = Math.max(this.foodLevel - 1, 0);
             }
         }
-        boolean flag = serverPlayer.level().getGameRules().getBoolean(GameRules.RULE_NATURAL_REGENERATION);
+
+        boolean flag = serverPlayer.level().getGameRules().get(GameRules.NATURAL_HEALTH_REGENERATION);
         if (flag && this.foodLevel >= 18 && serverPlayer.isHurt()) {
             ++this.tickTimer;
             if (this.tickTimer >= 80) {
@@ -55,6 +59,7 @@ abstract class FoodDataMixin {
         } else {
             this.tickTimer = 0;
         }
+
         callback.cancel();
     }
 

@@ -10,9 +10,12 @@ import org.spongepowered.asm.mixin.injection.ModifyVariable;
 @Mixin(Gui.class)
 abstract class GuiMixin {
 
-    @ModifyVariable(method = "renderHearts", at = @At("HEAD"), ordinal = 5)
+    @ModifyVariable(method = "renderHearts", at = @At("HEAD"), ordinal = 5, argsOnly = true)
     public int renderHearts(int lastHealth) {
-        if (!GoldenAgeCombat.CONFIG.get(ClientConfig.class).noFlashingHearts) return lastHealth;
+        if (!GoldenAgeCombat.CONFIG.get(ClientConfig.class).noFlashingHearts) {
+            return lastHealth;
+        }
+
         return 0;
     }
 }

@@ -12,12 +12,12 @@ import java.util.List;
 public class CommonConfig implements ConfigCore {
     @Config(description = "Completely remove the attack cooldown as if it never even existed in the first place.")
     public boolean removeAttackCooldown = true;
-    @Config(description = "Boost sharpness enchantment to 1.25 damage points per level instead of just 0.5.",
-            gameRestart = true)
-    public boolean boostSharpness = false;
     @Config(description = "Only damage tools by 1 durability instead of 2 when attacking. Apply the same logic to swords when harvesting blocks.",
             gameRestart = true)
     public boolean noItemDurabilityPenalty = true;
+    @Config(description = "Allow blocking with swords, which will reduce most incoming attacks by 50% and render a parry animation.",
+            gameRestart = true)
+    public boolean allowSwordBlocking = true;
     @Config(name = "legacy_attack_damage_values",
             description = "Revert weapon and tool attack damage to legacy values.",
             gameRestart = true)
