@@ -1,0 +1,24 @@
+{
+  "required": true,
+  "minVersion": "0.8",
+  "compatibilityLevel": "JAVA_17",
+  "package": "${modGroup}.mixin",
+  "mixins": [
+    "EntityMixin",
+    "FishingHookMixin",
+    "FoodDataMixin",
+    "PlayerMixin",
+    "ToolMaterialMixin"
+  ],
+  "client": [
+    "client.CameraMixin",
+    "client.GuiMixin",
+    "client.ItemInHandRendererMixin",
+    "client.ItemStackMixin",
+    "client.MinecraftMixin",
+    "client.ParticleEngineMixin"
+  ],
+  "injectors": {
+    "defaultRequire": 1
+  }
+}
